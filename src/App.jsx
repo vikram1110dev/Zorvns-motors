@@ -378,6 +378,12 @@ function App() {
   const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedBike, setSelectedBike] = useState('');
 
+  // Sidebar Filter States
+  const [filterCategories, setFilterCategories] = useState([]);
+  const [filterVehicleConfigs, setFilterVehicleConfigs] = useState([]);
+  const [filterAvailability, setFilterAvailability] = useState([]);
+  const [filterPriceRange, setFilterPriceRange] = useState({ min: '', max: '' });
+
   // Keep local states synchronized with changes made in other tabs (Admin panel)
   useEffect(() => {
     const handleStorageChange = () => {
