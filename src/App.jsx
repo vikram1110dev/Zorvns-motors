@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Wrench, 
-  ShoppingBag, 
-  Calendar, 
-  Search, 
-  Plus, 
-  Minus, 
-  Trash2, 
-  X, 
-  Check, 
-  Clock, 
-  Phone, 
-  MapPin, 
-  ShieldCheck, 
-  TrendingUp, 
+import {
+  Wrench,
+  ShoppingBag,
+  Calendar,
+  Search,
+  Plus,
+  Minus,
+  Trash2,
+  X,
+  Check,
+  Clock,
+  Phone,
+  MapPin,
+  ShieldCheck,
+  TrendingUp,
   Sparkles,
   ArrowRight,
   AlertCircle,
@@ -34,6 +34,17 @@ import {
 import './App.css';
 import heroImg from './assets/hero.png';
 import zorvnsLogo from './assets/zorvns-logo.png';
+
+// Components
+import Toast from './components/Toast';
+import StarRating from './components/StarRating';
+import ProductCard from './components/ProductCard';
+import CategoryGrid from './components/CategoryGrid';
+import HeroSection from './components/HeroSection';
+import CartDrawer from './components/CartDrawer';
+import WishlistModal from './components/WishlistModal';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 // INITIAL SPARES MENU DEFINITION
 const INITIAL_SPARES_MENU = [
@@ -71,8 +82,8 @@ const INITIAL_SPARES_MENU = [
 // INITIAL BIKE DATA DEFINITION
 const INITIAL_BIKE_BRANDS = {
   'ROYAL ENFIELD': [
-    'Classic 350', 'Classic 500', 'Meteor 350', 'Himalayan 450', 
-    'Guerrilla 450', 'Super Meteor 650', 'Himalayan 411', 'Scram 411', 
+    'Classic 350', 'Classic 500', 'Meteor 350', 'Himalayan 450',
+    'Guerrilla 450', 'Super Meteor 650', 'Himalayan 411', 'Scram 411',
     'Interceptor 650', 'Continental GT 650', 'Hunter 350', 'Thunderbird 350',
     'Thunderbird 500', 'Classic reborn 350'
   ],
@@ -83,11 +94,11 @@ const INITIAL_BIKE_BRANDS = {
     'GS 310', '310 R', 'S 1000 RR', 'F 450 GS'
   ],
   'KTM': [
-    'Duke 125', 'Duke 200', 'Duke 250', 'Duke 390', 'RC 125', 'RC 200', 
+    'Duke 125', 'Duke 200', 'Duke 250', 'Duke 390', 'RC 125', 'RC 200',
     'RC 390', 'Adventure 250', 'Adventure 390', 'Adventure 390 (2025)', 'DUKE 250 (GEN 3)'
   ],
   'YAMAHA': [
-    'XSR 155', 'Aerox', 'R15 V1', 'R15 V2', 'R15 V3', 'R15 V4', 
+    'XSR 155', 'Aerox', 'R15 V1', 'R15 V2', 'R15 V3', 'R15 V4',
     'MT 15', 'MT 09', 'FZ 16', 'FZ-X', 'FZ 250', 'FZ V2',
     'YZF-R1M', 'YZF-R1', 'YZF-R3'
   ],
@@ -95,20 +106,20 @@ const INITIAL_BIKE_BRANDS = {
     'Svartpilen 401', 'Vitpilen 401'
   ],
   'BAJAJ': [
-    'Pulsar NS 200', 'Pulsar RS 200', 'Pulsar NS 160', 'Dominar 400', 
+    'Pulsar NS 200', 'Pulsar RS 200', 'Pulsar NS 160', 'Dominar 400',
     'Dominar 250', 'Pulsar 220F', 'Pulsar NS 400', 'Pulsar N160'
   ],
   'KAWASAKI': [
-    'Ninja 650', 'Ninja 400', 'Ninja ZX-14R', 'Ninja ZX-10R', 'Ninja ZX-6R', 
-    'Ninja H2R', 'Vulcan S', 'Vulcan 900 Classic', 'Versys 650', 'Versys 1000', 
+    'Ninja 650', 'Ninja 400', 'Ninja ZX-14R', 'Ninja ZX-10R', 'Ninja ZX-6R',
+    'Ninja H2R', 'Vulcan S', 'Vulcan 900 Classic', 'Versys 650', 'Versys 1000',
     'Z400', 'Z650', 'Z800', 'Z900', 'Z1000'
   ],
   'BENELLI': [
     'TNT 300', 'TNT 600i', 'TNT 899', 'TRK 502', 'TRK 502X', 'Imperiale 400'
   ],
   'PIAGGIO': [
-    'Aprilia SR 125', 'Aprilia SR 150', 'Aprilia SR 160', 'Aprilia SXR', 
-    'Aprilia storm 125', 'Aprilia Storm 150', 'Aprilia Storm 160', 
+    'Aprilia SR 125', 'Aprilia SR 150', 'Aprilia SR 160', 'Aprilia SXR',
+    'Aprilia storm 125', 'Aprilia Storm 150', 'Aprilia Storm 160',
     'Vespa SXL 125', 'Vespa VXL 125', 'Aprilia RS 457'
   ],
   'HERO': [
@@ -172,8 +183,8 @@ const INITIAL_SPARES = [
 const STATUS_STEPS = [
   { key: 'booked', label: 'Booking Confirmed', desc: 'Appointment scheduled successfully', color: 'var(--info)' },
   { key: 'received', label: 'Bike Received', desc: 'Checked in at the workshop garage', color: 'var(--warning)' },
-  { key: 'inspecting', label: 'Diagnostic Check', desc: 'Pre-service checks and inspection', color: 'var(--primary)' },
-  { key: 'servicing', label: 'Active Repairs', desc: 'Spares replacement & servicing', color: 'var(--primary-hover)' },
+  { key: 'inspecting', label: 'Diagnostic Check', desc: 'Pre-service checks and inspection', color: 'var(--accent)' },
+  { key: 'servicing', label: 'Active Repairs', desc: 'Spares replacement & servicing', color: 'var(--accent-hover)' },
   { key: 'testing', label: 'Quality Test', desc: 'Road testing and diagnostic verification', color: 'var(--info)' },
   { key: 'ready', label: 'Ready for Pickup', desc: 'Finished, polished, and ready to ride!', color: 'var(--success)' }
 ];
@@ -210,76 +221,8 @@ const INITIAL_ENQUIRIES = [
   { id: 2, name: 'Sarah Connor', email: 'sarah@example.com', subject: 'Bulk Order Discount', message: 'Looking to purchase 10 packs of NGK Iridium spark plugs. Do you offer bulk trade discounts?', resolved: true }];
 
 // ─────────────────────────────────────────────
-// TOAST NOTIFICATION COMPONENT
+// MAIN APP COMPONENT
 // ─────────────────────────────────────────────
-function Toast({ toasts, removeToast }) {
-  return (
-    <div style={{
-      position: 'fixed',
-      bottom: '1.5rem',
-      right: '1.5rem',
-      zIndex: 9999,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '0.75rem',
-      pointerEvents: 'none'
-    }}>
-      {toasts.map(t => (
-        <div
-          key={t.id}
-          className="animate-fade-in-up"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            background: t.type === 'success' ? 'rgba(16,185,129,0.95)'
-              : t.type === 'error' ? 'rgba(239,68,68,0.95)'
-              : 'rgba(17,24,39,0.95)',
-            color: '#fff',
-            padding: '0.85rem 1.25rem',
-            borderRadius: '12px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-            fontSize: '0.9rem',
-            fontWeight: 500,
-            backdropFilter: 'blur(8px)',
-            pointerEvents: 'all',
-            maxWidth: '340px',
-            border: '1px solid rgba(255,255,255,0.15)'
-          }}
-        >
-          {t.type === 'success' ? <CheckCircle2 size={18} /> : t.type === 'error' ? <AlertCircle size={18} /> : <Info size={18} />}
-          <span style={{ flex: 1 }}>{t.message}</span>
-          <button
-            onClick={() => removeToast(t.id)}
-            style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', opacity: 0.7, padding: '0 0.25rem' }}
-          >
-            <X size={14} />
-          </button>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
-// STAR RATING DISPLAY COMPONENT
-// ─────────────────────────────────────────────
-function StarRating({ rating }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-      {[1, 2, 3, 4, 5].map(i => (
-        <Star
-          key={i}
-          size={12}
-          fill={i <= Math.round(rating) ? '#F59E0B' : 'transparent'}
-          color={i <= Math.round(rating) ? '#F59E0B' : '#D1D5DB'}
-        />
-      ))}
-      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginLeft: '0.25rem' }}>{rating.toFixed(1)}</span>
-    </div>
-  );
-}
-
 function App() {
   // Navigation active tab (highlighter)
   const [activeTab, setActiveTab] = useState('home');
@@ -310,12 +253,9 @@ function App() {
   const [bikeBrands, setBikeBrands] = useState(() => {
     const saved = localStorage.getItem('spark_bike_brands');
     const parsed = saved ? JSON.parse(saved) : {};
-    // Merge existing local storage with the massive new dictionary
-    // We do this to ensure the user gets all the new screenshot brands without losing their own additions
     const merged = { ...INITIAL_BIKE_BRANDS };
     for (const [brand, models] of Object.entries(parsed)) {
       if (merged[brand]) {
-        // combine arrays and remove duplicates
         merged[brand] = [...new Set([...merged[brand], ...models])];
       } else {
         merged[brand] = models;
@@ -403,7 +343,6 @@ function App() {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    // Periodically sync in case storage events don't fire on the same tab
     const interval = setInterval(handleStorageChange, 1500);
 
     return () => {
@@ -461,7 +400,6 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
   const toggleWishlist = (part) => {
-    // Check outside updater to avoid StrictMode double-invoke
     const exists = wishlist.find(i => i.id === part.id);
     const updated = exists
       ? wishlist.filter(i => i.id !== part.id)
@@ -494,7 +432,6 @@ function App() {
 
   // Cart helper functions
   const addToCart = (part) => {
-    // Check current cart OUTSIDE the updater to avoid StrictMode double-invoke
     const existing = cart.find(item => item.id === part.id);
     if (existing) {
       showToast(`${part.name} quantity updated in cart.`, 'info');
@@ -540,7 +477,7 @@ function App() {
       serviceType: formData.serviceType,
       date: formData.date,
       time: formData.time,
-      statusIndex: 0, // Booked
+      statusIndex: 0,
       notes: formData.notes
     };
     const updatedBookings = [newBooking, ...bookings];
@@ -550,8 +487,7 @@ function App() {
     setBookingSuccessCode(newCode);
     setSearchTrackingCode(newCode);
     setTrackedBooking(newBooking);
-    
-    // Reset Form
+
     setFormData({
       name: '',
       phone: '',
@@ -562,7 +498,6 @@ function App() {
       notes: ''
     });
 
-    // Switch view to tracking screen
     switchScreen('tracking');
   };
 
@@ -595,8 +530,7 @@ function App() {
     if (!trackedBooking) return;
     const currentIdx = trackedBooking.statusIndex;
     const nextIdx = (currentIdx + 1) % STATUS_STEPS.length;
-    
-    // Update bookings state
+
     const updatedBookings = bookings.map(b => {
       if (b.code === trackedBooking.code) {
         return { ...b, statusIndex: nextIdx };
@@ -605,8 +539,6 @@ function App() {
     });
     setBookings(updatedBookings);
     localStorage.setItem('spark_bookings', JSON.stringify(updatedBookings));
-
-    // Update locally tracked item
     setTrackedBooking(prev => ({ ...prev, statusIndex: nextIdx }));
   };
 
@@ -625,36 +557,34 @@ function App() {
 
   // Checkout simulation
   const handleCheckout = () => {
-    showToast(`🎉 Order placed! Total $${totalCartPrice.toFixed(2)} — Thank you!`, 'success');
+    showToast(`🎉 Order placed! Total ₹${totalCartPrice.toFixed(2)} — Thank you!`, 'success');
     setCart([]);
     setIsCartOpen(false);
   };
 
-  // Filter products based on search, category AND bike compatibility
+  // Filter products
   const filteredProducts = spares.filter(part => {
-    const matchesSearch = part.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesSearch = part.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           part.desc.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === 'All' || part.category === categoryFilter;
-    
-    // If a bike model is selected, check if it's compatible
+
     let matchesBike = true;
     if (selectedBike) {
       matchesBike = part.compatibility && part.compatibility.includes(selectedBike);
     } else if (selectedBrand) {
-      // If only brand is selected, check if compatible with ANY bike in that brand
       const brandBikes = bikeBrands[selectedBrand] || [];
       matchesBike = part.compatibility && part.compatibility.some(bike => brandBikes.includes(bike));
     }
-    
+
     return matchesSearch && matchesCategory && matchesBike;
   });
 
-  // Apply sorting to filtered results
+  // Apply sorting
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortBy === 'price-asc') return a.price - b.price;
     if (sortBy === 'price-desc') return b.price - a.price;
     if (sortBy === 'rating') return b.rating - a.rating;
-    return 0; // default order
+    return 0;
   });
 
   const categories = ['All', 'Engine', 'Brakes', 'Filters', 'Controls', 'Fluids', 'Electrical', 'Drivetrain'];
@@ -663,416 +593,139 @@ function App() {
   const switchScreen = (tabName) => {
     setActiveTab(tabName);
     setHoveredMenu(null);
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <>
       <div className="bg-gradient-wrapper"></div>
-      {/* Navigation Header */}
-      <header style={styles.headerWrapper} onMouseLeave={() => setHoveredMenu(null)}>
-        {/* Tier 1: Search & Actions */}
-        <div style={styles.middleBar}>
-          <div className="app-container" style={styles.middleBarContainer}>
-            {/* Logo */}
-            <div 
-              style={{ ...styles.logoGroup, cursor: 'pointer' }} 
-              onClick={() => switchScreen('home')}
-              title="ZORVNS - Home"
-            >
-              <img 
-                src={zorvnsLogo} 
-                alt="ZORVNS" 
-                style={styles.mainNavLogo}
-              />
-            </div>
 
-            {/* Search Bar */}
-            <div style={styles.mainSearchContainer}>
-              <Search size={18} color="var(--text-muted)" style={{marginLeft: '1rem'}} />
-              <input 
-                type="text" 
-                placeholder="Search For NGK I"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={styles.mainSearchInput}
-              />
-            </div>
+      {/* Header Component */}
+      <Header
+        zorvnsLogo={zorvnsLogo}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        cart={cart}
+        onCartOpen={() => setIsCartOpen(true)}
+        onSwitchScreen={switchScreen}
+        showGarage={showGarage}
+        hoveredMenu={hoveredMenu}
+        setHoveredMenu={setHoveredMenu}
+        sparesMenu={sparesMenu}
+        bikeBrands={bikeBrands}
+        brandLogos={brandLogos}
+        brandOrder={brandOrder}
+        activeMegaMenuBrand={activeMegaMenuBrand}
+        setActiveMegaMenuBrand={setActiveMegaMenuBrand}
+        setSelectedBrand={setSelectedBrand}
+        setSelectedBike={setSelectedBike}
+      />
 
-            {/* Actions */}
-            <div style={styles.middleBarActions}>
-              <button style={styles.iconBtn}>
-                <User size={22} color="#000" />
-              </button>
-              <button onClick={() => setIsCartOpen(true)} style={styles.iconBtnCart}>
-                <ShoppingBag size={22} color="#000" />
-                <span style={{marginLeft: '0.5rem', fontWeight: 500, color: '#000'}}>Cart</span>
-                {cart.length > 0 && <span className="cart-badge-pulse" style={styles.cartCountSparify}>{cart.reduce((a, c) => a + c.qty, 0)}</span>}
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Main Content */}
+      <main className="app-container main-content" style={{ padding: '1.5rem' }}>
 
-        {/* Tier 3: Bottom Links & Mega Menu */}
-        <div style={styles.bottomBar}>
-          <div className="app-container" style={styles.bottomBarContainer}>
-            <nav className="bottom-nav-scroll" style={styles.bottomNavLinks}>
-              <button onClick={() => switchScreen('home')} style={styles.bottomNavLink}>Home</button>
-              <button onClick={() => switchScreen('catalog')} style={styles.bottomNavLink}>All Collections</button>
-              
-              <div 
-                style={styles.navItemWithDropdown}
-                onMouseEnter={() => setHoveredMenu('bike')}
-              >
-                <button style={styles.bottomNavLinkDropdown}>Shop By Bike <ChevronDown size={14} /></button>
-                {hoveredMenu === 'bike' && (
-                  <div style={styles.megaMenuDropdown}>
-                    <div className="app-container" style={{ display: 'flex', gap: '2rem', textAlign: 'left' }}>
-                      {/* Left Pane: Brands Grid */}
-                      <div style={{ flex: '0 0 550px', borderRight: '1px solid #eee', paddingRight: '1rem', display: 'flex', flexDirection: 'column', maxHeight: '400px', overflowY: 'auto' }}>
-                        <h4 style={{ ...styles.megaMenuHeading, marginBottom: '1rem' }}>Select Brand</h4>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
-                          {(brandOrder || []).filter(b => bikeBrands && bikeBrands[b]).map((brand) => (
-                            <div 
-                              key={brand}
-                              onMouseEnter={() => setActiveMegaMenuBrand(brand)}
-                              style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: '1rem 0.5rem',
-                                cursor: 'pointer',
-                                border: activeMegaMenuBrand === brand ? '2px solid #f87171' : '1px solid #eee',
-                                background: activeMegaMenuBrand === brand ? '#fffaf9' : '#fff',
-                                color: activeMegaMenuBrand === brand ? '#f87171' : 'var(--text-main)',
-                                borderRadius: '8px',
-                                transition: 'all 0.2s',
-                                textAlign: 'center'
-                              }}
-                            >
-                              {brandLogos[brand] ? (
-                                <img 
-                                  src={brandLogos[brand]} 
-                                  alt={brand} 
-                                  style={{ width: '40px', height: '40px', objectFit: 'contain', marginBottom: '0.5rem', opacity: activeMegaMenuBrand === brand ? 1 : 0.7 }}
-                                />
-                              ) : (
-                                <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', borderRadius: '50%', marginBottom: '0.5rem', fontSize: '0.7rem', color: '#999' }}>
-                                  {brand.substring(0, 2).toUpperCase()}
-                                </div>
-                              )}
-                              <span style={{ fontSize: '0.75rem', fontWeight: activeMegaMenuBrand === brand ? 'bold' : '500' }}>
-                                {brand}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Right Pane: Models */}
-                      <div style={{ flex: 1, paddingLeft: '1rem', maxHeight: '400px', overflowY: 'auto' }}>
-                        <h4 style={{ ...styles.megaMenuHeading, marginBottom: '1rem' }}>
-                          {activeMegaMenuBrand ? `Models for ${activeMegaMenuBrand}` : 'Select a brand to view models'}
-                        </h4>
-                        {activeMegaMenuBrand && bikeBrands[activeMegaMenuBrand] && (
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
-                            {bikeBrands[activeMegaMenuBrand].map((model, idx) => (
-                              <a 
-                                key={idx} 
-                                href="#" 
-                                style={{...styles.megaMenuLink, padding: '0.5rem', background: '#f9fafb', borderRadius: '4px'}} 
-                                onClick={(e) => { 
-                                  e.preventDefault(); 
-                                  setSelectedBrand(activeMegaMenuBrand); 
-                                  setSelectedBike(model); 
-                                  switchScreen('catalog'); 
-                                }}
-                              >
-                                {model}
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              <div 
-                style={styles.navItemWithDropdown}
-                onMouseEnter={() => setHoveredMenu('spares')}
-              >
-                <button style={styles.bottomNavLinkDropdown}>Shop By Spares <ChevronDown size={14} /></button>
-                {hoveredMenu === 'spares' && (
-                  <div style={styles.megaMenuDropdown}>
-                    <div className="app-container" style={styles.megaMenuGrid}>
-                      {(sparesMenu || []).map((col, colIdx) => (
-                        <div key={colIdx} style={styles.megaMenuColumn}>
-                          {col.map((cat, catIdx) => (
-                            <React.Fragment key={cat.id}>
-                              {catIdx > 0 && cat.title === '' ? <div style={{ height: '2rem' }}></div> : null}
-                              {catIdx > 0 && cat.title !== '' ? <br/> : null}
-                              {cat.title && <h4 style={styles.megaMenuHeading}>{cat.title}</h4>}
-                              {(cat.items || []).map((item, iIdx) => (
-                                <a key={iIdx} href="#" style={styles.megaMenuLink}>{item}</a>
-                              ))}
-                            </React.Fragment>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div 
-                style={styles.navItemWithDropdown}
-                onMouseEnter={() => setHoveredMenu('accessories')}
-              >
-                <button style={styles.bottomNavLinkDropdown}>Shop By Accessories <ChevronDown size={14} /></button>
-                {hoveredMenu === 'accessories' && (
-                  <div style={styles.megaMenuDropdown}>
-                    <div className="app-container" style={styles.megaMenuGrid}>
-                      <div style={styles.megaMenuColumn}>
-                        <h4 style={styles.megaMenuHeading}>Riding Gear</h4>
-                        <a href="#" style={styles.megaMenuLink}>Helmets</a>
-                        <a href="#" style={styles.megaMenuLink}>Riding Jackets</a>
-                        <a href="#" style={styles.megaMenuLink}>Riding Gloves</a>
-                        <a href="#" style={styles.megaMenuLink}>Riding Pants</a>
-                        <a href="#" style={styles.megaMenuLink}>Riding Boots</a>
-                      </div>
-                      <div style={styles.megaMenuColumn}>
-                        <h4 style={styles.megaMenuHeading}>Luggage</h4>
-                        <a href="#" style={styles.megaMenuLink}>Tank Bags</a>
-                        <a href="#" style={styles.megaMenuLink}>Saddlebags</a>
-                        <a href="#" style={styles.megaMenuLink}>Top Boxes</a>
-                        <a href="#" style={styles.megaMenuLink}>Tail Bags</a>
-                        <a href="#" style={styles.megaMenuLink}>Bungee Cords</a>
-                      </div>
-                      <div style={styles.megaMenuColumn}>
-                        <h4 style={styles.megaMenuHeading}>Protection</h4>
-                        <a href="#" style={styles.megaMenuLink}>Crash Guards</a>
-                        <a href="#" style={styles.megaMenuLink}>Frame Sliders</a>
-                        <a href="#" style={styles.megaMenuLink}>Handguards</a>
-                        <a href="#" style={styles.megaMenuLink}>Radiator Guards</a>
-                        <a href="#" style={styles.megaMenuLink}>Sump Guards</a>
-                      </div>
-                      <div style={styles.megaMenuColumn}>
-                        <h4 style={styles.megaMenuHeading}>Performance</h4>
-                        <a href="#" style={styles.megaMenuLink}>Exhaust Systems</a>
-                        <a href="#" style={styles.megaMenuLink}>Performance Air Filters</a>
-                        <a href="#" style={styles.megaMenuLink}>ECU Remaps</a>
-                        <a href="#" style={styles.megaMenuLink}>Quickshifters</a>
-                      </div>
-                      <div style={styles.megaMenuColumn}>
-                        <h4 style={styles.megaMenuHeading}>Styling & Care</h4>
-                        <a href="#" style={styles.megaMenuLink}>Decals & Stickers</a>
-                        <a href="#" style={styles.megaMenuLink}>Tail Tidies</a>
-                        <a href="#" style={styles.megaMenuLink}>Bar End Mirrors</a>
-                        <a href="#" style={styles.megaMenuLink}>Bike Covers</a>
-                        <a href="#" style={styles.megaMenuLink}>Cleaning Kits</a>
-                      </div>
-                      <div style={styles.megaMenuColumn}>
-                        <h4 style={styles.megaMenuHeading}>Electronics</h4>
-                        <a href="#" style={styles.megaMenuLink}>Mobile Mounts</a>
-                        <a href="#" style={styles.megaMenuLink}>USB Chargers</a>
-                        <a href="#" style={styles.megaMenuLink}>Auxiliary Lights</a>
-                        <a href="#" style={styles.megaMenuLink}>Action Cameras</a>
-                        <a href="#" style={styles.megaMenuLink}>Bluetooth Communicators</a>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <button style={styles.bottomNavLink}>Wholesale Price</button>
-              {showGarage && <button onClick={() => switchScreen('tracking')} style={styles.bottomNavLink}>Track Order</button>}
-              <button style={styles.bottomNavLink}>Faq</button>
-              <button onClick={() => switchScreen('contact')} style={styles.bottomNavLink}>Contact Us</button>
-              <button style={styles.bottomNavLink}>Blog</button>
-              <button onClick={() => switchScreen('wishlist')} style={styles.bottomNavLink}>Wishlist</button>
-              <button style={styles.bottomNavLink}>Return And Replacement</button>
-              <button style={styles.bottomNavLink}>Brand Directory</button>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content Area containing separate screen/tab components */}
-      <main className="app-container" style={{ padding: '8rem 1.5rem 4rem', minHeight: 'calc(100vh - 20rem)' }}>
-        
-        {/* SCREEN 1: Home / Landing */}
+        {/* ═══ HOME SCREEN ═══ */}
         {activeTab === 'home' && (
-          <div className="animate-fade-in-up" style={{ display: 'flex', flexDirection: 'column', gap: '4rem', width: '100vw', marginLeft: 'calc(-50vw + 50%)', overflowX: 'hidden' }}>
-            
-            {/* 1. Full Width Hero Banner */}
-            <div style={styles.sparifyHeroBanner}>
-              <div style={styles.sparifyHeroContent}>
-                <h1 style={styles.sparifyHeroTitle}>UPGRADE YOUR RIDE</h1>
-                <p style={styles.sparifyHeroSub}>Premium Spares & Performance Parts for True Enthusiasts.</p>
-                <button onClick={() => switchScreen('catalog')} style={styles.sparifyHeroBtn}>Shop Now</button>
+          <div className="animate-fade-in-up" style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem', width: '100vw', marginLeft: 'calc(-50vw + 50%)', overflowX: 'hidden' }}>
+
+            {/* Hero */}
+            <HeroSection heroImage={heroImg} onShopNow={() => switchScreen('catalog')} />
+
+            {/* Shop by Category */}
+            <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
+              <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Shop By Category</h2>
+              <CategoryGrid onCategoryClick={() => switchScreen('catalog')} />
+            </div>
+
+            {/* Promo Banner */}
+            <div className="app-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <div className="promo-banner">
+                <h3>FREE SHIPPING ON ORDERS OVER ₹4,999!</h3>
+                <p>Use code <span className="promo-code">FREERIDE</span> at checkout. Valid until end of month.</p>
               </div>
             </div>
 
-            {/* 2. Shop By Category (Circular) */}
-            <div className="app-container" style={{ textAlign: 'center', width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
-              <h2 style={styles.sparifySectionTitle}>SHOP BY CATEGORY</h2>
-              <div style={styles.sparifyCategoryGrid}>
-                {['Helmets', 'Exhausts', 'Filters', 'Brakes', 'Lubricants', 'Luggage'].map((cat, idx) => (
-                  <div key={idx} style={styles.sparifyCategoryItem} onClick={() => switchScreen('catalog')}>
-                    <div style={styles.sparifyCategoryCircle}>
-                      <span style={{fontSize: '2rem', color: '#aaa', fontWeight: 'bold'}}>{cat[0]}</span>
-                    </div>
-                    <span style={styles.sparifyCategoryLabel}>{cat}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 3. Promotional Banner Strip */}
-            <div className="app-container" style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
-               <div style={styles.sparifyPromoStrip}>
-                 <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>FREE SHIPPING ON ORDERS OVER $99!</h3>
-                 <p style={{ color: '#aaa' }}>Use code <strong style={{color: '#fff'}}>FREERIDE</strong> at checkout. Valid until end of month.</p>
-               </div>
-            </div>
-
-            {/* 4. Best Sellers / Featured Products Grid */}
-            <div className="app-container" style={{ textAlign: 'center', width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
-              <h2 style={styles.sparifySectionTitle}>BEST SELLERS</h2>
-              <div style={styles.sparifyProductGrid}>
+            {/* Best Sellers */}
+            <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
+              <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Best Sellers</h2>
+              <div className="products-grid">
                 {spares.slice(0, 4).map(part => (
-                  <div 
-                    key={part.id} 
-                    style={{ ...styles.sparifyProductCard, cursor: 'pointer' }}
-                    onClick={() => { setSelectedProduct(part); switchScreen('product'); }}
-                  >
-                    {part.images && part.images.length > 0 ? (
-                      <div style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', width: '100%', height: '200px' }}>
-                        {part.images.map((imgUrl, i) => (
-                          <img key={i} src={imgUrl.trim()} alt={`${part.name} ${i+1}`} style={{ flex: '0 0 100%', width: '100%', height: '100%', objectFit: 'contain', scrollSnapAlign: 'start', backgroundColor: '#f9f9f9' }} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div style={styles.sparifyProductImagePlaceholder}>
-                        <ShoppingBag size={48} color="#e0e0e0" />
-                      </div>
-                    )}
-                    <div style={styles.sparifyProductInfo}>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{part.category}</span>
-                      <h4 style={styles.sparifyProductCardTitle}>{part.name}</h4>
-                      <StarRating rating={part.rating} />
-                      <div style={styles.sparifyProductCardFooter}>
-                        <span style={{ fontWeight: '900', fontSize: '1.2rem', color: '#111' }}>${part.price.toFixed(2)}</span>
-                        <button onClick={(e) => { e.stopPropagation(); addToCart(part); showToast(`Added ${part.name}`, 'success'); }} style={styles.sparifyAddToCartBtn}>+ Add</button>
-                      </div>
-                    </div>
-                  </div>
+                  <ProductCard
+                    key={part.id}
+                    part={part}
+                    onViewProduct={(p) => { setSelectedProduct(p); switchScreen('product'); }}
+                    onAddToCart={addToCart}
+                    onToggleWishlist={toggleWishlist}
+                    isWishlisted={isWishlisted(part.id)}
+                  />
                 ))}
               </div>
             </div>
 
-            {/* 5. Shop By Brands */}
-            <div className="app-container" style={{ textAlign: 'center', marginBottom: '4rem', width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
-              <h2 style={styles.sparifySectionTitle}>TOP BRANDS</h2>
-              <div style={styles.sparifyBrandsGrid}>
+            {/* Top Brands */}
+            <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto', marginBottom: '2rem' }}>
+              <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Top Brands</h2>
+              <div className="brands-grid">
                 {['BREMBO', 'K&N', 'MOTUL', 'NGK', 'AKRAPOVIC', 'MICHELIN'].map((brand, idx) => (
-                  <div key={idx} style={styles.sparifyBrandLogo}>
-                    {brand}
-                  </div>
+                  <div key={idx} className="brand-logo-card">{brand}</div>
                 ))}
               </div>
             </div>
-            
           </div>
         )}
 
-        {/* SCREEN 2: Services */}
+        {/* ═══ SERVICES SCREEN ═══ */}
         {showGarage && activeTab === 'services' && (
-          <section className="animate-fade-in-up" style={styles.sectionSpacing}>
-            <div style={styles.sectionHeader}>
-              <span style={styles.sectionSubtitle}>CLINIC SERVICES</span>
-              <h2 style={styles.sectionTitle}>PROFESSIONAL MOTORCYCLE CARE</h2>
-              <p style={styles.sectionDesc}>Our certified technicians use cutting edge tools to maintain, diagnose, and repair superbikes and commuter rides alike.</p>
+          <section className="animate-fade-in-up" style={{ paddingTop: '1rem', marginBottom: '2rem' }}>
+            <div className="section-header">
+              <span className="section-subtitle">CLINIC SERVICES</span>
+              <h2 className="section-title">PROFESSIONAL MOTORCYCLE CARE</h2>
+              <p className="section-desc">Our certified technicians use cutting edge tools to maintain, diagnose, and repair superbikes and commuter rides alike.</p>
             </div>
 
-            <div style={styles.serviceGrid}>
-              <div className="glass-panel" style={styles.serviceCard}>
-                <div style={styles.serviceIconContainer}>
-                  <Wrench size={24} color="var(--primary)" />
+            <div className="service-grid">
+              {[
+                { icon: Wrench, title: 'General Tune-up & Inspection', text: 'Comprehensive 32-point inspection, chain adjustments, Spark plugs check, oil replacement, filter cleaning, and clutch wire adjustment.', price: '₹3,999' },
+                { icon: Settings, title: 'Performance ECU Tuning', text: 'Custom fuel mapping, ignition curve optimization, dyno runs, throttle response adjustments, and speed limiter configuration.', price: '₹12,499' },
+                { icon: ShieldCheck, title: 'Brake System Overhaul', text: 'Brembo pad replacements, rotor resurfacing, brake fluid flush, master cylinder rebuild, and pressure testing for supreme safety.', price: '₹2,999' },
+                { icon: TrendingUp, title: 'Suspension Tuning & Seals', text: 'Sag calibration for riders weight, rebuild front forks, dust and oil seals replacements, rear shock overhaul, and damping setup.', price: '₹6,999' }
+              ].map((service, idx) => (
+                <div key={idx} className="glass-panel service-card">
+                  <div className="service-icon"><service.icon size={22} /></div>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{service.title}</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', flex: 1 }}>{service.text}</p>
+                  <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: '0.92rem' }}>Starting at {service.price}</span>
                 </div>
-                <h3 style={styles.serviceCardTitle}>General Tune-up & Inspection</h3>
-                <p style={styles.serviceCardText}>Comprehensive 32-point inspection, chain adjustments, Spark plugs check, oil replacement, filter cleaning, and clutch wire adjustment.</p>
-                <span style={styles.serviceCardPrice}>Starting at $49.00</span>
-              </div>
-
-              <div className="glass-panel" style={styles.serviceCard}>
-                <div style={styles.serviceIconContainer}>
-                  <Settings size={24} color="var(--primary)" />
-                </div>
-                <h3 style={styles.serviceCardTitle}>Performance ECU Tuning</h3>
-                <p style={styles.serviceCardText}>Custom fuel mapping, ignition curve optimization, dyno runs, throttle response adjustments, and speed limiter configuration.</p>
-                <span style={styles.serviceCardPrice}>Starting at $149.00</span>
-              </div>
-
-              <div className="glass-panel" style={styles.serviceCard}>
-                <div style={styles.serviceIconContainer}>
-                  <ShieldCheck size={24} color="var(--primary)" />
-                </div>
-                <h3 style={styles.serviceCardTitle}>Brake System Overhaul</h3>
-                <p style={styles.serviceCardText}>Brembo pad replacements, rotor resurfacing, brake fluid flush, master cylinder rebuild, and pressure testing for supreme safety.</p>
-                <span style={styles.serviceCardPrice}>Starting at $39.00</span>
-              </div>
-
-              <div className="glass-panel" style={styles.serviceCard}>
-                <div style={styles.serviceIconContainer}>
-                  <TrendingUp size={24} color="var(--primary)" />
-                </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Suspension Tuning & Seals</h3>
-                <p style={styles.serviceCardText}>Sag calibration for riders weight, rebuild front forks, dust and oil seals replacements, rear shock overhaul, and damping setup.</p>
-                <span style={styles.serviceCardPrice}>Starting at $89.00</span>
-              </div>
+              ))}
             </div>
-            
-            <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <button onClick={() => switchScreen('book')} className="btn-primary">
-                Book An Appointment
-              </button>
+
+            <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+              <button onClick={() => switchScreen('book')} className="btn-primary">Book An Appointment</button>
             </div>
           </section>
         )}
 
-        {/* SCREEN 3: Spare Parts Shop */}
+        {/* ═══ CATALOG SCREEN ═══ */}
         {activeTab === 'catalog' && (
-          <section className="animate-fade-in-up" style={styles.sectionSpacing}>
-            <div style={styles.sectionHeader}>
-              <span style={styles.sectionSubtitle}>ZORVNS STORE</span>
-              <h2 style={styles.sectionTitle}>GENUINE SPARES CATALOG</h2>
-              <p style={styles.sectionDesc}>Search or filter our catalog of race-tested and manufacturer-approved components to keep your machine authentic.</p>
+          <section className="animate-fade-in-up" style={{ paddingTop: '1rem', marginBottom: '2rem' }}>
+            <div className="section-header">
+              <span className="section-subtitle">ZORVNS STORE</span>
+              <h2 className="section-title">GENUINE SPARES CATALOG</h2>
+              <p className="section-desc">Search or filter our catalog of race-tested and manufacturer-approved components.</p>
             </div>
 
-            {/* Find spares by Bike Model Finder (eauto.co.in design style) */}
-            <div className="glass-panel" style={styles.bikeFinderPanel}>
-              <div style={styles.bikeFinderHeader}>
-                <ShoppingBag size={20} color="var(--primary)" />
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>Find Spares by Bike Model</h3>
+            {/* Bike Finder */}
+            <div className="glass-panel bike-finder" style={{ textAlign: 'left' }}>
+              <div className="bike-finder-header">
+                <ShoppingBag size={18} color="var(--accent)" />
+                <h3>Find Spares by Bike Model</h3>
               </div>
-              <div style={styles.bikeFinderControls}>
-                {/* Select Brand */}
-                <div style={styles.finderField}>
-                  <label style={styles.finderLabel}>1. Select Brand</label>
-                  <select 
+              <div className="bike-finder-controls">
+                <div className="finder-field">
+                  <label>1. Select Brand</label>
+                  <select
                     value={selectedBrand}
-                    onChange={(e) => {
-                      setSelectedBrand(e.target.value);
-                      setSelectedBike('');
-                    }}
-                    style={styles.finderSelect}
+                    onChange={(e) => { setSelectedBrand(e.target.value); setSelectedBike(''); }}
                   >
                     <option value="">-- All Brands --</option>
                     {(brandOrder || []).filter(b => bikeBrands && bikeBrands[b]).map(brand => (
@@ -1080,15 +733,12 @@ function App() {
                     ))}
                   </select>
                 </div>
-
-                {/* Select Bike Model */}
-                <div style={styles.finderField}>
-                  <label style={styles.finderLabel}>2. Select Bike Model</label>
-                  <select 
+                <div className="finder-field">
+                  <label>2. Select Bike Model</label>
+                  <select
                     value={selectedBike}
                     disabled={!selectedBrand}
                     onChange={(e) => setSelectedBike(e.target.value)}
-                    style={styles.finderSelect}
                   >
                     <option value="">-- All Bikes --</option>
                     {selectedBrand && bikeBrands[selectedBrand].map(bike => (
@@ -1096,60 +746,47 @@ function App() {
                     ))}
                   </select>
                 </div>
-
-                {/* Reset button */}
-                <button 
-                  onClick={() => {
-                    setSelectedBrand('');
-                    setSelectedBike('');
-                  }}
+                <button
+                  onClick={() => { setSelectedBrand(''); setSelectedBike(''); }}
                   className="btn-secondary"
-                  style={{ alignSelf: 'flex-end', height: '42px', display: 'flex', alignItems: 'center' }}
+                  style={{ alignSelf: 'flex-end', height: '42px' }}
                 >
                   Clear Selection
                 </button>
               </div>
-              
-              {/* Selected Compatibility Feedback */}
               {(selectedBrand || selectedBike) && (
-                <div style={styles.compatibilityFeedback}>
-                  <Check size={14} color="var(--success)" />
-                  <span style={{ fontSize: '0.85rem' }}>
-                    Showing spare parts compatible with {selectedBike ? <strong>{selectedBike}</strong> : <strong>all {selectedBrand} models</strong>}
-                  </span>
+                <div className="compat-feedback">
+                  <Check size={14} />
+                  <span>Showing spare parts compatible with {selectedBike ? <strong>{selectedBike}</strong> : <strong>all {selectedBrand} models</strong>}</span>
                 </div>
               )}
             </div>
 
-            {/* Filter controls */}
-            <div className="glass-panel" style={styles.filterControls}>
-              <div style={styles.searchBox}>
-                <Search size={18} color="var(--text-muted)" />
-                <input 
-                  type="text" 
-                  placeholder="Search parts, brands, keywords..." 
+            {/* Filter Controls */}
+            <div className="glass-panel filter-panel">
+              <div className="search-box">
+                <Search size={17} color="var(--text-light)" />
+                <input
+                  type="text"
+                  placeholder="Search parts, brands, keywords..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  style={styles.searchInput}
                 />
               </div>
-
-              <div style={styles.categoryFilters}>
+              <div className="filter-pills">
                 {categories.map(cat => (
                   <button
                     key={cat}
                     onClick={() => setCategoryFilter(cat)}
-                    style={categoryFilter === cat ? styles.filterTabActive : styles.filterTab}
+                    className={`filter-pill ${categoryFilter === cat ? 'active' : ''}`}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
-
-              {/* Sort Dropdown */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border)' }}>
-                <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Sort by:</span>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div className="sort-bar">
+                <span className="sort-label">Sort by:</span>
+                <div className="filter-pills">
                   {[
                     { key: 'default', label: 'Default' },
                     { key: 'price-asc', label: 'Price: Low → High' },
@@ -1159,7 +796,7 @@ function App() {
                     <button
                       key={opt.key}
                       onClick={() => setSortBy(opt.key)}
-                      style={sortBy === opt.key ? styles.filterTabActive : styles.filterTab}
+                      className={`filter-pill ${sortBy === opt.key ? 'active' : ''}`}
                     >
                       {opt.label}
                     </button>
@@ -1168,189 +805,134 @@ function App() {
               </div>
             </div>
 
-            {/* Catalog Grid */}
+            {/* Product Grid */}
             {sortedProducts.length === 0 ? (
-              <div className="glass-panel" style={styles.emptyCatalog}>
-                <AlertCircle size={48} color="var(--text-muted)" style={{ marginBottom: '1rem' }} />
+              <div className="glass-panel empty-state">
+                <AlertCircle size={44} color="var(--text-light)" style={{ marginBottom: '1rem' }} />
                 <h3>No Compatible Spare Parts Found</h3>
                 <p style={{ color: 'var(--text-muted)' }}>Try adjusting your search queries or selecting a different bike model.</p>
               </div>
             ) : (
-              <div style={styles.catalogGrid}>
+              <div className="products-grid">
                 {sortedProducts.map(part => (
-                  <div 
-                    key={part.id} 
-                    className="glass-panel" 
-                    style={{ ...styles.productCard, cursor: 'pointer' }}
-                    onClick={() => { setSelectedProduct(part); switchScreen('product'); }}
-                  >
-                    <div style={styles.productBadge}>{part.category}</div>
-                    {part.images && part.images.length > 0 && (
-                      <div style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', width: '100%', height: '150px', borderBottom: '1px solid #f0f0f0' }}>
-                        {part.images.map((imgUrl, i) => (
-                          <img key={i} src={imgUrl.trim()} alt={`${part.name} ${i+1}`} style={{ flex: '0 0 100%', width: '100%', height: '100%', objectFit: 'contain', scrollSnapAlign: 'start', backgroundColor: '#fff' }} />
-                        ))}
-                      </div>
-                    )}
-                    <div style={styles.productDetails}>
-                      <h3 style={styles.productName}>{part.name}</h3>
-                      <p style={styles.productDesc}>{part.desc}</p>
-                      
-                      {/* Compatibility model badges list */}
-                      {part.compatibility && (
-                        <div style={styles.compatibilityList}>
-                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Fits: </span>
-                          {part.compatibility.map(b => (
-                            <span key={b} style={styles.compatBadge}>{b}</span>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Star Rating */}
-                      <StarRating rating={part.rating} />
-
-                      <div style={styles.productFooter}>
-                        <div>
-                          <span style={styles.productPrice}>${part.price.toFixed(2)}</span>
-                          <span style={styles.productStock}>In Stock: {part.stock}</span>
-                        </div>
-                        <div style={{ display: 'flex', gap: '0.4rem' }}>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); toggleWishlist(part); }}
-                            title={isWishlisted(part.id) ? 'Remove from wishlist' : 'Save to wishlist'}
-                            style={{
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              padding: '0.4rem 0.5rem', borderRadius: '8px', cursor: 'pointer',
-                              background: isWishlisted(part.id) ? 'rgba(239,68,68,0.08)' : 'rgba(17,24,39,0.04)',
-                              border: isWishlisted(part.id) ? '1px solid rgba(239,68,68,0.3)' : '1px solid var(--border)',
-                              color: isWishlisted(part.id) ? '#EF4444' : 'var(--text-muted)',
-                              transition: 'all 0.2s ease'
-                            }}
-                          >
-                            <Heart size={14} fill={isWishlisted(part.id) ? '#EF4444' : 'none'} />
-                          </button>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); addToCart(part); }}
-                            className="btn-primary" 
-                            style={styles.addToCartBtn}
-                          >
-                            <Plus size={16} />
-                            Add
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ProductCard
+                    key={part.id}
+                    part={part}
+                    onViewProduct={(p) => { setSelectedProduct(p); switchScreen('product'); }}
+                    onAddToCart={addToCart}
+                    onToggleWishlist={toggleWishlist}
+                    isWishlisted={isWishlisted(part.id)}
+                  />
                 ))}
               </div>
             )}
 
-            {/* Moto Clinic / Garage Services teaser banner (Only shown if Garage is INACTIVE) */}
+            {/* Garage Teaser */}
             {!showGarage && (
-              <div className="glass-panel animate-fade-in-up" style={styles.teaserBanner}>
+              <div className="glass-panel teaser-banner animate-fade-in-up">
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                  <div style={{ ...styles.logoIcon, width: '48px', height: '48px' }}>
-                    <Wrench size={24} color="#fff" />
+                  <div className="service-icon" style={{ width: '48px', height: '48px' }}>
+                    <Wrench size={22} />
                   </div>
                 </div>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>ZORVNS Clinic & Garage Servicing</h3>
-                <span style={{ fontSize: '0.8rem', background: 'rgba(17, 24, 39, 0.04)', color: 'var(--text-muted)', border: '1px solid rgba(17,24,39,0.1)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontWeight: 'bold' }}>COMING SOON</span>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '600px', margin: '1rem auto 0', lineHeight: '1.6' }}>
-                  We are expanding our store! Professional diagnostic evaluations, suspension setups, and high-performance ECU mappings will be available in our clinic soon. Stay tuned!
+                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem' }}>ZORVNS Clinic & Garage Servicing</h3>
+                <span style={{
+                  fontSize: '0.75rem', background: 'var(--bg-main)', color: 'var(--text-muted)',
+                  border: '1px solid var(--border)', padding: '0.2rem 0.6rem',
+                  borderRadius: 'var(--radius-sm)', fontWeight: 700
+                }}>COMING SOON</span>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', maxWidth: '580px', margin: '1rem auto 0', lineHeight: 1.6 }}>
+                  We are expanding our store! Professional diagnostic evaluations, suspension setups, and high-performance ECU mappings will be available in our clinic soon.
                 </p>
               </div>
             )}
           </section>
         )}
 
-        {/* SCREEN: Product Details */}
+        {/* ═══ PRODUCT DETAIL SCREEN ═══ */}
         {activeTab === 'product' && selectedProduct && (
-          <section className="animate-fade-in-up" style={{ ...styles.sectionSpacing, maxWidth: '1200px', margin: '0 auto', paddingTop: '2rem' }}>
-            {/* Back Button */}
-            <button 
+          <section className="animate-fade-in-up" style={{ maxWidth: '1100px', margin: '0 auto', paddingTop: '1rem' }}>
+            <button
               onClick={() => { switchScreen('catalog'); setSelectedProduct(null); }}
-              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '2rem', fontSize: '0.95rem', fontWeight: 500 }}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1.5rem', fontSize: '0.9rem', fontWeight: 500 }}
             >
-              <ArrowLeft size={18} /> Back to Catalog
+              <ArrowLeft size={16} /> Back to Catalog
             </button>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '4rem', alignItems: 'start' }}>
-              {/* Left Column: Image Viewer */}
-              <div className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', background: '#fff' }}>
-                <div style={{ width: '100%', height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f9f9f9', borderRadius: '12px', overflow: 'hidden' }}>
+            <div className="product-detail-grid">
+              {/* Image */}
+              <div className="product-detail-image">
+                <div className="product-detail-image-main">
                   {selectedProduct.images && selectedProduct.images.length > 0 ? (
                     <div style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', width: '100%', height: '100%', WebkitOverflowScrolling: 'touch' }}>
-                        {selectedProduct.images.map((imgUrl, i) => (
-                          <img key={i} src={imgUrl.trim()} alt={`${selectedProduct.name} ${i+1}`} style={{ flex: '0 0 100%', width: '100%', height: '100%', objectFit: 'contain', scrollSnapAlign: 'start', backgroundColor: '#fff' }} />
-                        ))}
+                      {selectedProduct.images.map((imgUrl, i) => (
+                        <img key={i} src={imgUrl.trim()} alt={`${selectedProduct.name} ${i + 1}`} style={{ flex: '0 0 100%', width: '100%', height: '100%', objectFit: 'contain', scrollSnapAlign: 'start', backgroundColor: '#fff' }} />
+                      ))}
                     </div>
                   ) : (
                     <span style={{ color: '#ccc' }}>No Image Available</span>
                   )}
                 </div>
                 {selectedProduct.images && selectedProduct.images.length > 1 && (
-                  <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Swipe or scroll to view more images</p>
+                  <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', padding: '0.75rem' }}>Swipe or scroll to view more images</p>
                 )}
               </div>
 
-              {/* Right Column: Details */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'left' }}>
+              {/* Details */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'left' }}>
                 <div>
-                  <span style={{ display: 'inline-block', background: 'rgba(17,24,39,0.05)', padding: '0.3rem 0.8rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  <span style={{ display: 'inline-block', background: 'var(--bg-main)', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
                     {selectedProduct.category}
                   </span>
-                  <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#111', lineHeight: 1.2, marginBottom: '0.5rem' }}>
+                  <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.2, marginBottom: '0.5rem' }}>
                     {selectedProduct.name}
                   </h1>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
                     <StarRating rating={selectedProduct.rating} />
-                    <span style={{ fontSize: '0.85rem', color: 'var(--success)', fontWeight: 600 }}>{selectedProduct.stock > 0 ? `In Stock (${selectedProduct.stock})` : 'Out of Stock'}</span>
+                    <span style={{ fontSize: '0.82rem', color: 'var(--success)', fontWeight: 600 }}>
+                      {selectedProduct.stock > 0 ? `In Stock (${selectedProduct.stock})` : 'Out of Stock'}
+                    </span>
                   </div>
-                  <h2 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--primary)' }}>
-                    ${selectedProduct.price.toFixed(2)}
+                  <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--accent)' }}>
+                    ₹{selectedProduct.price.toFixed(2)}
                   </h2>
                 </div>
 
-                <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '1.5rem 0' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.75rem' }}>Product Overview</h3>
-                  <p style={{ color: 'var(--text-main)', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '1.25rem 0' }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.6rem' }}>Product Overview</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.6 }}>
                     {selectedProduct.desc || 'No description available for this product.'}
                   </p>
                 </div>
 
                 {selectedProduct.compatibility && selectedProduct.compatibility.length > 0 && (
                   <div>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.75rem' }}>Compatibility</h3>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.6rem' }}>Compatibility</h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
                       {selectedProduct.compatibility.map(b => (
-                        <span key={b} style={styles.compatBadge}>{b}</span>
+                        <span key={b} className="compat-badge" style={{ fontSize: '0.72rem', padding: '0.2rem 0.5rem' }}>{b}</span>
                       ))}
                     </div>
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); addToCart(selectedProduct); showToast(`Added ${selectedProduct.name} to cart`, 'success'); }}
-                    className="btn-primary" 
-                    style={{ flex: 1, padding: '1rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <button
+                    onClick={() => { addToCart(selectedProduct); showToast(`Added ${selectedProduct.name} to cart`, 'success'); }}
+                    className="btn-primary"
+                    style={{ flex: 1, padding: '0.9rem', fontSize: '1rem' }}
                     disabled={selectedProduct.stock <= 0}
                   >
-                    <ShoppingBag size={20} />
+                    <ShoppingBag size={18} />
                     {selectedProduct.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                   </button>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); toggleWishlist(selectedProduct); }}
-                    style={{ 
-                      width: '56px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                      borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s ease',
-                      border: isWishlisted(selectedProduct.id) ? '2px solid rgba(239,68,68,0.5)' : '1px solid var(--border)',
-                      background: isWishlisted(selectedProduct.id) ? 'rgba(239,68,68,0.08)' : '#fff',
-                      color: isWishlisted(selectedProduct.id) ? '#EF4444' : 'var(--text-muted)'
-                    }}
+                  <button
+                    onClick={() => toggleWishlist(selectedProduct)}
+                    className={`wishlist-btn ${isWishlisted(selectedProduct.id) ? 'active' : ''}`}
+                    style={{ width: '50px', height: '50px' }}
                     title={isWishlisted(selectedProduct.id) ? 'Remove from wishlist' : 'Save to wishlist'}
                   >
-                    <Heart size={24} fill={isWishlisted(selectedProduct.id) ? '#EF4444' : 'none'} />
+                    <Heart size={22} fill={isWishlisted(selectedProduct.id) ? '#EF4444' : 'none'} />
                   </button>
                 </div>
               </div>
@@ -1358,97 +940,88 @@ function App() {
           </section>
         )}
 
-        {/* SCREEN 4: Live Status Tracker */}
+        {/* ═══ TRACKING SCREEN ═══ */}
         {showGarage && activeTab === 'tracking' && (
-          <section className="animate-fade-in-up" style={styles.sectionSpacing}>
-            <div style={styles.sectionHeader}>
-              <span style={styles.sectionSubtitle}>TRACKER</span>
-              <h2 style={styles.sectionTitle}>LIVE GARAGE STATUS</h2>
-              <p style={styles.sectionDesc}>Watch the status of your machine live as technicians work. Search using your unique ZORVNS booking code.</p>
+          <section className="animate-fade-in-up" style={{ paddingTop: '1rem', marginBottom: '2rem' }}>
+            <div className="section-header">
+              <span className="section-subtitle">TRACKER</span>
+              <h2 className="section-title">LIVE GARAGE STATUS</h2>
+              <p className="section-desc">Watch the status of your machine live as technicians work. Search using your unique ZORVNS booking code.</p>
             </div>
 
-            <div style={{ maxWidth: '640px', margin: '0 auto 2.5rem' }}>
-              <form onSubmit={handleTrackSubmit} style={styles.trackFormLarge}>
-                <input 
-                  type="text" 
+            <div style={{ maxWidth: '600px', margin: '0 auto 2rem' }}>
+              <form onSubmit={handleTrackSubmit} style={{ display: 'flex', gap: '0.6rem', width: '100%' }}>
+                <input
+                  type="text"
                   placeholder="Enter Code (try: SC-77301)"
                   value={searchTrackingCode}
                   onChange={(e) => setSearchTrackingCode(e.target.value)}
-                  style={styles.trackInputLarge}
+                  style={{ fontSize: '1rem', padding: '0.85rem' }}
                 />
-                <button type="submit" className="btn-primary">
-                  Track Ride
-                </button>
+                <button type="submit" className="btn-primary">Track Ride</button>
               </form>
             </div>
 
             {trackedBooking ? (
-              <div className="glass-panel animate-fade-in-up" style={styles.trackerContainer}>
-                {/* Developer Demo Tooltip */}
-                <div style={styles.demoBanner}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Sparkles size={16} color="var(--primary)" />
-                    <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>DEMO SIMULATION TOOL</span>
+              <div className="glass-panel animate-fade-in-up" style={{ padding: '2rem', textAlign: 'left', maxWidth: '820px', margin: '0 auto' }}>
+                <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', padding: '0.65rem 1rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <Sparkles size={15} color="var(--accent)" />
+                    <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>DEMO SIMULATION TOOL</span>
                   </div>
-                  <button onClick={advanceTrackedStatus} className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                  <button onClick={advanceTrackedStatus} className="btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
                     Simulate Status Step Forward
                   </button>
                 </div>
 
-                <div style={styles.trackerHeader}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
                   <div>
-                    <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{trackedBooking.code}</span>
-                    <h3 style={{ fontSize: '1.5rem', marginTop: '0.25rem' }}>{trackedBooking.bikeModel}</h3>
+                    <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{trackedBooking.code}</span>
+                    <h3 style={{ fontSize: '1.35rem', marginTop: '0.2rem' }}>{trackedBooking.bikeModel}</h3>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Owner</span>
-                    <p style={{ fontWeight: '600' }}>{trackedBooking.name}</p>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>Owner</span>
+                    <p style={{ fontWeight: 600 }}>{trackedBooking.name}</p>
                   </div>
                 </div>
 
-                <div style={styles.trackerMetaRow}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem', marginBottom: '1.25rem' }}>
                   <div>
-                    <span style={styles.metaLabel}>SERVICE TYPE</span>
-                    <p style={styles.metaValue}>{trackedBooking.serviceType}</p>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.04em' }}>SERVICE TYPE</span>
+                    <p style={{ fontSize: '1rem', fontWeight: 600, marginTop: '0.1rem' }}>{trackedBooking.serviceType}</p>
                   </div>
                   <div>
-                    <span style={styles.metaLabel}>APPOINTMENT SLOT</span>
-                    <p style={styles.metaValue}>{trackedBooking.date} at {trackedBooking.time}</p>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.04em' }}>APPOINTMENT SLOT</span>
+                    <p style={{ fontSize: '1rem', fontWeight: 600, marginTop: '0.1rem' }}>{trackedBooking.date} at {trackedBooking.time}</p>
                   </div>
                 </div>
 
                 {trackedBooking.notes && (
-                  <div style={styles.notesBlock}>
-                    <span style={styles.metaLabel}>SYMPTOMS & NOTES</span>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>"{trackedBooking.notes}"</p>
+                  <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '0.85rem', marginBottom: '2rem' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.04em' }}>SYMPTOMS & NOTES</span>
+                    <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>"{trackedBooking.notes}"</p>
                   </div>
                 )}
 
-                {/* Progress bar and nodes */}
-                <div style={styles.timelineContainer}>
+                <div className="timeline-grid">
                   {STATUS_STEPS.map((step, idx) => {
                     const isCompleted = idx <= trackedBooking.statusIndex;
                     const isActive = idx === trackedBooking.statusIndex;
                     return (
-                      <div key={step.key} style={styles.timelineStep}>
-                        <div style={{
-                          ...styles.timelineDot,
-                          backgroundColor: isCompleted ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-                          borderColor: isActive ? 'var(--primary)' : isCompleted ? 'var(--primary)' : 'var(--border)',
-                          boxShadow: isActive ? '0 0 16px var(--primary)' : 'none'
-                        }}>
-                          {isCompleted ? <Check size={14} color="#fff" /> : <span>{idx + 1}</span>}
+                      <div key={step.key} className="timeline-step">
+                        <div className={`timeline-dot ${isCompleted ? 'completed' : 'pending'} ${isActive ? 'active' : ''}`}>
+                          {isCompleted ? <Check size={13} color="#fff" /> : <span>{idx + 1}</span>}
                         </div>
-                        <div style={styles.timelineLabel}>{step.label}</div>
-                        <div style={styles.timelineDesc}>{step.desc}</div>
+                        <div style={{ fontSize: '0.78rem', fontWeight: 700, marginBottom: '0.2rem' }}>{step.label}</div>
+                        <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', lineHeight: 1.3 }}>{step.desc}</div>
                       </div>
                     );
                   })}
                 </div>
               </div>
             ) : (
-              <div className="glass-panel" style={styles.noSearchPanel}>
-                <AlertCircle size={36} color="var(--text-muted)" style={{ marginBottom: '0.5rem' }} />
+              <div className="glass-panel empty-state" style={{ maxWidth: '500px', margin: '0 auto' }}>
+                <AlertCircle size={36} color="var(--text-light)" style={{ marginBottom: '0.5rem' }} />
                 <h3>No active tracking lookup.</h3>
                 <p style={{ color: 'var(--text-muted)' }}>Enter one of the demo booking codes (like <strong>SC-77301</strong> or <strong>SC-12402</strong>) above to test the interactive status simulation!</p>
               </div>
@@ -1456,79 +1029,53 @@ function App() {
           </section>
         )}
 
-        {/* SECTION 5: Book Service Slot */}
+        {/* ═══ BOOKING SCREEN ═══ */}
         {showGarage && activeTab === 'book' && (
-          <section className="animate-fade-in-up" style={{ ...styles.sectionSpacing, maxWidth: '720px', margin: '0 auto' }}>
-            <div style={styles.sectionHeader}>
-              <span style={styles.sectionSubtitle}>RESERVATION</span>
-              <h2 style={styles.sectionTitle}>BOOK A SERVICE SLOT</h2>
-              <p style={styles.sectionDesc}>Fill in your details below. We will assign you a tracking code immediately to watch updates in real time.</p>
+          <section className="animate-fade-in-up" style={{ maxWidth: '700px', margin: '0 auto', paddingTop: '1rem' }}>
+            <div className="section-header">
+              <span className="section-subtitle">RESERVATION</span>
+              <h2 className="section-title">BOOK A SERVICE SLOT</h2>
+              <p className="section-desc">Fill in your details below. We will assign you a tracking code immediately.</p>
             </div>
 
             {bookingSuccessCode ? (
-              <div className="glass-panel animate-fade-in-up" style={styles.bookingSuccessPanel}>
-                <div style={styles.successCircle}>
-                  <Check size={36} color="var(--success)" />
+              <div className="glass-panel animate-fade-in-up" style={{ padding: '2.5rem 2rem', textAlign: 'center' }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--success-bg)', border: '1px solid rgba(16, 185, 129, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
+                  <Check size={30} color="var(--success)" />
                 </div>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Booking Confirmed!</h3>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                  Your appointment slot has been successfully locked. Use the tracking code below in the 'Track Ride' panel to watch real-time diagnostics.
+                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem' }}>Booking Confirmed!</h3>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+                  Your appointment slot has been successfully locked. Use the tracking code below in the 'Track Ride' panel.
                 </p>
-                <div style={styles.codeBanner}>
-                  <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>TRACKING CODE</span>
-                  <span style={{ fontSize: '2rem', fontFamily: 'var(--font-heading)', fontWeight: '800', color: 'var(--primary)' }}>{bookingSuccessCode}</span>
+                <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '1.25rem', display: 'inline-flex', flexDirection: 'column', gap: '0.2rem', minWidth: '260px' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>TRACKING CODE</span>
+                  <span style={{ fontSize: '1.75rem', fontFamily: 'var(--font-heading)', fontWeight: 800, color: 'var(--accent)' }}>{bookingSuccessCode}</span>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '1.5rem' }}>
-                  <button onClick={() => { switchScreen('tracking'); setBookingSuccessCode(''); }} className="btn-primary">
-                    Track Live Progress
-                  </button>
-                  <button onClick={() => setBookingSuccessCode('')} className="btn-secondary">
-                    Book Another Slot
-                  </button>
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                  <button onClick={() => { switchScreen('tracking'); setBookingSuccessCode(''); }} className="btn-primary">Track Live Progress</button>
+                  <button onClick={() => setBookingSuccessCode('')} className="btn-secondary">Book Another Slot</button>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleBookingSubmit} className="glass-panel" style={styles.bookingForm}>
-                <div style={styles.formRow}>
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Full Name</label>
-                    <input 
-                      type="text" 
-                      required 
-                      placeholder="e.g. Vikram Dev"
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    />
+              <form onSubmit={handleBookingSubmit} className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'left' }}>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Full Name</label>
+                    <input type="text" required placeholder="e.g. Vikram Dev" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
                   </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Phone Number</label>
-                    <input 
-                      type="tel" 
-                      required 
-                      placeholder="e.g. 9876543210"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    />
+                  <div className="form-group">
+                    <label className="form-label">Phone Number</label>
+                    <input type="tel" required placeholder="e.g. 9876543210" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
                   </div>
                 </div>
-
-                <div style={styles.formRow}>
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Motorcycle Model</label>
-                    <input 
-                      type="text" 
-                      required 
-                      placeholder="e.g. Yamaha YZF-R1 or Duke 390"
-                      value={formData.bikeModel}
-                      onChange={(e) => setFormData({...formData, bikeModel: e.target.value})}
-                    />
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Motorcycle Model</label>
+                    <input type="text" required placeholder="e.g. Yamaha YZF-R1 or Duke 390" value={formData.bikeModel} onChange={(e) => setFormData({ ...formData, bikeModel: e.target.value })} />
                   </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Service Category</label>
-                    <select 
-                      value={formData.serviceType}
-                      onChange={(e) => setFormData({...formData, serviceType: e.target.value})}
-                    >
+                  <div className="form-group">
+                    <label className="form-label">Service Category</label>
+                    <select value={formData.serviceType} onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}>
                       <option>General Diagnostics & Tuning</option>
                       <option>Performance ECU Tuning</option>
                       <option>Suspension Tuning & Fork seals</option>
@@ -1537,23 +1084,14 @@ function App() {
                     </select>
                   </div>
                 </div>
-
-                <div style={styles.formRow}>
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Preferred Date</label>
-                    <input 
-                      type="date" 
-                      required
-                      value={formData.date}
-                      onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    />
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Preferred Date</label>
+                    <input type="date" required value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} />
                   </div>
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Preferred Time Slot</label>
-                    <select 
-                      value={formData.time}
-                      onChange={(e) => setFormData({...formData, time: e.target.value})}
-                    >
+                  <div className="form-group">
+                    <label className="form-label">Preferred Time Slot</label>
+                    <select value={formData.time} onChange={(e) => setFormData({ ...formData, time: e.target.value })}>
                       <option>09:00 AM - 11:30 AM</option>
                       <option>11:30 AM - 02:00 PM</option>
                       <option>02:30 PM - 05:00 PM</option>
@@ -1561,139 +1099,92 @@ function App() {
                     </select>
                   </div>
                 </div>
-
-                <div style={styles.formGroup}>
-                  <label style={styles.formLabel}>Special Notes / Diagnostics Symptoms</label>
-                  <textarea 
-                    rows="3" 
-                    placeholder="Provide any details e.g. front brake squeaks, check transmission fluid, hard cold start..."
-                    value={formData.notes}
-                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                  />
+                <div className="form-group">
+                  <label className="form-label">Special Notes / Diagnostics Symptoms</label>
+                  <textarea rows="3" placeholder="Provide any details..." value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
                 </div>
-
-                <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                  <Calendar size={18} />
-                  Confirm and Book Appointment
+                <button type="submit" className="btn-primary" style={{ width: '100%' }}>
+                  <Calendar size={16} /> Confirm and Book Appointment
                 </button>
               </form>
             )}
           </section>
         )}
 
-        {/* SCREEN 6: Contact Us */}
+        {/* ═══ CONTACT SCREEN ═══ */}
         {activeTab === 'contact' && (
-          <section className="animate-fade-in-up" style={{ ...styles.sectionSpacing, maxWidth: '900px', margin: '0 auto' }}>
-            <div style={styles.sectionHeader}>
-              <span style={styles.sectionSubtitle}>CONTACT US</span>
-              <h2 style={styles.sectionTitle}>GET IN TOUCH WITH ZORVNS</h2>
-              <p style={styles.sectionDesc}>Have inquiries about specific spare parts, stock levels, or order tracking? Drop us a message.</p>
+          <section className="animate-fade-in-up" style={{ maxWidth: '880px', margin: '0 auto', paddingTop: '1rem' }}>
+            <div className="section-header">
+              <span className="section-subtitle">CONTACT US</span>
+              <h2 className="section-title">GET IN TOUCH WITH ZORVNS</h2>
+              <p className="section-desc">Have inquiries about specific spare parts, stock levels, or order tracking? Drop us a message.</p>
             </div>
 
-            <div style={styles.contactContainer}>
-              {/* Contact Information Cards */}
-              <div style={styles.contactInfoCol}>
-                <div className="glass-panel" style={styles.contactInfoCard}>
-                  <div style={styles.contactIconCircle}>
-                    <Phone size={20} color="var(--primary)" />
-                  </div>
+            <div className="contact-layout">
+              <div className="contact-info-col">
+                <div className="glass-panel contact-info-card">
+                  <div className="contact-icon"><Phone size={18} /></div>
                   <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 'bold' }}>Phone Support</h4>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>+1 (555) 019-2834</p>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.80rem' }}>Toll Free parts line</p>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700 }}>Phone Support</h4>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.15rem' }}>+1 (555) 019-2834</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>Toll Free parts line</p>
                   </div>
                 </div>
-
-                <div className="glass-panel" style={styles.contactInfoCard}>
-                  <div style={styles.contactIconCircle}>
-                    <Mail size={20} color="var(--primary)" />
-                  </div>
+                <div className="glass-panel contact-info-card">
+                  <div className="contact-icon"><Mail size={18} /></div>
                   <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 'bold' }}>Email Address</h4>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>parts@zorvns.com</p>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Response in 24 hours</p>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700 }}>Email Address</h4>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.15rem' }}>parts@zorvns.com</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>Response in 24 hours</p>
                   </div>
                 </div>
-
-                <div className="glass-panel" style={styles.contactInfoCard}>
-                  <div style={styles.contactIconCircle}>
-                    <MapPin size={20} color="var(--primary)" />
-                  </div>
+                <div className="glass-panel contact-info-card">
+                  <div className="contact-icon"><MapPin size={18} /></div>
                   <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 'bold' }}>HQ Warehouse</h4>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>482 Gearbox Alley, Speedville</p>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700 }}>HQ Warehouse</h4>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.15rem' }}>482 Gearbox Alley, Speedville</p>
                   </div>
                 </div>
               </div>
 
-              {/* Contact Form Panel */}
-              <div className="glass-panel" style={{ flex: 1.3, padding: '2rem' }}>
+              <div className="glass-panel" style={{ flex: 1.3, padding: '1.75rem' }}>
                 {contactSuccess ? (
                   <div className="animate-fade-in-up" style={{ textAlign: 'center', padding: '2rem 1rem' }}>
-                    <div style={{ ...styles.successCircle, marginBottom: '1rem' }}>
-                      <Check size={30} color="var(--success)" />
+                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--success-bg)', border: '1px solid rgba(16, 185, 129, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                      <Check size={28} color="var(--success)" />
                     </div>
-                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Message Sent!</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                    <h3 style={{ fontSize: '1.15rem', marginBottom: '0.4rem' }}>Message Sent!</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
                       Thank you for contacting ZORVNS. Our parts department will get back to you shortly.
                     </p>
-                    <button onClick={() => setContactSuccess(false)} className="btn-secondary">
-                      Send Another Message
-                    </button>
+                    <button onClick={() => setContactSuccess(false)} className="btn-secondary">Send Another Message</button>
                   </div>
                 ) : (
-                  <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', textAlign: 'left' }}>Send Us a Message</h3>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', textAlign: 'left' }}>
-                      <label style={styles.formLabel}>Your Name</label>
-                      <input 
-                        type="text" 
-                        required 
-                        placeholder="e.g. Vikram Dev"
-                        value={contactData.name}
-                        onChange={(e) => setContactData({...contactData, name: e.target.value})}
-                      />
+                  <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', textAlign: 'left' }}>Send Us a Message</h3>
+                    <div className="form-group">
+                      <label className="form-label">Your Name</label>
+                      <input type="text" required placeholder="e.g. Vikram Dev" value={contactData.name} onChange={(e) => setContactData({ ...contactData, name: e.target.value })} />
                     </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', textAlign: 'left' }}>
-                      <label style={styles.formLabel}>Email Address</label>
-                      <input 
-                        type="email" 
-                        required 
-                        placeholder="e.g. vikram@example.com"
-                        value={contactData.email}
-                        onChange={(e) => setContactData({...contactData, email: e.target.value})}
-                      />
+                    <div className="form-group">
+                      <label className="form-label">Email Address</label>
+                      <input type="email" required placeholder="e.g. vikram@example.com" value={contactData.email} onChange={(e) => setContactData({ ...contactData, email: e.target.value })} />
                     </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', textAlign: 'left' }}>
-                      <label style={styles.formLabel}>Subject</label>
-                      <select 
-                        value={contactData.subject}
-                        onChange={(e) => setContactData({...contactData, subject: e.target.value})}
-                      >
+                    <div className="form-group">
+                      <label className="form-label">Subject</label>
+                      <select value={contactData.subject} onChange={(e) => setContactData({ ...contactData, subject: e.target.value })}>
                         <option>Parts Availability Inquiry</option>
                         <option>Bulk Order Discount</option>
                         <option>Shipping & Delivery Status</option>
                         <option>General Feedback</option>
                       </select>
                     </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', textAlign: 'left' }}>
-                      <label style={styles.formLabel}>Message</label>
-                      <textarea 
-                        required 
-                        rows="4" 
-                        placeholder="Write your request details here..."
-                        value={contactData.message}
-                        onChange={(e) => setContactData({...contactData, message: e.target.value})}
-                      />
+                    <div className="form-group">
+                      <label className="form-label">Message</label>
+                      <textarea required rows="4" placeholder="Write your request details here..." value={contactData.message} onChange={(e) => setContactData({ ...contactData, message: e.target.value })} />
                     </div>
-
-                    <button type="submit" className="btn-primary" style={{ justifyContent: 'center' }}>
-                      <Send size={16} />
-                      Send Message
+                    <button type="submit" className="btn-primary" style={{ width: '100%' }}>
+                      <Send size={15} /> Send Message
                     </button>
                   </form>
                 )}
@@ -1705,1303 +1196,40 @@ function App() {
       </main>
 
       {/* Cart Drawer */}
-      {isCartOpen && (
-        <div style={styles.cartOverlay} onClick={() => setIsCartOpen(false)}>
-          <div style={styles.cartDrawer} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.cartDrawerHeader}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <ShoppingBag size={20} color="var(--primary)" />
-                <h3 style={{ fontSize: '1.25rem' }}>Spare Parts Cart</h3>
-              </div>
-              <button onClick={() => setIsCartOpen(false)} style={styles.closeDrawerBtn}>
-                <X size={20} />
-              </button>
-            </div>
+      <CartDrawer
+        cart={cart}
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        onUpdateQty={updateQty}
+        onRemove={removeFromCart}
+        onCheckout={handleCheckout}
+        totalPrice={totalCartPrice}
+      />
 
-            <div style={styles.cartDrawerBody}>
-              {cart.length === 0 ? (
-                <div style={styles.emptyCartMessage}>
-                  <ShoppingBag size={48} color="var(--text-muted)" style={{ marginBottom: '1rem' }} />
-                  <p>Your cart is empty.</p>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Browse spares to add genuine parts.</p>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {cart.map(item => (
-                    <div key={item.id} style={styles.cartItemCard}>
-                      <div style={{ flex: 1 }}>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: '600' }}>{item.name}</h4>
-                        <span style={{ fontSize: '0.85rem', color: 'var(--primary)' }}>${item.price.toFixed(2)}</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <button onClick={() => updateQty(item.id, -1)} style={styles.qtyBtn}>
-                          <Minus size={12} />
-                        </button>
-                        <span style={{ width: '20px', textAlign: 'center', fontSize: '0.9rem' }}>{item.qty}</span>
-                        <button onClick={() => updateQty(item.id, 1)} style={styles.qtyBtn}>
-                          <Plus size={12} />
-                        </button>
-                        <button onClick={() => removeFromCart(item.id)} style={styles.deleteCartItemBtn}>
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+      {/* Footer */}
+      <Footer zorvnsLogo={zorvnsLogo} onSwitchScreen={switchScreen} />
 
-            {cart.length > 0 && (
-              <div style={styles.cartDrawerFooter}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Subtotal</span>
-                  <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary)' }}>${totalCartPrice.toFixed(2)}</span>
-                </div>
-                <button onClick={handleCheckout} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                  Checkout & Place Order
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Footer Section */}
-      <footer style={styles.footer}>
-        <div className="app-container" style={styles.footerGrid}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div 
-              style={{ ...styles.logoGroup, cursor: 'pointer' }} 
-              onClick={() => switchScreen('home')}
-              title="ZORVNS - Home"
-            >
-              <img 
-                src={zorvnsLogo} 
-                alt="ZORVNS" 
-                style={{ height: '42px', maxWidth: '170px', objectFit: 'contain', display: 'block' }} 
-              />
-            </div>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-              Futuristic diagnostics, high-performance repairs, and premium motorcycle spares under one garage.
-            </p>
-          </div>
-
-          <div>
-            <h4 style={{ color: 'var(--text-main)', marginBottom: '1rem', fontSize: '1rem' }}>Store Timings</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Clock size={14} color="var(--primary)" />
-                <span>Mon - Sat: 9:00 AM - 7:30 PM</span>
-              </div>
-              <div>Sunday: Closed</div>
-            </div>
-          </div>
-
-          <div>
-            <h4 style={{ color: 'var(--text-main)', marginBottom: '1rem', fontSize: '1rem' }}>Contact Clinic</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Phone size={14} color="var(--primary)" />
-                <span>+1 (555) 019-2834</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <MapPin size={14} color="var(--primary)" />
-                <span>482 Gearbox Alley, Speedville</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style={styles.footerBottom}>
-          <p>© 2026 ZORVNS Inc. All Rights Reserved. Crafted for precision rides.</p>
-        </div>
-      </footer>
-
-      {/* WISHLIST OVERLAY PANEL */}
+      {/* Wishlist Modal */}
       {activeTab === 'wishlist' && (
-        <div
-          style={{
-            position: 'fixed', inset: 0, zIndex: 200,
-            background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}
-          onClick={() => switchScreen('catalog')}
-        >
-          <div
-            className="glass-panel animate-fade-in-up"
-            style={{ width: '90%', maxWidth: '760px', maxHeight: '80vh', overflowY: 'auto', padding: '2.5rem' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <Heart size={22} color="#EF4444" fill="#EF4444" />
-                <h2 style={{ fontSize: '1.5rem' }}>My Wishlist</h2>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: 'rgba(17,24,39,0.05)', border: '1px solid var(--border)', padding: '0.15rem 0.5rem', borderRadius: '20px' }}>{wishlist.length} saved</span>
-              </div>
-              <button onClick={() => switchScreen('catalog')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={22} /></button>
-            </div>
-            {wishlist.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
-                <Heart size={48} style={{ marginBottom: '1rem', opacity: 0.25 }} />
-                <p style={{ fontSize: '1rem', fontWeight: 600 }}>No saved items yet.</p>
-                <p style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}>Tap the ♡ on any part in the catalog to save it here.</p>
-              </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
-                {wishlist.map(part => (
-                  <div key={part.id} style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid var(--border)', borderRadius: '12px', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', textAlign: 'left' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 'bold', letterSpacing: '0.05em' }}>{part.category}</span>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginTop: '0.15rem' }}>{part.name}</h4>
-                      </div>
-                      <button onClick={() => toggleWishlist(part)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#EF4444', padding: '0.25rem' }}><X size={14} /></button>
-                    </div>
-                    <StarRating rating={part.rating} />
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>{part.desc}</p>
-                    <span style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>${part.price.toFixed(2)}</span>
-                    <button
-                      onClick={() => { addToCart(part); showToast(`${part.name} moved to cart!`, 'success'); }}
-                      className="btn-primary"
-                      style={{ width: '100%', justifyContent: 'center', fontSize: '0.85rem', padding: '0.55rem 1rem' }}
-                    >
-                      <ShoppingBag size={14} /> Move to Cart
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        <WishlistModal
+          wishlist={wishlist}
+          onClose={() => switchScreen('catalog')}
+          onToggleWishlist={toggleWishlist}
+          onAddToCart={(part) => { addToCart(part); showToast(`${part.name} moved to cart!`, 'success'); }}
+        />
       )}
 
-      {/* Back to Top Floating Button */}
+      {/* Back to Top */}
       {showBackToTop && (
-        <button
-          onClick={scrollToTop}
-          className="animate-fade-in-up"
-          title="Back to top"
-          style={{
-            position: 'fixed',
-            bottom: '6rem',
-            right: '1.5rem',
-            zIndex: 150,
-            width: '44px',
-            height: '44px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
-            color: '#fff',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          <ChevronUp size={20} />
+        <button onClick={scrollToTop} className="back-to-top animate-fade-in-up" title="Back to top">
+          <ChevronUp size={18} />
         </button>
       )}
 
-      {/* Toast Notification Renderer */}
+      {/* Toast Notifications */}
       <Toast toasts={toasts} removeToast={removeToast} />
     </>
   );
 }
-
-// Complete inline JavaScript styles for layout customization
-const styles = {
-  headerWrapper: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 100,
-    background: '#fff',
-    borderBottom: '1px solid var(--border)',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
-  },
-  middleBar: {
-    background: '#FFFFFF',
-    padding: '0.85rem 0',
-    borderBottom: '1px solid rgba(0,0,0,0.08)'
-  },
-  middleBarContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: '2rem'
-  },
-  mainNavLogo: {
-    height: '46px',
-    maxWidth: '180px',
-    objectFit: 'contain',
-    display: 'block',
-    transition: 'transform 0.2s ease',
-  },
-  mainSearchContainer: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    background: '#fff',
-    borderRadius: '50px',
-    overflow: 'hidden',
-    border: '1px solid transparent',
-    transition: 'border 0.3s ease',
-    maxWidth: '600px',
-    margin: '0 auto'
-  },
-  mainSearchInput: {
-    flex: 1,
-    border: 'none',
-    background: 'transparent',
-    padding: '0.75rem 1rem',
-    fontSize: '0.9rem',
-    outline: 'none',
-    color: '#000'
-  },
-  middleBarActions: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1.5rem'
-  },
-  iconBtn: {
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0.25rem'
-  },
-  iconBtnCart: {
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0.25rem',
-    position: 'relative'
-  },
-  cartCountSparify: {
-    position: 'absolute',
-    top: '-4px',
-    left: '12px',
-    background: '#000',
-    color: '#fff',
-    fontSize: '0.65rem',
-    fontWeight: 'bold',
-    width: '16px',
-    height: '16px',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  bottomBar: {
-    background: '#fff',
-    position: 'relative'
-  },
-  bottomBarContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '0 1.5rem'
-  },
-  bottomNavLinks: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1.5rem',
-    flexWrap: 'nowrap',
-    justifyContent: 'center'
-  },
-  bottomNavLink: {
-    background: 'none',
-    border: 'none',
-    color: '#000',
-    fontSize: '0.85rem',
-    fontWeight: 500,
-    cursor: 'pointer',
-    padding: '1rem 0',
-    transition: 'color 0.2s',
-    whiteSpace: 'nowrap'
-  },
-  bottomNavLinkDropdown: {
-    background: 'none',
-    border: 'none',
-    color: '#000',
-    fontSize: '0.85rem',
-    fontWeight: 500,
-    cursor: 'pointer',
-    padding: '1rem 0',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.25rem',
-    whiteSpace: 'nowrap'
-  },
-  navItemWithDropdown: {
-    position: 'static'
-  },
-  megaMenuDropdown: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    width: '100%',
-    maxHeight: 'calc(100vh - 12rem)',
-    overflowY: 'auto',
-    overscrollBehavior: 'contain',
-    boxSizing: 'border-box',
-    background: '#fff',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-    borderTop: '1px solid rgba(0,0,0,0.05)',
-    zIndex: 200,
-    padding: '2.5rem 0',
-    borderBottom: '4px solid #f87171'
-  },
-  megaMenuGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    gap: '2rem',
-    textAlign: 'left'
-  },
-  megaMenuColumn: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem'
-  },
-  megaMenuHeading: {
-    fontSize: '0.9rem',
-    fontWeight: 800,
-    color: '#000',
-    marginBottom: '0.5rem',
-    textTransform: 'uppercase'
-  },
-  megaMenuLink: {
-    color: '#666',
-    fontSize: '0.85rem',
-    textDecoration: 'none',
-    transition: 'color 0.2s'
-  },
-  sparifyHeroBanner: {
-    width: '100%',
-    height: '650px',
-    background: '#111', 
-    backgroundImage: 'url("https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=2070&auto=format&fit=crop")',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#fff',
-    position: 'relative',
-    marginTop: '-4rem'
-  },
-  sparifyHeroContent: {
-    textAlign: 'center',
-    background: 'rgba(0,0,0,0.6)',
-    padding: '4rem',
-    borderRadius: '16px',
-    backdropFilter: 'blur(8px)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    maxWidth: '800px'
-  },
-  sparifyHeroTitle: {
-    fontSize: '4.5rem',
-    fontWeight: 900,
-    marginBottom: '1rem',
-    color: '#fff',
-    letterSpacing: '2px',
-    lineHeight: 1.1
-  },
-  sparifyHeroSub: {
-    fontSize: '1.3rem',
-    marginBottom: '2.5rem',
-    opacity: 0.9
-  },
-  sparifyHeroBtn: {
-    background: '#f87171',
-    color: '#fff',
-    border: 'none',
-    padding: '1.2rem 3rem',
-    fontSize: '1.1rem',
-    fontWeight: 800,
-    borderRadius: '50px',
-    cursor: 'pointer',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    transition: 'all 0.3s',
-    boxShadow: '0 10px 20px rgba(248, 113, 113, 0.3)'
-  },
-  sparifySectionTitle: {
-    fontSize: '2rem',
-    fontWeight: 900,
-    marginBottom: '3rem',
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    letterSpacing: '1.5px',
-    color: '#111'
-  },
-  sparifyCategoryGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    gap: '2.5rem',
-    padding: '1rem 0'
-  },
-  sparifyCategoryItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '1.2rem',
-    cursor: 'pointer'
-  },
-  sparifyCategoryCircle: {
-    width: '160px',
-    height: '160px',
-    borderRadius: '50%',
-    background: '#f8f8f8',
-    border: '1px solid #eaeaea',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.3s',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.04)'
-  },
-  sparifyCategoryLabel: {
-    fontWeight: 800,
-    fontSize: '1.05rem',
-    color: '#222',
-    textTransform: 'uppercase'
-  },
-  sparifyPromoStrip: {
-    background: 'linear-gradient(135deg, #111, #222)',
-    color: '#fff',
-    padding: '3rem 2rem',
-    borderRadius: '16px',
-    textAlign: 'center',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-    border: '1px solid rgba(255,255,255,0.1)'
-  },
-  sparifyProductGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '2.5rem'
-  },
-  sparifyProductCard: {
-    background: '#fff',
-    border: '1px solid #eaeaea',
-    borderRadius: '16px',
-    overflow: 'hidden',
-    transition: 'transform 0.3s, box-shadow 0.3s',
-    display: 'flex',
-    flexDirection: 'column',
-    textAlign: 'left'
-  },
-  sparifyProductImagePlaceholder: {
-    height: '240px',
-    background: '#f9f9f9',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottom: '1px solid #f0f0f0'
-  },
-  sparifyProductInfo: {
-    padding: '1.5rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem',
-    flex: 1
-  },
-  sparifyProductCardTitle: {
-    fontSize: '1.1rem',
-    fontWeight: 800,
-    lineHeight: 1.4,
-    color: '#111',
-    marginBottom: '0.25rem'
-  },
-  sparifyProductCardFooter: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 'auto',
-    paddingTop: '1.25rem',
-    borderTop: '1px solid #f5f5f5'
-  },
-  sparifyAddToCartBtn: {
-    background: '#000',
-    color: '#fff',
-    border: 'none',
-    padding: '0.6rem 1.25rem',
-    borderRadius: '8px',
-    fontWeight: 700,
-    cursor: 'pointer',
-    transition: 'background 0.2s'
-  },
-  sparifyBrandsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    gap: '1.5rem'
-  },
-  sparifyBrandLogo: {
-    height: '90px',
-    background: '#fff',
-    border: '1px solid #eaeaea',
-    borderRadius: '12px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 900,
-    fontSize: '1.1rem',
-    color: '#999',
-    letterSpacing: '1px',
-    transition: 'all 0.3s',
-    cursor: 'pointer'
-  },
-  nav: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '4.5rem',
-    background: 'rgba(255, 255, 255, 0.8)',
-    backdropFilter: 'blur(16px)',
-    borderBottom: '1px solid var(--border)',
-    zIndex: 100,
-    display: 'flex',
-    alignItems: 'center'
-  },
-  navContainer: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  logoGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    cursor: 'pointer'
-  },
-  logoIcon: {
-    background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
-    width: '32px',
-    height: '32px',
-    borderRadius: '6px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 0 10px var(--primary-glow)'
-  },
-  logoText: {
-    fontFamily: 'var(--font-heading)',
-    fontSize: '1.25rem',
-    fontWeight: 800,
-    letterSpacing: '0.05em',
-    color: 'var(--text-main)'
-  },
-  logoBadge: {
-    fontSize: '0.65rem',
-    background: 'rgba(17, 24, 39, 0.04)',
-    color: 'var(--text-muted)',
-    padding: '0.15rem 0.4rem',
-    borderRadius: '4px',
-    fontWeight: 'bold',
-    border: '1px solid rgba(17, 24, 39, 0.12)'
-  },
-  navLinks: {
-    display: 'flex',
-    gap: '1.5rem'
-  },
-  navLink: {
-    background: 'none',
-    border: 'none',
-    color: 'var(--text-muted)',
-    fontSize: '0.9rem',
-    fontWeight: 500,
-    cursor: 'pointer',
-    transition: 'color 0.3s ease',
-    outline: 'none'
-  },
-  navLinkActive: {
-    color: 'var(--primary)'
-  },
-  navActions: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem'
-  },
-  cartButton: {
-    position: 'relative',
-    background: 'rgba(17, 24, 39, 0.02)',
-    border: '1px solid var(--border)',
-    color: 'var(--text-main)',
-    width: '40px',
-    height: '40px',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.3s ease'
-  },
-  cartCount: {
-    position: 'absolute',
-    top: '-4px',
-    right: '-4px',
-    background: 'var(--primary)',
-    color: '#fff',
-    fontSize: '0.7rem',
-    fontWeight: 'bold',
-    width: '18px',
-    height: '18px',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  navCTA: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-    background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
-    color: '#fff',
-    border: 'none',
-    fontWeight: 600,
-    padding: '0.5rem 1rem',
-    borderRadius: '8px',
-    fontSize: '0.85rem',
-    boxShadow: '0 4px 10px var(--primary-glow)',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease'
-  },
-  sectionSpacing: {
-    paddingTop: '1rem',
-    marginBottom: '2rem'
-  },
-  heroSection: {
-    display: 'grid',
-    gridTemplateColumns: '1.2fr 1fr',
-    gap: '2.5rem',
-    padding: '3rem',
-    alignItems: 'center',
-    marginBottom: '2.5rem',
-    textAlign: 'left',
-    overflow: 'hidden',
-    position: 'relative'
-  },
-  heroContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.25rem'
-  },
-  badgeRow: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    background: 'rgba(17, 24, 39, 0.04)',
-    border: '1px solid rgba(17, 24, 39, 0.12)',
-    color: 'var(--text-muted)',
-    padding: '0.35rem 0.75rem',
-    borderRadius: '50px',
-    fontSize: '0.75rem',
-    fontWeight: 600,
-    width: 'fit-content'
-  },
-  heroTitle: {
-    fontSize: '3rem',
-    lineHeight: 1.1,
-    fontWeight: 900
-  },
-  heroDescription: {
-    color: 'var(--text-muted)',
-    fontSize: '1.05rem',
-    maxWidth: '540px'
-  },
-  heroButtonRow: {
-    display: 'flex',
-    gap: '1rem',
-    marginTop: '0.5rem'
-  },
-  heroImageWrapper: {
-    position: 'relative',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  heroImage: {
-    width: '100%',
-    borderRadius: '12px',
-    objectFit: 'cover',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
-    border: '1px solid var(--border)'
-  },
-  metricGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '1.5rem',
-    marginBottom: '2.5rem'
-  },
-  metricCard: {
-    padding: '2rem',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0.5rem'
-  },
-  metricVal: {
-    fontSize: '2rem',
-    fontWeight: 800,
-    fontFamily: 'var(--font-heading)'
-  },
-  metricLabel: {
-    color: 'var(--text-muted)',
-    fontSize: '0.9rem'
-  },
-  quickTrackPanel: {
-    padding: '2rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    textAlign: 'left',
-    gap: '2rem',
-    marginBottom: '2.5rem'
-  },
-  quickTrackForm: {
-    display: 'flex',
-    gap: '0.75rem',
-    alignItems: 'center'
-  },
-  quickTrackInput: {
-    minWidth: '240px'
-  },
-  sectionHeader: {
-    textAlign: 'center',
-    maxWidth: '600px',
-    margin: '0 auto 3rem'
-  },
-  sectionSubtitle: {
-    color: 'var(--primary)',
-    fontWeight: 700,
-    fontSize: '0.85rem',
-    letterSpacing: '0.15em'
-  },
-  sectionTitle: {
-    fontSize: '2.25rem',
-    marginTop: '0.25rem',
-    marginBottom: '0.75rem'
-  },
-  sectionDesc: {
-    color: 'var(--text-muted)',
-    fontSize: '0.95rem'
-  },
-  serviceGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '2rem'
-  },
-  serviceCard: {
-    padding: '2.5rem',
-    textAlign: 'left',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    transition: 'all 0.3s ease'
-  },
-  serviceIconContainer: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '10px',
-    background: 'rgba(17, 24, 39, 0.04)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: '1px solid rgba(17, 24, 39, 0.08)'
-  },
-  serviceCardTitle: {
-    fontSize: '1.25rem',
-    fontWeight: 700
-  },
-  serviceCardText: {
-    color: 'var(--text-muted)',
-    fontSize: '0.9rem',
-    flex: 1
-  },
-  serviceCardPrice: {
-    color: 'var(--primary)',
-    fontWeight: 600,
-    fontSize: '0.95rem'
-  },
-  bikeFinderPanel: {
-    padding: '2rem',
-    textAlign: 'left',
-    marginBottom: '2rem'
-  },
-  bikeFinderHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    marginBottom: '1.25rem',
-    borderBottom: '1px solid var(--border)',
-    paddingBottom: '0.75rem'
-  },
-  bikeFinderControls: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr auto',
-    gap: '1.5rem',
-    alignItems: 'center'
-  },
-  finderField: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem'
-  },
-  finderLabel: {
-    fontSize: '0.85rem',
-    fontWeight: 'bold',
-    color: 'var(--text-muted)'
-  },
-  finderSelect: {
-    padding: '0.75rem',
-    borderRadius: '8px',
-    border: '1px solid rgba(17, 24, 39, 0.1)',
-    background: '#FFFFFF',
-    fontSize: '0.9rem',
-    width: '100%'
-  },
-  compatibilityFeedback: {
-    marginTop: '1.25rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    background: 'rgba(16, 185, 129, 0.05)',
-    border: '1px solid rgba(16, 185, 129, 0.2)',
-    padding: '0.75rem 1rem',
-    borderRadius: '8px',
-    color: 'var(--success-dark)'
-  },
-  filterControls: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-    padding: '1.5rem',
-    marginBottom: '2rem'
-  },
-  searchBox: {
-    display: 'flex',
-    alignItems: 'center',
-    background: '#FFFFFF',
-    border: '1px solid rgba(17, 24, 39, 0.1)',
-    borderRadius: '8px',
-    paddingLeft: '1rem',
-    width: '100%'
-  },
-  searchInput: {
-    background: 'transparent',
-    border: 'none',
-    boxShadow: 'none',
-    width: '100%',
-    padding: '0.75rem 0.5rem'
-  },
-  categoryFilters: {
-    display: 'flex',
-    gap: '0.5rem',
-    flexWrap: 'wrap'
-  },
-  filterTab: {
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid var(--border)',
-    color: 'var(--text-muted)',
-    padding: '0.4rem 1rem',
-    borderRadius: '20px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    fontSize: '0.85rem'
-  },
-  filterTabActive: {
-    background: 'var(--primary)',
-    border: '1px solid var(--primary)',
-    color: '#fff',
-    padding: '0.4rem 1rem',
-    borderRadius: '20px',
-    cursor: 'pointer',
-    fontSize: '0.85rem',
-    fontWeight: 600
-  },
-  emptyCatalog: {
-    padding: '4rem',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  catalogGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '1.5rem'
-  },
-  productCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    overflow: 'hidden',
-    position: 'relative'
-  },
-  productBadge: {
-    position: 'absolute',
-    top: '0.75rem',
-    left: '0.75rem',
-    background: 'rgba(17, 24, 39, 0.05)',
-    border: '1px solid rgba(17, 24, 39, 0.12)',
-    color: 'var(--text-muted)',
-    fontSize: '0.7rem',
-    fontWeight: 'bold',
-    padding: '0.15rem 0.5rem',
-    borderRadius: '4px',
-    zIndex: 2
-  },
-  productDetails: {
-    padding: '1.5rem',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    height: '100%',
-    gap: '1rem',
-    textAlign: 'left'
-  },
-  productName: {
-    fontSize: '1rem',
-    fontWeight: 700,
-    marginTop: '0.5rem'
-  },
-  productDesc: {
-    color: 'var(--text-muted)',
-    fontSize: '0.8rem',
-    lineHeight: 1.4,
-    flex: 1
-  },
-  compatibilityList: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.25rem',
-    alignItems: 'center',
-    margin: '0.5rem 0'
-  },
-  compatBadge: {
-    fontSize: '0.65rem',
-    background: 'rgba(17,24,39,0.03)',
-    border: '1px solid rgba(17,24,39,0.08)',
-    padding: '0.1rem 0.35rem',
-    borderRadius: '4px',
-    color: 'var(--text-muted)'
-  },
-  productFooter: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  productPrice: {
-    display: 'block',
-    fontSize: '1.15rem',
-    fontWeight: 'bold',
-    color: 'var(--text-main)'
-  },
-  productStock: {
-    display: 'block',
-    fontSize: '0.7rem',
-    color: 'var(--text-muted)'
-  },
-  addToCartBtn: {
-    padding: '0.4rem 0.8rem',
-    fontSize: '0.8rem'
-  },
-  bookingForm: {
-    padding: '2.5rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-    textAlign: 'left'
-  },
-  formRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '1.5rem'
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem'
-  },
-  formLabel: {
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    color: 'var(--text-muted)'
-  },
-  bookingSuccessPanel: {
-    padding: '3rem 2rem',
-    textAlign: 'center'
-  },
-  successCircle: {
-    width: '64px',
-    height: '64px',
-    borderRadius: '50%',
-    background: 'rgba(16, 185, 129, 0.1)',
-    border: '1px solid rgba(16, 185, 129, 0.3)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '0 auto 1.5rem'
-  },
-  codeBanner: {
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid var(--border)',
-    borderRadius: '12px',
-    padding: '1.5rem',
-    display: 'inline-flex',
-    flexDirection: 'column',
-    gap: '0.25rem',
-    minWidth: '280px'
-  },
-  trackFormLarge: {
-    display: 'flex',
-    gap: '0.75rem',
-    width: '100%'
-  },
-  trackInputLarge: {
-    width: '100%',
-    fontSize: '1.05rem',
-    padding: '0.85rem'
-  },
-  trackerContainer: {
-    padding: '2.5rem',
-    textAlign: 'left',
-    maxWidth: '850px',
-    margin: '0 auto'
-  },
-  demoBanner: {
-    background: 'rgba(17, 24, 39, 0.03)',
-    border: '1px solid rgba(17, 24, 39, 0.08)',
-    padding: '0.75rem 1rem',
-    borderRadius: '8px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '2rem'
-  },
-  trackerHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    borderBottom: '1px solid var(--border)',
-    paddingBottom: '1.5rem',
-    marginBottom: '1.5rem'
-  },
-  trackerMetaRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '1.5rem',
-    marginBottom: '1.5rem'
-  },
-  metaLabel: {
-    fontSize: '0.75rem',
-    color: 'var(--text-muted)',
-    fontWeight: 'bold',
-    letterSpacing: '0.05em'
-  },
-  metaValue: {
-    fontSize: '1.05rem',
-    fontWeight: '600',
-    marginTop: '0.15rem'
-  },
-  notesBlock: {
-    background: 'rgba(255,255,255,0.02)',
-    border: '1px solid var(--border)',
-    borderRadius: '8px',
-    padding: '1rem',
-    marginBottom: '2.5rem'
-  },
-  timelineContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    gap: '0.5rem',
-    position: 'relative',
-    marginTop: '1rem'
-  },
-  timelineStep: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-    zIndex: 2
-  },
-  timelineDot: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '0.8rem',
-    fontWeight: 'bold',
-    color: '#fff',
-    border: '2px solid transparent',
-    transition: 'all 0.3s ease',
-    marginBottom: '0.75rem'
-  },
-  timelineLabel: {
-    fontSize: '0.8rem',
-    fontWeight: '700',
-    marginBottom: '0.25rem'
-  },
-  timelineDotActive: {
-    boxShadow: '0 0 16px var(--primary)',
-    borderColor: 'var(--primary)'
-  },
-  timelineDesc: {
-    fontSize: '0.65rem',
-    color: 'var(--text-muted)',
-    lineHeight: 1.3
-  },
-  noSearchPanel: {
-    padding: '4rem 2rem',
-    textAlign: 'center',
-    maxWidth: '540px',
-    margin: '0 auto'
-  },
-  cartOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    backdropFilter: 'blur(4px)',
-    zIndex: 110,
-    display: 'flex',
-    justifyContent: 'flex-end'
-  },
-  cartDrawer: {
-    width: '420px',
-    maxWidth: '100%',
-    height: '100%',
-    background: 'var(--bg-darker)',
-    borderLeft: '1px solid var(--border)',
-    display: 'flex',
-    flexDirection: 'column',
-    boxShadow: '-10px 0 30px rgba(0,0,0,0.5)'
-  },
-  cartDrawerHeader: {
-    padding: '1.5rem',
-    borderBottom: '1px solid var(--border)',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  closeDrawerBtn: {
-    background: 'none',
-    border: 'none',
-    color: 'var(--text-muted)',
-    cursor: 'pointer'
-  },
-  cartDrawerBody: {
-    flex: 1,
-    padding: '1.5rem',
-    overflowY: 'auto'
-  },
-  emptyCartMessage: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '60%',
-    color: 'var(--text-muted)'
-  },
-  cartItemCard: {
-    background: 'rgba(255,255,255,0.02)',
-    border: '1px solid var(--border)',
-    borderRadius: '8px',
-    padding: '1rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  qtyBtn: {
-    width: '24px',
-    height: '24px',
-    borderRadius: '4px',
-    border: '1px solid var(--border)',
-    background: 'rgba(255,255,255,0.05)',
-    color: '#fff',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  deleteCartItemBtn: {
-    background: 'none',
-    border: 'none',
-    color: '#EF4444',
-    cursor: 'pointer',
-    marginLeft: '0.5rem',
-    padding: '0.25rem'
-  },
-  cartDrawerFooter: {
-    padding: '1.5rem',
-    borderTop: '1px solid var(--border)',
-    background: 'rgba(255,255,255,0.01)'
-  },
-  teaserBanner: {
-    background: 'rgba(17, 24, 39, 0.02)',
-    border: '1px dashed rgba(17, 24, 39, 0.12)',
-    borderRadius: '16px',
-    padding: '3rem 2rem',
-    textAlign: 'center',
-    marginTop: '4rem'
-  },
-  contactContainer: {
-    display: 'flex',
-    gap: '2.5rem',
-    marginTop: '2rem'
-  },
-  contactInfoCol: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-    flex: 1,
-    textAlign: 'left'
-  },
-  contactInfoCard: {
-    padding: '1.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem'
-  },
-  contactIconCircle: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    background: 'rgba(17, 24, 39, 0.04)',
-    border: '1px solid rgba(17, 24, 39, 0.08)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  footer: {
-    borderTop: '1px solid var(--border)',
-    padding: '4rem 0 2rem',
-    background: '#FFFFFF',
-    marginTop: '6rem'
-  },
-  footerGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1.5fr 1fr 1fr',
-    gap: '3rem',
-    textAlign: 'left',
-    marginBottom: '3rem'
-  },
-  footerBottom: {
-    borderTop: '1px solid rgba(255,255,255,0.05)',
-    paddingTop: '2rem',
-    fontSize: '0.8rem',
-    color: 'var(--text-muted)'
-  }
-};
 
 export default App;
