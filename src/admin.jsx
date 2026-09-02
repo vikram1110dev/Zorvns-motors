@@ -459,7 +459,7 @@ function AdminPortal() {
   // Admin login handler
   const handleAdminLogin = (e) => {
     e.preventDefault();
-    if (adminCredentials.email === 'admin@sparkcraft.com' && adminCredentials.password === 'admin123') {
+    if ((adminCredentials.email === 'admin@zorvns.com' || adminCredentials.email === 'admin@sparkcraft.com') && adminCredentials.password === 'admin123') {
       setIsAdminLoggedIn(true);
       setAdminLoginError('');
     } else {
@@ -540,7 +540,7 @@ function AdminPortal() {
             <div style={styles.logoIcon}>
               <Wrench size={22} color="#fff" />
             </div>
-            <span style={styles.logoText}>SPARK CRAFT</span>
+            <span style={styles.logoText}>ZORVNS</span>
             <span style={styles.logoBadge}>OPERATIONS PORTAL</span>
           </div>
 
@@ -587,7 +587,7 @@ function AdminPortal() {
                   <input 
                     type="email" 
                     required 
-                    placeholder="admin@sparkcraft.com"
+                    placeholder="admin@zorvns.com"
                     value={adminCredentials.email}
                     onChange={(e) => setAdminCredentials({...adminCredentials, email: e.target.value})}
                   />
@@ -616,7 +616,7 @@ function AdminPortal() {
             <div style={styles.adminDashboardHeader}>
               <div>
                 <span style={styles.sectionSubtitle}>CONTROL BOARD</span>
-                <h2 style={{ fontSize: '2rem', textAlign: 'left' }}>SPARK CRAFT OPERATIONS</h2>
+                <h2 style={{ fontSize: '2rem', textAlign: 'left' }}>ZORVNS OPERATIONS</h2>
               </div>
               
               {/* Garage toggle controller */}
@@ -1091,7 +1091,7 @@ function AdminPortal() {
 
       <footer style={styles.footer}>
         <div style={styles.footerBottom}>
-          <p>© 2026 Spark Craft Inc. All Rights Reserved. Crafted for precision rides.</p>
+          <p>© 2026 ZORVNS Inc. All Rights Reserved. Crafted for precision rides.</p>
         </div>
       </footer>
     </>

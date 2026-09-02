@@ -28,7 +28,8 @@ import {
   ChevronUp,
   User,
   ChevronDown,
-  ArrowLeft
+  ArrowLeft,
+  Settings
 } from 'lucide-react';
 import './App.css';
 import heroImg from './assets/hero.png';
@@ -687,7 +688,7 @@ function App() {
             {/* Logo */}
             <div style={{...styles.logoGroup, gap: '0'}} onClick={() => switchScreen('home')}>
               <div style={styles.sparifyLogoWrapper}>
-                 <span style={styles.sparifyLogoTextMain}>Spark Craft</span>
+                 <span style={styles.sparifyLogoTextMain}>ZORVNS</span>
                  <Wrench size={16} color="#000" style={{marginLeft: '-4px', marginTop: '-10px'}}/>
               </div>
             </div>
@@ -1053,7 +1054,7 @@ function App() {
         {activeTab === 'catalog' && (
           <section className="animate-fade-in-up" style={styles.sectionSpacing}>
             <div style={styles.sectionHeader}>
-              <span style={styles.sectionSubtitle}>SPARK STORE</span>
+              <span style={styles.sectionSubtitle}>ZORVNS STORE</span>
               <h2 style={styles.sectionTitle}>GENUINE SPARES CATALOG</h2>
               <p style={styles.sectionDesc}>Search or filter our catalog of race-tested and manufacturer-approved components to keep your machine authentic.</p>
             </div>
@@ -1255,7 +1256,7 @@ function App() {
                     <Wrench size={24} color="#fff" />
                   </div>
                 </div>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Spark Craft Clinic & Garage Servicing</h3>
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>ZORVNS Clinic & Garage Servicing</h3>
                 <span style={{ fontSize: '0.8rem', background: 'rgba(17, 24, 39, 0.04)', color: 'var(--text-muted)', border: '1px solid rgba(17,24,39,0.1)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontWeight: 'bold' }}>COMING SOON</span>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '600px', margin: '1rem auto 0', lineHeight: '1.6' }}>
                   We are expanding our store! Professional diagnostic evaluations, suspension setups, and high-performance ECU mappings will be available in our clinic soon. Stay tuned!
@@ -1366,7 +1367,7 @@ function App() {
             <div style={styles.sectionHeader}>
               <span style={styles.sectionSubtitle}>TRACKER</span>
               <h2 style={styles.sectionTitle}>LIVE GARAGE STATUS</h2>
-              <p style={styles.sectionDesc}>Watch the status of your machine live as technicians work. Search using your unique Spark Craft booking code.</p>
+              <p style={styles.sectionDesc}>Watch the status of your machine live as technicians work. Search using your unique ZORVNS booking code.</p>
             </div>
 
             <div style={{ maxWidth: '640px', margin: '0 auto 2.5rem' }}>
@@ -1588,7 +1589,7 @@ function App() {
           <section className="animate-fade-in-up" style={{ ...styles.sectionSpacing, maxWidth: '900px', margin: '0 auto' }}>
             <div style={styles.sectionHeader}>
               <span style={styles.sectionSubtitle}>CONTACT US</span>
-              <h2 style={styles.sectionTitle}>GET IN TOUCH WITH SPARK CRAFT</h2>
+              <h2 style={styles.sectionTitle}>GET IN TOUCH WITH ZORVNS</h2>
               <p style={styles.sectionDesc}>Have inquiries about specific spare parts, stock levels, or order tracking? Drop us a message.</p>
             </div>
 
@@ -1612,7 +1613,7 @@ function App() {
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1rem', fontWeight: 'bold' }}>Email Address</h4>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>parts@sparkcraft.com</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>parts@zorvns.com</p>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Response in 24 hours</p>
                   </div>
                 </div>
@@ -1637,7 +1638,7 @@ function App() {
                     </div>
                     <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Message Sent!</h3>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                      Thank you for contacting Spark Craft. Our parts department will get back to you shortly.
+                      Thank you for contacting ZORVNS. Our parts department will get back to you shortly.
                     </p>
                     <button onClick={() => setContactSuccess(false)} className="btn-secondary">
                       Send Another Message
@@ -1776,7 +1777,7 @@ function App() {
               <div style={styles.logoIcon}>
                 <Wrench size={20} color="#fff" />
               </div>
-              <span style={styles.logoText}>SPARK CRAFT</span>
+              <span style={styles.logoText}>ZORVNS</span>
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
               Futuristic diagnostics, high-performance repairs, and premium motorcycle spares under one garage.
@@ -1809,7 +1810,7 @@ function App() {
           </div>
         </div>
         <div style={styles.footerBottom}>
-          <p>© 2026 Spark Craft Inc. All Rights Reserved. Crafted for precision rides.</p>
+          <p>© 2026 ZORVNS Inc. All Rights Reserved. Crafted for precision rides.</p>
         </div>
       </footer>
 
