@@ -672,18 +672,9 @@ function App() {
   return (
     <>
       <div className="bg-gradient-wrapper"></div>
-      {/* 3-Tier Navigation Header */}
+      {/* Navigation Header */}
       <header style={styles.headerWrapper} onMouseLeave={() => setHoveredMenu(null)}>
-        {/* Tier 1: Top Announcement Bar */}
-        <div style={styles.topBar}>
-          <div className="app-container" style={styles.topBarContainer}>
-            <span style={styles.topBarText}></span>
-            <span style={styles.topBarTextCenter}>7-DAYS EASY RETURN AND EXCHANGE ✅</span>
-            <span style={styles.topBarText}>DUE TO HIGH ORDER VOLUME SLIGHT DELAY IN DISPATCHES ARE EXPECTED UNTIL 19TH AUG</span>
-          </div>
-        </div>
-
-        {/* Tier 2: Search & Actions */}
+        {/* Tier 1: Search & Actions */}
         <div style={styles.middleBar}>
           <div className="app-container" style={styles.middleBarContainer}>
             {/* Logo */}
@@ -728,7 +719,7 @@ function App() {
         {/* Tier 3: Bottom Links & Mega Menu */}
         <div style={styles.bottomBar}>
           <div className="app-container" style={styles.bottomBarContainer}>
-            <nav style={styles.bottomNavLinks}>
+            <nav className="bottom-nav-scroll" style={styles.bottomNavLinks}>
               <button onClick={() => switchScreen('home')} style={styles.bottomNavLink}>Home</button>
               <button onClick={() => switchScreen('catalog')} style={styles.bottomNavLink}>All Collections</button>
               
@@ -913,7 +904,7 @@ function App() {
       </header>
 
       {/* Main Content Area containing separate screen/tab components */}
-      <main className="app-container" style={{ padding: '12rem 1.5rem 4rem', minHeight: 'calc(100vh - 20rem)' }}>
+      <main className="app-container" style={{ padding: '8rem 1.5rem 4rem', minHeight: 'calc(100vh - 20rem)' }}>
         
         {/* SCREEN 1: Home / Landing */}
         {activeTab === 'home' && (
@@ -1930,28 +1921,6 @@ const styles = {
     borderBottom: '1px solid var(--border)',
     boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
   },
-  topBar: {
-    background: '#000',
-    color: '#fff',
-    fontSize: '0.7rem',
-    fontWeight: 700,
-    letterSpacing: '0.05em'
-  },
-  topBarContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '0.5rem 1.5rem',
-    alignItems: 'center'
-  },
-  topBarText: {
-    opacity: 0.9,
-    textTransform: 'uppercase'
-  },
-  topBarTextCenter: {
-    opacity: 1,
-    color: '#10B981', // green tint for the checkmark effect
-    textTransform: 'uppercase'
-  },
   middleBar: {
     background: '#FFFFFF',
     padding: '0.85rem 0',
@@ -2043,7 +2012,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '1.5rem',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     justifyContent: 'center'
   },
   bottomNavLink: {
