@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import './App.css';
 import heroImg from './assets/hero.png';
+import zorvnsLogo from './assets/zorvns-logo.png';
 
 // INITIAL SPARES MENU DEFINITION
 const INITIAL_SPARES_MENU = [
@@ -686,11 +687,16 @@ function App() {
         <div style={styles.middleBar}>
           <div className="app-container" style={styles.middleBarContainer}>
             {/* Logo */}
-            <div style={{...styles.logoGroup, gap: '0'}} onClick={() => switchScreen('home')}>
-              <div style={styles.sparifyLogoWrapper}>
-                 <span style={styles.sparifyLogoTextMain}>ZORVNS</span>
-                 <Wrench size={16} color="#000" style={{marginLeft: '-4px', marginTop: '-10px'}}/>
-              </div>
+            <div 
+              style={{ ...styles.logoGroup, cursor: 'pointer' }} 
+              onClick={() => switchScreen('home')}
+              title="ZORVNS - Home"
+            >
+              <img 
+                src={zorvnsLogo} 
+                alt="ZORVNS" 
+                style={styles.mainNavLogo}
+              />
             </div>
 
             {/* Search Bar */}
@@ -1773,11 +1779,16 @@ function App() {
       <footer style={styles.footer}>
         <div className="app-container" style={styles.footerGrid}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={styles.logoGroup}>
-              <div style={styles.logoIcon}>
-                <Wrench size={20} color="#fff" />
-              </div>
-              <span style={styles.logoText}>ZORVNS</span>
+            <div 
+              style={{ ...styles.logoGroup, cursor: 'pointer' }} 
+              onClick={() => switchScreen('home')}
+              title="ZORVNS - Home"
+            >
+              <img 
+                src={zorvnsLogo} 
+                alt="ZORVNS" 
+                style={{ height: '42px', maxWidth: '170px', objectFit: 'contain', display: 'block' }} 
+              />
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
               Futuristic diagnostics, high-performance repairs, and premium motorcycle spares under one garage.
@@ -1942,9 +1953,9 @@ const styles = {
     textTransform: 'uppercase'
   },
   middleBar: {
-    background: '#EAEAEA',
-    padding: '1rem 0',
-    borderBottom: '1px solid rgba(0,0,0,0.05)'
+    background: '#FFFFFF',
+    padding: '0.85rem 0',
+    borderBottom: '1px solid rgba(0,0,0,0.08)'
   },
   middleBarContainer: {
     display: 'flex',
@@ -1952,22 +1963,12 @@ const styles = {
     alignItems: 'center',
     gap: '2rem'
   },
-  sparifyLogoWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    background: '#f87171', // Orange/Red color of Sparify
-    padding: '0.2rem 0.5rem',
-    borderRadius: '4px',
-    color: '#000',
-    border: '2px solid #000'
-  },
-  sparifyLogoTextMain: {
-    fontFamily: 'Impact, sans-serif',
-    fontSize: '1.4rem',
-    textTransform: 'lowercase',
-    color: '#fff',
-    letterSpacing: '1px',
-    WebkitTextStroke: '1px #000'
+  mainNavLogo: {
+    height: '46px',
+    maxWidth: '180px',
+    objectFit: 'contain',
+    display: 'block',
+    transition: 'transform 0.2s ease',
   },
   mainSearchContainer: {
     flex: 1,

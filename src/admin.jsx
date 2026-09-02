@@ -19,6 +19,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import './index.css';
+import zorvnsLogo from './assets/zorvns-logo.png';
 
 // INITIAL SPARES MENU DEFINITION
 const INITIAL_SPARES_MENU = [
@@ -536,11 +537,16 @@ function AdminPortal() {
     <>
       <nav style={styles.nav}>
         <div className="app-container" style={styles.navContainer}>
-          <div style={styles.logoGroup} onClick={() => window.location.href = '/'}>
-            <div style={styles.logoIcon}>
-              <Wrench size={22} color="#fff" />
-            </div>
-            <span style={styles.logoText}>ZORVNS</span>
+          <div 
+            style={{ ...styles.logoGroup, cursor: 'pointer' }} 
+            onClick={() => window.location.href = '/'}
+            title="Return to Main Store"
+          >
+            <img 
+              src={zorvnsLogo} 
+              alt="ZORVNS" 
+              style={{ height: '38px', maxWidth: '160px', objectFit: 'contain', display: 'block' }} 
+            />
             <span style={styles.logoBadge}>OPERATIONS PORTAL</span>
           </div>
 
@@ -568,10 +574,13 @@ function AdminPortal() {
             </div>
 
             <div className="glass-panel" style={{ padding: '2.5rem 2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-                <div style={{ ...styles.contactIconCircle, width: '48px', height: '48px' }}>
-                  <Lock size={22} color="var(--primary)" />
-                </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem', gap: '0.6rem' }}>
+                <img 
+                  src={zorvnsLogo} 
+                  alt="ZORVNS" 
+                  style={{ height: '54px', maxWidth: '210px', objectFit: 'contain', display: 'block' }} 
+                />
+                <span style={styles.logoBadge}>ADMIN SECURE ACCESS</span>
               </div>
 
               {adminLoginError && (
@@ -1091,6 +1100,13 @@ function AdminPortal() {
 
       <footer style={styles.footer}>
         <div style={styles.footerBottom}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+            <img 
+              src={zorvnsLogo} 
+              alt="ZORVNS" 
+              style={{ height: '30px', maxWidth: '130px', objectFit: 'contain' }} 
+            />
+          </div>
           <p>© 2026 ZORVNS Inc. All Rights Reserved. Crafted for precision rides.</p>
         </div>
       </footer>
