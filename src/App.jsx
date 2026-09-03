@@ -1,35 +1,20 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
-  Wrench,
   ShoppingBag,
-  Calendar,
   Search,
+  AlertCircle,
   Plus,
   Minus,
   Trash2,
   X,
   Check,
-  Clock,
   Phone,
   MapPin,
-  ShieldCheck,
-  TrendingUp,
-  Sparkles,
-  ArrowRight,
-  AlertCircle,
   Mail,
   Send,
-  Sliders,
-  ChevronRight,
-  CheckCircle2,
-  Info,
-  Star,
   Heart,
   ChevronUp,
-  User,
-  ChevronDown,
-  ArrowLeft,
-  Settings
+  ArrowLeft
 } from 'lucide-react';
 import './App.css';
 import heroImg from './assets/hero.png';
@@ -169,50 +154,14 @@ const INITIAL_BRAND_LOGOS = {
 
 // Mock spare parts catalog data
 const INITIAL_SPARES = [
-  { id: 1, name: 'Brembo Sintered Brake Pads', category: 'Brakes', price: 89.99, stock: 12, rating: 4.9, desc: 'High friction coefficient pads for maximum stopping power.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'Honda CBR650R'] },
-  { id: 2, name: 'NGK Iridium IX Spark Plug (Pack of 4)', category: 'Engine', price: 45.50, stock: 8, rating: 4.8, desc: 'Designed specifically for high-performance motorcycle engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650'] },
-  { id: 3, name: 'K&N High-Flow Air Filter', category: 'Filters', price: 65.00, stock: 15, rating: 4.7, desc: 'Washable and reusable filter for increased horsepower.', compatibility: ['KTM RC 390', 'KTM Adventure 390', 'RE Himalayan 450'] },
-  { id: 4, name: 'CNC Adjustable Clutch & Brake Levers', category: 'Controls', price: 110.00, stock: 6, rating: 4.9, desc: '6-position adjustable aluminum levers, black anodized.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM Duke 250', 'KTM RC 390'] },
-  { id: 5, name: 'Motul 300V Synthetic Oil (4 Liters)', category: 'Fluids', price: 79.99, stock: 20, rating: 5.0, desc: 'Double Ester technology for racing & high-revving engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
-  { id: 6, name: 'LED Sequential Turn Signals (Set of 2)', category: 'Electrical', price: 34.99, stock: 24, rating: 4.6, desc: 'Sequential flowing glow pattern with high brightness LEDs.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
-  { id: 7, name: 'DID 525 VX3 Gold X-Ring Chain', category: 'Drivetrain', price: 135.00, stock: 4, rating: 4.9, desc: 'Top-tier durability and reduced friction chain.', compatibility: ['RE Continental GT 650', 'Honda CBR650R'] },
-  { id: 8, name: 'Yuasa Heavy Duty AGM Battery', category: 'Electrical', price: 95.00, stock: 10, rating: 4.7, desc: 'Maintenance-free high cranking amp battery.', compatibility: ['RE Classic 350', 'RE Himalayan 450', 'Honda CB350 H\'ness'] }
-];
-
-// Service status categories
-const STATUS_STEPS = [
-  { key: 'booked', label: 'Booking Confirmed', desc: 'Appointment scheduled successfully', color: 'var(--info)' },
-  { key: 'received', label: 'Bike Received', desc: 'Checked in at the workshop garage', color: 'var(--warning)' },
-  { key: 'inspecting', label: 'Diagnostic Check', desc: 'Pre-service checks and inspection', color: 'var(--accent)' },
-  { key: 'servicing', label: 'Active Repairs', desc: 'Spares replacement & servicing', color: 'var(--accent-hover)' },
-  { key: 'testing', label: 'Quality Test', desc: 'Road testing and diagnostic verification', color: 'var(--info)' },
-  { key: 'ready', label: 'Ready for Pickup', desc: 'Finished, polished, and ready to ride!', color: 'var(--success)' }
-];
-
-// Initial mock bookings seeded to local storage
-const INITIAL_BOOKINGS = [
-  {
-    code: 'SC-77301',
-    name: 'Vikram Dev',
-    phone: '9876543210',
-    bikeModel: 'Yamaha YZF-R1',
-    serviceType: 'Performance Tuning & Fluid Flush',
-    date: '2026-08-12',
-    time: '10:00 AM',
-    statusIndex: 3, // Servicing
-    notes: 'Please check rear brake feel and adjust chain slack.'
-  },
-  {
-    code: 'SC-12402',
-    name: 'John Doe',
-    phone: '9988776655',
-    bikeModel: 'KTM Duke 390',
-    serviceType: 'General Servicing',
-    date: '2026-08-13',
-    time: '02:30 PM',
-    statusIndex: 1, // Received
-    notes: 'Standard 10,000 km oil change & service.'
-  }
+  { id: 1, name: 'Brembo Sintered Brake Pads', category: 'Brakes', subCategory: 'Brake Pads', price: 89.99, stock: 12, rating: 4.9, desc: 'High friction coefficient pads for maximum stopping power.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'Honda CBR650R'] },
+  { id: 2, name: 'NGK Iridium IX Spark Plug (Pack of 4)', category: 'Engine', subCategory: 'Spark plug', price: 45.50, stock: 8, rating: 4.8, desc: 'Designed specifically for high-performance motorcycle engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650'] },
+  { id: 3, name: 'K&N High-Flow Air Filter', category: 'Filters', subCategory: 'Air Filter', price: 65.00, stock: 15, rating: 4.7, desc: 'Washable and reusable filter for increased horsepower.', compatibility: ['KTM RC 390', 'KTM Adventure 390', 'RE Himalayan 450'] },
+  { id: 4, name: 'CNC Adjustable Clutch & Brake Levers', category: 'Controls', subCategory: 'Levers', price: 110.00, stock: 6, rating: 4.9, desc: '6-position adjustable aluminum levers, black anodized.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM Duke 250', 'KTM RC 390'] },
+  { id: 5, name: 'Motul 300V Synthetic Oil (4 Liters)', category: 'Fluids', subCategory: 'Engine Oil', price: 79.99, stock: 20, rating: 5.0, desc: 'Double Ester technology for racing & high-revving engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
+  { id: 6, name: 'LED Sequential Turn Signals (Set of 2)', category: 'Electrical', subCategory: 'Turn Signals', price: 34.99, stock: 24, rating: 4.6, desc: 'Sequential flowing glow pattern with high brightness LEDs.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
+  { id: 7, name: 'DID 525 VX3 Gold X-Ring Chain', category: 'Drivetrain', subCategory: 'Chain', price: 135.00, stock: 4, rating: 4.9, desc: 'Top-tier durability and reduced friction chain.', compatibility: ['RE Continental GT 650', 'Honda CBR650R'] },
+  { id: 8, name: 'Yuasa Heavy Duty AGM Battery', category: 'Electrical', subCategory: 'Battery', price: 95.00, stock: 10, rating: 4.7, desc: 'Maintenance-free high cranking amp battery.', compatibility: ['RE Classic 350', 'RE Himalayan 450', 'Honda CB350 H\'ness'] }
 ];
 
 // Mock initial enquiries
@@ -242,12 +191,6 @@ function App() {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
   const [activeMegaMenuBrand, setActiveMegaMenuBrand] = useState(Object.keys(INITIAL_BIKE_BRANDS)[0]);
-
-  // SHOW_GARAGE_SERVICES state (controlled by admin dashboard!)
-  const [showGarage, setShowGarage] = useState(() => {
-    const saved = localStorage.getItem('spark_show_garage');
-    return saved ? JSON.parse(saved) : false;
-  });
 
   // Pull bike brands from local storage
   const [bikeBrands, setBikeBrands] = useState(() => {
@@ -301,13 +244,19 @@ function App() {
   // Pull latest spares inventory from local storage (synced with admin panel)
   const [spares, setSpares] = useState(() => {
     const saved = localStorage.getItem('spark_spares');
-    return saved ? JSON.parse(saved) : INITIAL_SPARES;
-  });
-
-  // Pull latest bookings from local storage (synced with admin panel)
-  const [bookings, setBookings] = useState(() => {
-    const saved = localStorage.getItem('spark_bookings');
-    return saved ? JSON.parse(saved) : INITIAL_BOOKINGS;
+    if (!saved) return INITIAL_SPARES;
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed.map(item => {
+        if (!item.subCategory) {
+          const match = INITIAL_SPARES.find(i => i.id === item.id);
+          return { ...item, subCategory: match ? match.subCategory : '' };
+        }
+        return item;
+      });
+    } catch {
+      return INITIAL_SPARES;
+    }
   });
 
   // Pull enquiries from local storage (synced with admin panel)
@@ -329,14 +278,8 @@ function App() {
   // Keep local states synchronized with changes made in other tabs (Admin panel)
   useEffect(() => {
     const handleStorageChange = () => {
-      const savedGarage = localStorage.getItem('spark_show_garage');
-      if (savedGarage) setShowGarage(JSON.parse(savedGarage));
-
       const savedSpares = localStorage.getItem('spark_spares');
       if (savedSpares) setSpares(JSON.parse(savedSpares));
-
-      const savedBookings = localStorage.getItem('spark_bookings');
-      if (savedBookings) setBookings(JSON.parse(savedBookings));
 
       const savedEnquiries = localStorage.getItem('spark_enquiries');
       if (savedEnquiries) setEnquiries(JSON.parse(savedEnquiries));
@@ -353,18 +296,6 @@ function App() {
       clearInterval(interval);
     };
   }, []);
-
-  // Booking Form State
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    bikeModel: '',
-    serviceType: 'General Diagnostics & Tuning',
-    date: '',
-    time: '09:00 AM',
-    notes: ''
-  });
-  const [bookingSuccessCode, setBookingSuccessCode] = useState('');
 
   // Contact Form State
   const [contactData, setContactData] = useState({
@@ -416,23 +347,6 @@ function App() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Catalog State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [sortBy, setSortBy] = useState('default');
-
-  // Tracking Code Input
-  const [searchTrackingCode, setSearchTrackingCode] = useState('SC-77301');
-  const [trackedBooking, setTrackedBooking] = useState(bookings[0]);
-
-  // Sync tracked booking when bookings state updates
-  useEffect(() => {
-    if (trackedBooking) {
-      const match = bookings.find(b => b.code === trackedBooking.code);
-      if (match) setTrackedBooking(match);
-    }
-  }, [bookings]);
-
   // Cart helper functions
   const addToCart = (part) => {
     const existing = cart.find(item => item.id === part.id);
@@ -468,41 +382,11 @@ function App() {
 
   const totalCartPrice = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
 
-  // Submit Booking Form
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-    const newCode = `SC-${Math.floor(10000 + Math.random() * 90000)}`;
-    const newBooking = {
-      code: newCode,
-      name: formData.name,
-      phone: formData.phone,
-      bikeModel: formData.bikeModel,
-      serviceType: formData.serviceType,
-      date: formData.date,
-      time: formData.time,
-      statusIndex: 0,
-      notes: formData.notes
-    };
-    const updatedBookings = [newBooking, ...bookings];
-    setBookings(updatedBookings);
-    localStorage.setItem('spark_bookings', JSON.stringify(updatedBookings));
-
-    setBookingSuccessCode(newCode);
-    setSearchTrackingCode(newCode);
-    setTrackedBooking(newBooking);
-
-    setFormData({
-      name: '',
-      phone: '',
-      bikeModel: '',
-      serviceType: 'General Diagnostics & Tuning',
-      date: '',
-      time: '09:00 AM',
-      notes: ''
-    });
-
-    switchScreen('tracking');
-  };
+  // Catalog State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [subCategoryFilter, setSubCategoryFilter] = useState('All');
+  const [sortBy, setSortBy] = useState('default');
 
   // Submit Contact Form
   const handleContactSubmit = (e) => {
@@ -528,36 +412,6 @@ function App() {
     });
   };
 
-  // Simulate advancing the status of a tracked booking for demo purposes
-  const advanceTrackedStatus = () => {
-    if (!trackedBooking) return;
-    const currentIdx = trackedBooking.statusIndex;
-    const nextIdx = (currentIdx + 1) % STATUS_STEPS.length;
-
-    const updatedBookings = bookings.map(b => {
-      if (b.code === trackedBooking.code) {
-        return { ...b, statusIndex: nextIdx };
-      }
-      return b;
-    });
-    setBookings(updatedBookings);
-    localStorage.setItem('spark_bookings', JSON.stringify(updatedBookings));
-    setTrackedBooking(prev => ({ ...prev, statusIndex: nextIdx }));
-  };
-
-  // Handle Tracking Search
-  const handleTrackSubmit = (e) => {
-    e.preventDefault();
-    const result = bookings.find(b => b.code.toUpperCase().trim() === searchTrackingCode.toUpperCase().trim());
-    if (result) {
-      setTrackedBooking(result);
-      showToast(`Booking ${result.code} found!`, 'success');
-    } else {
-      setTrackedBooking(null);
-      showToast('Tracking code not found. Try "SC-77301" for a demo!', 'error');
-    }
-  };
-
   // Checkout simulation
   const handleCheckout = () => {
     showToast(`🎉 Order placed! Total ₹${totalCartPrice.toFixed(2)} — Thank you!`, 'success');
@@ -574,14 +428,29 @@ function App() {
     if (categoryFilter && categoryFilter !== 'All') {
       const filterNorm = categoryFilter.trim().toLowerCase();
       const partCatNorm = (part.category || '').trim().toLowerCase();
+      const partSubCatNorm = (part.subCategory || '').trim().toLowerCase();
 
-      const exactMatch = partCatNorm === filterNorm;
-      const singularMatch = partCatNorm.replace(/s$/, '') === filterNorm.replace(/s$/, '');
-      const includesMatch = partCatNorm.includes(filterNorm) || filterNorm.includes(partCatNorm);
+      const exactMatch = partCatNorm === filterNorm || partSubCatNorm === filterNorm;
+      const singularMatch = partCatNorm.replace(/s$/, '') === filterNorm.replace(/s$/, '') ||
+                            partSubCatNorm.replace(/s$/, '') === filterNorm.replace(/s$/, '');
+      const includesMatch = partCatNorm.includes(filterNorm) || filterNorm.includes(partCatNorm) ||
+                            partSubCatNorm.includes(filterNorm) || filterNorm.includes(partSubCatNorm);
       const nameMatch = (part.name || '').toLowerCase().includes(filterNorm);
       const descMatch = (part.desc || '').toLowerCase().includes(filterNorm);
 
       matchesCategory = exactMatch || singularMatch || includesMatch || nameMatch || descMatch;
+    }
+
+    let matchesSubCategory = true;
+    if (subCategoryFilter && subCategoryFilter !== 'All') {
+      const subNorm = subCategoryFilter.trim().toLowerCase();
+      const partSubNorm = (part.subCategory || '').trim().toLowerCase();
+      const partNameNorm = (part.name || '').trim().toLowerCase();
+
+      matchesSubCategory = partSubNorm === subNorm ||
+                           partSubNorm.includes(subNorm) ||
+                           subNorm.includes(partSubNorm) ||
+                           partNameNorm.includes(subNorm);
     }
 
     let matchesBike = true;
@@ -594,7 +463,7 @@ function App() {
       );
     }
 
-    return matchesSearch && matchesCategory && matchesBike;
+    return matchesSearch && matchesCategory && matchesSubCategory && matchesBike;
   });
 
   // Apply sorting
@@ -643,6 +512,43 @@ function App() {
     return Array.from(map.values());
   }, [sparesMenu, spares, categoryFilter]);
 
+  // Contextual subcategories available for filter pills
+  const availableSubCategoriesForFilter = useMemo(() => {
+    const set = new Set();
+
+    // 1. From spares in catalog
+    (spares || []).forEach(p => {
+      if (p.subCategory && p.subCategory.trim()) {
+        if (categoryFilter === 'All' || !categoryFilter) {
+          set.add(p.subCategory.trim());
+        } else {
+          const catNorm = categoryFilter.toLowerCase().trim();
+          const pCatNorm = (p.category || '').toLowerCase().trim();
+          if (pCatNorm === catNorm || pCatNorm.includes(catNorm) || catNorm.includes(pCatNorm)) {
+            set.add(p.subCategory.trim());
+          }
+        }
+      }
+    });
+
+    // 2. From sparesMenu if category matches block title
+    if (categoryFilter !== 'All') {
+      const catNorm = categoryFilter.toLowerCase().trim();
+      (sparesMenu || []).forEach(col => {
+        (col || []).forEach(block => {
+          const blockTitle = (block.title || '').toLowerCase().trim();
+          if (blockTitle && (blockTitle === catNorm || blockTitle.includes(catNorm) || catNorm.includes(blockTitle))) {
+            (block.items || []).forEach(it => {
+              if (it && it.trim()) set.add(it.trim());
+            });
+          }
+        });
+      });
+    }
+
+    return Array.from(set);
+  }, [spares, sparesMenu, categoryFilter]);
+
   // Switch Screen logic
   const switchScreen = (tabName) => {
     setActiveTab(tabName);
@@ -662,7 +568,6 @@ function App() {
         cart={cart}
         onCartOpen={() => setIsCartOpen(true)}
         onSwitchScreen={switchScreen}
-        showGarage={showGarage}
         hoveredMenu={hoveredMenu}
         setHoveredMenu={setHoveredMenu}
         sparesMenu={sparesMenu}
@@ -677,7 +582,20 @@ function App() {
         setSelectedBike={setSelectedBike}
         categoryFilter={categoryFilter}
         onSelectCategory={(cat) => {
-          setCategoryFilter(cat);
+          const isPrimary = categories.some(c => c.toLowerCase() === cat.toLowerCase());
+          if (isPrimary) {
+            setCategoryFilter(cat);
+            setSubCategoryFilter('All');
+          } else {
+            const matchPart = spares.find(p => (p.subCategory || '').toLowerCase() === cat.toLowerCase());
+            if (matchPart) {
+              setCategoryFilter(matchPart.category);
+              setSubCategoryFilter(cat);
+            } else {
+              setCategoryFilter('All');
+              setSubCategoryFilter(cat);
+            }
+          }
           setSearchQuery('');
           switchScreen('catalog');
         }}
@@ -734,37 +652,6 @@ function App() {
               </div>
             </div>
           </div>
-        )}
-
-        {/* ═══ SERVICES SCREEN ═══ */}
-        {showGarage && activeTab === 'services' && (
-          <section className="animate-fade-in-up" style={{ paddingTop: '1rem', marginBottom: '2rem' }}>
-            <div className="section-header">
-              <span className="section-subtitle">CLINIC SERVICES</span>
-              <h2 className="section-title">PROFESSIONAL MOTORCYCLE CARE</h2>
-              <p className="section-desc">Our certified technicians use cutting edge tools to maintain, diagnose, and repair superbikes and commuter rides alike.</p>
-            </div>
-
-            <div className="service-grid">
-              {[
-                { icon: Wrench, title: 'General Tune-up & Inspection', text: 'Comprehensive 32-point inspection, chain adjustments, Spark plugs check, oil replacement, filter cleaning, and clutch wire adjustment.', price: '₹3,999' },
-                { icon: Settings, title: 'Performance ECU Tuning', text: 'Custom fuel mapping, ignition curve optimization, dyno runs, throttle response adjustments, and speed limiter configuration.', price: '₹12,499' },
-                { icon: ShieldCheck, title: 'Brake System Overhaul', text: 'Brembo pad replacements, rotor resurfacing, brake fluid flush, master cylinder rebuild, and pressure testing for supreme safety.', price: '₹2,999' },
-                { icon: TrendingUp, title: 'Suspension Tuning & Seals', text: 'Sag calibration for riders weight, rebuild front forks, dust and oil seals replacements, rear shock overhaul, and damping setup.', price: '₹6,999' }
-              ].map((service, idx) => (
-                <div key={idx} className="glass-panel service-card">
-                  <div className="service-icon"><service.icon size={22} /></div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{service.title}</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', flex: 1 }}>{service.text}</p>
-                  <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: '0.92rem' }}>Starting at {service.price}</span>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-              <button onClick={() => switchScreen('book')} className="btn-primary">Book An Appointment</button>
-            </div>
-          </section>
         )}
 
         {/* ═══ CATALOG SCREEN ═══ */}
@@ -827,10 +714,22 @@ function App() {
                   <ShoppingBag size={14} color="var(--accent)" />
                   <span>Category filter: <strong>{categoryFilter}</strong></span>
                   <button 
-                    onClick={() => setCategoryFilter('All')} 
+                    onClick={() => { setCategoryFilter('All'); setSubCategoryFilter('All'); }} 
                     style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.2rem' }}
                   >
                     Clear Category &times;
+                  </button>
+                </div>
+              )}
+              {subCategoryFilter !== 'All' && (
+                <div className="compat-feedback" style={{ marginTop: '0.4rem', background: 'rgba(17, 24, 39, 0.05)', borderColor: 'var(--border)', color: 'var(--text-main)' }}>
+                  <ShoppingBag size={14} color="var(--accent)" />
+                  <span>Sub-category: <strong>{subCategoryFilter}</strong></span>
+                  <button 
+                    onClick={() => setSubCategoryFilter('All')} 
+                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.2rem' }}
+                  >
+                    Clear Sub-Category &times;
                   </button>
                 </div>
               )}
@@ -851,13 +750,42 @@ function App() {
                 {categories.map(cat => (
                   <button
                     key={cat}
-                    onClick={() => setCategoryFilter(cat)}
+                    onClick={() => {
+                      setCategoryFilter(cat);
+                      setSubCategoryFilter('All');
+                    }}
                     className={`filter-pill ${categoryFilter === cat ? 'active' : ''}`}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
+
+              {/* Contextual Sub Category Filter Pills */}
+              {availableSubCategoriesForFilter.length > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.65rem', paddingTop: '0.65rem', borderTop: '1px dashed var(--border)' }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Sub Categories:
+                  </span>
+                  <button
+                    onClick={() => setSubCategoryFilter('All')}
+                    className={`filter-pill ${subCategoryFilter === 'All' ? 'active' : ''}`}
+                    style={{ fontSize: '0.74rem', padding: '0.2rem 0.6rem' }}
+                  >
+                    All
+                  </button>
+                  {availableSubCategoriesForFilter.map(sub => (
+                    <button
+                      key={sub}
+                      onClick={() => setSubCategoryFilter(sub)}
+                      className={`filter-pill ${subCategoryFilter === sub ? 'active' : ''}`}
+                      style={{ fontSize: '0.74rem', padding: '0.2rem 0.6rem' }}
+                    >
+                      {sub}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="sort-bar">
                 <span className="sort-label">Sort by:</span>
                 <div className="filter-pills">
@@ -898,26 +826,6 @@ function App() {
                     isWishlisted={isWishlisted(part.id)}
                   />
                 ))}
-              </div>
-            )}
-
-            {/* Garage Teaser */}
-            {!showGarage && (
-              <div className="glass-panel teaser-banner animate-fade-in-up">
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                  <div className="service-icon" style={{ width: '48px', height: '48px' }}>
-                    <Wrench size={22} />
-                  </div>
-                </div>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem' }}>ZORVNS Clinic & Garage Servicing</h3>
-                <span style={{
-                  fontSize: '0.75rem', background: 'var(--bg-main)', color: 'var(--text-muted)',
-                  border: '1px solid var(--border)', padding: '0.2rem 0.6rem',
-                  borderRadius: 'var(--radius-sm)', fontWeight: 700
-                }}>COMING SOON</span>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', maxWidth: '580px', margin: '1rem auto 0', lineHeight: 1.6 }}>
-                  We are expanding our store! Professional diagnostic evaluations, suspension setups, and high-performance ECU mappings will be available in our clinic soon.
-                </p>
               </div>
             )}
           </section>
@@ -1014,176 +922,7 @@ function App() {
           </section>
         )}
 
-        {/* ═══ TRACKING SCREEN ═══ */}
-        {showGarage && activeTab === 'tracking' && (
-          <section className="animate-fade-in-up" style={{ paddingTop: '1rem', marginBottom: '2rem' }}>
-            <div className="section-header">
-              <span className="section-subtitle">TRACKER</span>
-              <h2 className="section-title">LIVE GARAGE STATUS</h2>
-              <p className="section-desc">Watch the status of your machine live as technicians work. Search using your unique ZORVNS booking code.</p>
-            </div>
 
-            <div style={{ maxWidth: '600px', margin: '0 auto 2rem' }}>
-              <form onSubmit={handleTrackSubmit} style={{ display: 'flex', gap: '0.6rem', width: '100%' }}>
-                <input
-                  type="text"
-                  placeholder="Enter Code (try: SC-77301)"
-                  value={searchTrackingCode}
-                  onChange={(e) => setSearchTrackingCode(e.target.value)}
-                  style={{ fontSize: '1rem', padding: '0.85rem' }}
-                />
-                <button type="submit" className="btn-primary">Track Ride</button>
-              </form>
-            </div>
-
-            {trackedBooking ? (
-              <div className="glass-panel animate-fade-in-up" style={{ padding: '2rem', textAlign: 'left', maxWidth: '820px', margin: '0 auto' }}>
-                <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', padding: '0.65rem 1rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <Sparkles size={15} color="var(--accent)" />
-                    <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>DEMO SIMULATION TOOL</span>
-                  </div>
-                  <button onClick={advanceTrackedStatus} className="btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
-                    Simulate Status Step Forward
-                  </button>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
-                  <div>
-                    <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{trackedBooking.code}</span>
-                    <h3 style={{ fontSize: '1.35rem', marginTop: '0.2rem' }}>{trackedBooking.bikeModel}</h3>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>Owner</span>
-                    <p style={{ fontWeight: 600 }}>{trackedBooking.name}</p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem', marginBottom: '1.25rem' }}>
-                  <div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.04em' }}>SERVICE TYPE</span>
-                    <p style={{ fontSize: '1rem', fontWeight: 600, marginTop: '0.1rem' }}>{trackedBooking.serviceType}</p>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.04em' }}>APPOINTMENT SLOT</span>
-                    <p style={{ fontSize: '1rem', fontWeight: 600, marginTop: '0.1rem' }}>{trackedBooking.date} at {trackedBooking.time}</p>
-                  </div>
-                </div>
-
-                {trackedBooking.notes && (
-                  <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '0.85rem', marginBottom: '2rem' }}>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.04em' }}>SYMPTOMS & NOTES</span>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>"{trackedBooking.notes}"</p>
-                  </div>
-                )}
-
-                <div className="timeline-grid">
-                  {STATUS_STEPS.map((step, idx) => {
-                    const isCompleted = idx <= trackedBooking.statusIndex;
-                    const isActive = idx === trackedBooking.statusIndex;
-                    return (
-                      <div key={step.key} className="timeline-step">
-                        <div className={`timeline-dot ${isCompleted ? 'completed' : 'pending'} ${isActive ? 'active' : ''}`}>
-                          {isCompleted ? <Check size={13} color="#fff" /> : <span>{idx + 1}</span>}
-                        </div>
-                        <div style={{ fontSize: '0.78rem', fontWeight: 700, marginBottom: '0.2rem' }}>{step.label}</div>
-                        <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', lineHeight: 1.3 }}>{step.desc}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              <div className="glass-panel empty-state" style={{ maxWidth: '500px', margin: '0 auto' }}>
-                <AlertCircle size={36} color="var(--text-light)" style={{ marginBottom: '0.5rem' }} />
-                <h3>No active tracking lookup.</h3>
-                <p style={{ color: 'var(--text-muted)' }}>Enter one of the demo booking codes (like <strong>SC-77301</strong> or <strong>SC-12402</strong>) above to test the interactive status simulation!</p>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ═══ BOOKING SCREEN ═══ */}
-        {showGarage && activeTab === 'book' && (
-          <section className="animate-fade-in-up" style={{ maxWidth: '700px', margin: '0 auto', paddingTop: '1rem' }}>
-            <div className="section-header">
-              <span className="section-subtitle">RESERVATION</span>
-              <h2 className="section-title">BOOK A SERVICE SLOT</h2>
-              <p className="section-desc">Fill in your details below. We will assign you a tracking code immediately.</p>
-            </div>
-
-            {bookingSuccessCode ? (
-              <div className="glass-panel animate-fade-in-up" style={{ padding: '2.5rem 2rem', textAlign: 'center' }}>
-                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--success-bg)', border: '1px solid rgba(16, 185, 129, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
-                  <Check size={30} color="var(--success)" />
-                </div>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem' }}>Booking Confirmed!</h3>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-                  Your appointment slot has been successfully locked. Use the tracking code below in the 'Track Ride' panel.
-                </p>
-                <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '1.25rem', display: 'inline-flex', flexDirection: 'column', gap: '0.2rem', minWidth: '260px' }}>
-                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>TRACKING CODE</span>
-                  <span style={{ fontSize: '1.75rem', fontFamily: 'var(--font-heading)', fontWeight: 800, color: 'var(--accent)' }}>{bookingSuccessCode}</span>
-                </div>
-                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                  <button onClick={() => { switchScreen('tracking'); setBookingSuccessCode(''); }} className="btn-primary">Track Live Progress</button>
-                  <button onClick={() => setBookingSuccessCode('')} className="btn-secondary">Book Another Slot</button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleBookingSubmit} className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'left' }}>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Full Name</label>
-                    <input type="text" required placeholder="e.g. Vikram Dev" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Phone Number</label>
-                    <input type="tel" required placeholder="e.g. 9876543210" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Motorcycle Model</label>
-                    <input type="text" required placeholder="e.g. Yamaha YZF-R1 or Duke 390" value={formData.bikeModel} onChange={(e) => setFormData({ ...formData, bikeModel: e.target.value })} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Service Category</label>
-                    <select value={formData.serviceType} onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}>
-                      <option>General Diagnostics & Tuning</option>
-                      <option>Performance ECU Tuning</option>
-                      <option>Suspension Tuning & Fork seals</option>
-                      <option>Braking System Overhaul</option>
-                      <option>Complete Fluid & Engine Flush</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Preferred Date</label>
-                    <input type="date" required value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Preferred Time Slot</label>
-                    <select value={formData.time} onChange={(e) => setFormData({ ...formData, time: e.target.value })}>
-                      <option>09:00 AM - 11:30 AM</option>
-                      <option>11:30 AM - 02:00 PM</option>
-                      <option>02:30 PM - 05:00 PM</option>
-                      <option>05:00 PM - 07:30 PM</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Special Notes / Diagnostics Symptoms</label>
-                  <textarea rows="3" placeholder="Provide any details..." value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
-                </div>
-                <button type="submit" className="btn-primary" style={{ width: '100%' }}>
-                  <Calendar size={16} /> Confirm and Book Appointment
-                </button>
-              </form>
-            )}
-          </section>
-        )}
 
         {/* ═══ CONTACT SCREEN ═══ */}
         {activeTab === 'contact' && (

@@ -8,7 +8,6 @@ export default function Header({
   cart,
   onCartOpen,
   onSwitchScreen,
-  showGarage,
   // Mega menu props
   hoveredMenu,
   setHoveredMenu,
@@ -331,7 +330,6 @@ export default function Header({
             </div>
 
             <button className="nav-link-btn">Wholesale Price</button>
-            {showGarage && <button onClick={() => handleNavClick('tracking')} className="nav-link-btn">Track Order</button>}
             <button className="nav-link-btn">Faq</button>
             <button onClick={() => handleNavClick('contact')} className="nav-link-btn">Contact Us</button>
             <button className="nav-link-btn">Blog</button>
@@ -361,7 +359,6 @@ export default function Header({
               <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Shop By Accessories</button>
               <div className="mobile-menu-divider" />
               <button className="mobile-menu-link">Wholesale Price</button>
-              {showGarage && <button className="mobile-menu-link" onClick={() => handleNavClick('tracking')}>Track Order</button>}
               <button className="mobile-menu-link">Faq</button>
               <button className="mobile-menu-link" onClick={() => handleNavClick('contact')}>Contact Us</button>
               <button className="mobile-menu-link" onClick={() => handleNavClick('wishlist')}>Wishlist</button>

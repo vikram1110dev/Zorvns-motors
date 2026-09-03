@@ -2,17 +2,14 @@ import React, { StrictMode, useState, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
   Wrench, 
-  Calendar, 
   Plus, 
   Trash2, 
   X, 
   Check, 
-  Lock, 
   Unlock, 
   LogOut, 
   DollarSign, 
   Package, 
-  Layers, 
   Inbox,
   AlertCircle,
   ChevronUp,
@@ -85,7 +82,7 @@ const INITIAL_BIKE_BRANDS = {
     'Thunderbird 500', 'Classic reborn 350'
   ],
   'TVS': [
-    'Apachr RTX 300', 'Apache RR 310', 'Apache RTR 310', 'Apache RTR 200', 'Apache 160'
+    'Apache RTR 300', 'Apache RR 310', 'Apache RTR 310', 'Apache RTR 200', 'Apache 160'
   ],
   'BMW': [
     'GS 310', '310 R', 'S 1000 RR', 'F 450 GS'
@@ -144,50 +141,14 @@ const INITIAL_BIKE_BRANDS = {
 
 // Initial Mock spare parts catalog data
 const INITIAL_SPARES = [
-  { id: 1, name: 'Brembo Sintered Brake Pads', category: 'Brakes', price: 89.99, stock: 12, rating: 4.9, desc: 'High friction coefficient pads for maximum stopping power.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'Honda CBR650R'] },
-  { id: 2, name: 'NGK Iridium IX Spark Plug (Pack of 4)', category: 'Engine', price: 45.50, stock: 8, rating: 4.8, desc: 'Designed specifically for high-performance motorcycle engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650'] },
-  { id: 3, name: 'K&N High-Flow Air Filter', category: 'Filters', price: 65.00, stock: 15, rating: 4.7, desc: 'Washable and reusable filter for increased horsepower.', compatibility: ['KTM RC 390', 'KTM Adventure 390', 'RE Himalayan 450'] },
-  { id: 4, name: 'CNC Adjustable Clutch & Brake Levers', category: 'Controls', price: 110.00, stock: 6, rating: 4.9, desc: '6-position adjustable aluminum levers, black anodized.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM Duke 250', 'KTM RC 390'] },
-  { id: 5, name: 'Motul 300V Synthetic Oil (4 Liters)', category: 'Fluids', price: 79.99, stock: 20, rating: 5.0, desc: 'Double Ester technology for racing & high-revving engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
-  { id: 6, name: 'LED Sequential Turn Signals (Set of 2)', category: 'Electrical', price: 34.99, stock: 24, rating: 4.6, desc: 'Sequential flowing glow pattern with high brightness LEDs.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
-  { id: 7, name: 'DID 525 VX3 Gold X-Ring Chain', category: 'Drivetrain', price: 135.00, stock: 4, rating: 4.9, desc: 'Top-tier durability and reduced friction chain.', compatibility: ['RE Continental GT 650', 'Honda CBR650R'] },
-  { id: 8, name: 'Yuasa Heavy Duty AGM Battery', category: 'Electrical', price: 95.00, stock: 10, rating: 4.7, desc: 'Maintenance-free high cranking amp battery.', compatibility: ['RE Classic 350', 'RE Himalayan 450', 'Honda CB350 H\'ness'] }
-];
-
-// Service status categories
-const STATUS_STEPS = [
-  { key: 'booked', label: 'Booking Confirmed', desc: 'Appointment scheduled successfully', color: 'var(--info)' },
-  { key: 'received', label: 'Bike Received', desc: 'Checked in at the workshop garage', color: 'var(--warning)' },
-  { key: 'inspecting', label: 'Diagnostic Check', desc: 'Pre-service checks and inspection', color: 'var(--primary)' },
-  { key: 'servicing', label: 'Active Repairs', desc: 'Spares replacement & servicing', color: 'var(--primary-hover)' },
-  { key: 'testing', label: 'Quality Test', desc: 'Road testing and diagnostic verification', color: 'var(--info)' },
-  { key: 'ready', label: 'Ready for Pickup', desc: 'Finished, polished, and ready to ride!', color: 'var(--success)' }
-];
-
-// Initial mock bookings seeded to local storage
-const INITIAL_BOOKINGS = [
-  {
-    code: 'SC-77301',
-    name: 'Vikram Dev',
-    phone: '9876543210',
-    bikeModel: 'Yamaha YZF-R1',
-    serviceType: 'Performance Tuning & Fluid Flush',
-    date: '2026-08-12',
-    time: '10:00 AM',
-    statusIndex: 3, // Servicing
-    notes: 'Please check rear brake feel and adjust chain slack.'
-  },
-  {
-    code: 'SC-12402',
-    name: 'John Doe',
-    phone: '9988776655',
-    bikeModel: 'KTM Duke 390',
-    serviceType: 'General Servicing',
-    date: '2026-08-13',
-    time: '02:30 PM',
-    statusIndex: 1, // Received
-    notes: 'Standard 10,000 km oil change & service.'
-  }
+  { id: 1, name: 'Brembo Sintered Brake Pads', category: 'Brakes', subCategory: 'Brake Pads', price: 89.99, stock: 12, rating: 4.9, desc: 'High friction coefficient pads for maximum stopping power.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'Honda CBR650R'] },
+  { id: 2, name: 'NGK Iridium IX Spark Plug (Pack of 4)', category: 'Engine', subCategory: 'Spark plug', price: 45.50, stock: 8, rating: 4.8, desc: 'Designed specifically for high-performance motorcycle engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650'] },
+  { id: 3, name: 'K&N High-Flow Air Filter', category: 'Filters', subCategory: 'Air Filter', price: 65.00, stock: 15, rating: 4.7, desc: 'Washable and reusable filter for increased horsepower.', compatibility: ['KTM RC 390', 'KTM Adventure 390', 'RE Himalayan 450'] },
+  { id: 4, name: 'CNC Adjustable Clutch & Brake Levers', category: 'Controls', subCategory: 'Levers', price: 110.00, stock: 6, rating: 4.9, desc: '6-position adjustable aluminum levers, black anodized.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM Duke 250', 'KTM RC 390'] },
+  { id: 5, name: 'Motul 300V Synthetic Oil (4 Liters)', category: 'Fluids', subCategory: 'Engine Oil', price: 79.99, stock: 20, rating: 5.0, desc: 'Double Ester technology for racing & high-revving engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
+  { id: 6, name: 'LED Sequential Turn Signals (Set of 2)', category: 'Electrical', subCategory: 'Turn Signals', price: 34.99, stock: 24, rating: 4.6, desc: 'Sequential flowing glow pattern with high brightness LEDs.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
+  { id: 7, name: 'DID 525 VX3 Gold X-Ring Chain', category: 'Drivetrain', subCategory: 'Chain', price: 135.00, stock: 4, rating: 4.9, desc: 'Top-tier durability and reduced friction chain.', compatibility: ['RE Continental GT 650', 'Honda CBR650R'] },
+  { id: 8, name: 'Yuasa Heavy Duty AGM Battery', category: 'Electrical', subCategory: 'Battery', price: 95.00, stock: 10, rating: 4.7, desc: 'Maintenance-free high cranking amp battery.', compatibility: ['RE Classic 350', 'RE Himalayan 450', 'Honda CB350 H\'ness'] }
 ];
 
 // Mock initial enquiries
@@ -197,35 +158,27 @@ const INITIAL_ENQUIRIES = [
 ];
 
 function AdminPortal() {
-  // SHOW_GARAGE_SERVICES state (controlled by admin dashboard!)
-  const [showGarage, setShowGarage] = useState(() => {
-    const saved = localStorage.getItem('spark_show_garage');
-    return saved ? JSON.parse(saved) : false;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('spark_show_garage', JSON.stringify(showGarage));
-  }, [showGarage]);
-
   // Spares store inventory state
   const [spares, setSpares] = useState(() => {
     const saved = localStorage.getItem('spark_spares');
-    return saved ? JSON.parse(saved) : INITIAL_SPARES;
+    if (!saved) return INITIAL_SPARES;
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed.map(item => {
+        if (!item.subCategory) {
+          const matchInitial = INITIAL_SPARES.find(init => init.id === item.id);
+          return { ...item, subCategory: matchInitial ? matchInitial.subCategory : '' };
+        }
+        return item;
+      });
+    } catch {
+      return INITIAL_SPARES;
+    }
   });
 
   useEffect(() => {
     localStorage.setItem('spark_spares', JSON.stringify(spares));
   }, [spares]);
-
-  // Bookings state
-  const [bookings, setBookings] = useState(() => {
-    const saved = localStorage.getItem('spark_bookings');
-    return saved ? JSON.parse(saved) : INITIAL_BOOKINGS;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('spark_bookings', JSON.stringify(bookings));
-  }, [bookings]);
 
   // Customer enquiries state
   const [enquiries, setEnquiries] = useState(() => {
@@ -296,10 +249,6 @@ function AdminPortal() {
   const [newBrandModel, setNewBrandModel] = useState('');
   const [newModelInputs, setNewModelInputs] = useState({});
 
-  // Add Product State
-  const [newProduct, setNewProduct] = useState({
-    name: '', category: '', price: '', stock: '', desc: '', images: ''
-  });
 
   const [toastMessage, setToastMessage] = useState(null);
   const showToast = (msg, type = 'success') => {
@@ -409,25 +358,6 @@ function AdminPortal() {
     setBrandOrder(newOrder);
   };
 
-  const handleAddProduct = (e) => {
-    e.preventDefault();
-    if (!newProduct.name || !newProduct.price) return;
-    const newId = Date.now();
-    const imageList = newProduct.images ? newProduct.images.split(',').map(url => url.trim()).filter(url => url !== '') : [];
-    const product = {
-      id: newId,
-      name: newProduct.name,
-      category: newProduct.category || 'General',
-      price: parseFloat(newProduct.price),
-      stock: parseInt(newProduct.stock) || 0,
-      desc: newProduct.desc || '',
-      images: imageList,
-      rating: 5.0,
-      compatibility: [] // Can be edited later
-    };
-    setSpares(prev => [product, ...prev]);
-    setNewProduct({ name: '', category: '', price: '', stock: '', desc: '', images: '' });
-  };
 
   const handleAddModel = (brand) => {
     const model = newModelInputs[brand];
@@ -473,11 +403,56 @@ function AdminPortal() {
   const [newPartData, setNewPartData] = useState({
     name: '',
     category: 'Engine',
+    subCategory: '',
     price: '',
     stock: '',
     desc: ''
   });
   const [compatCheckboxes, setCompatCheckboxes] = useState([]);
+
+  // Compute contextual subcategory suggestions for current category and all known subcategories
+  const availableSubCategories = useMemo(() => {
+    const set = new Set();
+
+    const defaultCategorySubMap = {
+      'Engine': ['Spark plug', 'Piston', 'Cylinder Head', 'Gasket', 'Camshaft', 'Valves', 'Carburetor', 'Oil filter'],
+      'Brakes': ['Brake Pads', 'Brake shoe', 'Disc plate', 'Master cylinder', 'Brake pedal', 'Brake lines', 'Brake housing', 'Brake cable'],
+      'Filters': ['Air Filter', 'Oil filter', 'Fuel Filter', 'Cabin Filter'],
+      'Controls': ['Levers', 'Gear pedal', 'Footrest', 'Footrest bracket', 'Throttle cable', 'Clutch cable', 'Handlebar', 'Mirrors', 'Control switch'],
+      'Fluids': ['Engine Oil', 'Brake Fluid', 'Chain lube', 'Fork oil', 'Coolant', 'Chain maintenance'],
+      'Electrical': ['Battery', 'Spark plug', 'Headlamp', 'Indicators', 'Regulator rectifier', 'Speedometer', 'Horn', 'Turn Signals'],
+      'Drivetrain': ['Regular chain sprocket', 'Chain', 'Chain maintenance', 'Clutch plate', 'Clutch assembly', 'Clutch shoe', 'CVT belt'],
+      'Fork parts': ['Fork oil seal', 'Shock absorber'],
+      'Swingarm parts': ['Swingarm bush kit'],
+      'Lighting': ['Headlamp', 'Indicators'],
+      'Body parts': ['Visor', 'Front shield', 'Mudguard', 'Fairings'],
+      'Gear system': ['Gear pedal'],
+      'Foot control': ['Footrest', 'Footrest bracket'],
+      'Fuel': ['Fuel pump assembly', 'Fuel cock']
+    };
+
+    if (newPartData.category && defaultCategorySubMap[newPartData.category]) {
+      defaultCategorySubMap[newPartData.category].forEach(s => set.add(s));
+    }
+
+    (sparesMenu || []).forEach(col => {
+      (col || []).forEach(block => {
+        if (block.items) {
+          block.items.forEach(it => {
+            if (it && it.trim()) set.add(it.trim());
+          });
+        }
+      });
+    });
+
+    (spares || []).forEach(p => {
+      if (p.subCategory && p.subCategory.trim()) {
+        set.add(p.subCategory.trim());
+      }
+    });
+
+    return Array.from(set);
+  }, [newPartData.category, sparesMenu, spares]);
 
   // Admin login handler
   const handleAdminLogin = (e) => {
@@ -497,6 +472,7 @@ function AdminPortal() {
       id: Date.now(),
       name: newPartData.name,
       category: newPartData.category,
+      subCategory: (newPartData.subCategory || '').trim(),
       price: parseFloat(newPartData.price),
       stock: parseInt(newPartData.stock),
       rating: 5.0,
@@ -505,9 +481,9 @@ function AdminPortal() {
     };
     const updated = [...spares, newPart];
     setSpares(updated);
-    setNewPartData({ name: '', category: 'Engine', price: '', stock: '', desc: '' });
+    setNewPartData({ name: '', category: 'Engine', subCategory: '', price: '', stock: '', desc: '' });
     setCompatCheckboxes([]);
-    alert('New Spare Part successfully added to inventory catalog!');
+    showToast(`Added ${newPart.name} to inventory!`, 'success');
   };
 
   // Toggle compatibility checkbox
@@ -528,23 +504,14 @@ function AdminPortal() {
     setSpares(prev => prev.map(item => item.id === id ? { ...item, price: Math.max(0, parseFloat(newPrice)) } : item));
   };
 
+  const handleUpdateSubCategory = (id, newSubCategory) => {
+    setSpares(prev => prev.map(item => item.id === id ? { ...item, subCategory: newSubCategory } : item));
+  };
+
   // Delete spare part
   const handleDeletePart = (id) => {
     if (confirm('Are you sure you want to delete this part from inventory?')) {
       setSpares(prev => prev.filter(item => item.id !== id));
-    }
-  };
-
-  // Update Booking Status index
-  const handleUpdateStatus = (code, index) => {
-    const updated = bookings.map(b => b.code === code ? { ...b, statusIndex: parseInt(index) } : b);
-    setBookings(updated);
-  };
-
-  // Delete Booking
-  const handleDeleteBooking = (code) => {
-    if (confirm(`Cancel and delete booking ${code}?`)) {
-      setBookings(prev => prev.filter(b => b.code !== code));
     }
   };
 
@@ -678,28 +645,6 @@ function AdminPortal() {
                 <span style={styles.sectionSubtitle}>CONTROL BOARD</span>
                 <h2 style={{ fontSize: '2rem', textAlign: 'left' }}>ZORVNS OPERATIONS</h2>
               </div>
-              
-              {/* Garage toggle controller */}
-              <div className="glass-panel" style={styles.adminTogglePanel}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Wrench size={18} color={showGarage ? 'var(--success)' : 'var(--text-muted)'} />
-                  <div>
-                    <p style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>Garage Services Clinic</p>
-                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Status: {showGarage ? 'LIVE ON STORE' : 'HIDDEN / COMING SOON'}</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setShowGarage(!showGarage)}
-                  className="btn-primary" 
-                  style={{ 
-                    padding: '0.4rem 0.8rem', 
-                    fontSize: '0.8rem',
-                    background: showGarage ? 'var(--success)' : 'var(--primary)'
-                  }}
-                >
-                  {showGarage ? 'Deactivate Garage' : 'Activate Garage Live'}
-                </button>
-              </div>
             </div>
 
             {/* Dashboard metrics grid */}
@@ -727,14 +672,6 @@ function AdminPortal() {
                   <h4 style={styles.adminMetricVal}>{enquiries.filter(e => !e.resolved).length} Pending</h4>
                 </div>
               </div>
-
-              <div className="glass-panel" style={styles.adminMetricCard}>
-                <Layers size={20} color="var(--success)" />
-                <div>
-                  <span style={styles.adminMetricLabel}>ACTIVE BOOKINGS</span>
-                  <h4 style={styles.adminMetricVal}>{bookings.length} Reservation Slots</h4>
-                </div>
-              </div>
             </div>
 
             {/* Main Admin Section Grid */}
@@ -745,52 +682,6 @@ function AdminPortal() {
                 <div className="glass-panel" style={{ padding: '2rem' }}>
                   <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', textAlign: 'left' }}>Store Catalog Inventory</h3>
                   
-                  {/* Add Product Form */}
-                  <div style={{ marginBottom: '2rem', background: 'rgba(17,24,39,0.02)', padding: '1.5rem', borderRadius: '8px' }}>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '1rem', fontWeight: 'bold' }}>Add New Product</h4>
-                    <form onSubmit={handleAddProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                      <div style={{ display: 'flex', gap: '1rem' }}>
-                        <div style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                          <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Name</label>
-                          <input type="text" required value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} style={{ padding: '0.5rem', border: '1px solid #eee', borderRadius: '4px' }} />
-                        </div>
-                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                          <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Category</label>
-                          <input 
-                            type="text" 
-                            list="admin-category-list" 
-                            required 
-                            placeholder="Select or enter category..." 
-                            value={newProduct.category} 
-                            onChange={(e) => setNewProduct({...newProduct, category: e.target.value})} 
-                            style={{ padding: '0.5rem', border: '1px solid #eee', borderRadius: '4px' }} 
-                          />
-                          <datalist id="admin-category-list">
-                            {(categories || []).map(cat => <option key={cat} value={cat} />)}
-                          </datalist>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: '1rem' }}>
-                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                          <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Price ($)</label>
-                          <input type="number" step="0.01" required value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} style={{ padding: '0.5rem', border: '1px solid #eee', borderRadius: '4px' }} />
-                        </div>
-                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                          <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Stock Quantity</label>
-                          <input type="number" required value={newProduct.stock} onChange={(e) => setNewProduct({...newProduct, stock: e.target.value})} style={{ padding: '0.5rem', border: '1px solid #eee', borderRadius: '4px' }} />
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                        <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Description</label>
-                        <textarea value={newProduct.desc} onChange={(e) => setNewProduct({...newProduct, desc: e.target.value})} rows="2" style={{ padding: '0.5rem', border: '1px solid #eee', borderRadius: '4px' }}></textarea>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                        <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Images (Comma-separated URLs)</label>
-                        <input type="text" placeholder="https://image1.jpg, https://image2.jpg" value={newProduct.images} onChange={(e) => setNewProduct({...newProduct, images: e.target.value})} style={{ padding: '0.5rem', border: '1px solid #eee', borderRadius: '4px' }} />
-                      </div>
-                      <button type="submit" className="btn-primary" style={{ alignSelf: 'flex-start', padding: '0.6rem 1.5rem', marginTop: '0.5rem' }}>Add Product</button>
-                    </form>
-                  </div>
                   
                   <div style={styles.adminTableContainer}>
                     <table style={styles.adminTable}>
@@ -798,6 +689,7 @@ function AdminPortal() {
                         <tr>
                           <th style={styles.th}>Name</th>
                           <th style={styles.th}>Category</th>
+                          <th style={styles.th}>Sub Category</th>
                           <th style={styles.th}>Price ($)</th>
                           <th style={styles.th}>Stock</th>
                           <th style={styles.th}>Actions</th>
@@ -808,6 +700,16 @@ function AdminPortal() {
                           <tr key={part.id} style={styles.tr}>
                             <td style={{ ...styles.td, fontWeight: 'bold' }}>{part.name}</td>
                             <td style={styles.td}>{part.category}</td>
+                            <td style={styles.td}>
+                              <input 
+                                type="text"
+                                list="admin-subcat-list"
+                                placeholder="Sub category..."
+                                value={part.subCategory || ''}
+                                onChange={(e) => handleUpdateSubCategory(part.id, e.target.value)}
+                                style={{ ...styles.adminTableInput, width: '130px', textAlign: 'left', padding: '0.35rem 0.5rem' }}
+                              />
+                            </td>
                             <td style={styles.td}>
                               <input 
                                 type="number" 
@@ -841,7 +743,7 @@ function AdminPortal() {
                   <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', textAlign: 'left' }}>Add New Spare Part</h3>
                   <form onSubmit={handleAddPart} style={styles.adminAddForm}>
                     <div style={styles.formRow}>
-                      <div style={styles.formGroup}>
+                      <div style={{ ...styles.formGroup, flex: 1.2 }}>
                         <label style={styles.formLabel}>Part Name</label>
                         <input 
                           type="text" 
@@ -851,7 +753,7 @@ function AdminPortal() {
                           onChange={(e) => setNewPartData({...newPartData, name: e.target.value})}
                         />
                       </div>
-                      <div style={styles.formGroup}>
+                      <div style={{ ...styles.formGroup, flex: 0.9 }}>
                         <label style={styles.formLabel}>Category</label>
                         <select 
                           value={newPartData.category}
@@ -862,7 +764,47 @@ function AdminPortal() {
                           ))}
                         </select>
                       </div>
+                      <div style={{ ...styles.formGroup, flex: 0.9 }}>
+                        <label style={styles.formLabel}>Sub Category</label>
+                        <input 
+                          type="text"
+                          list="admin-subcat-list"
+                          placeholder="Select or enter..."
+                          value={newPartData.subCategory}
+                          onChange={(e) => setNewPartData({...newPartData, subCategory: e.target.value})}
+                        />
+                        <datalist id="admin-subcat-list">
+                          {availableSubCategories.map(sub => (
+                            <option key={sub} value={sub} />
+                          ))}
+                        </datalist>
+                      </div>
                     </div>
+
+                    {availableSubCategories.length > 0 && (
+                      <div style={{ marginTop: '-0.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Quick Subcategory:</span>
+                        {availableSubCategories.slice(0, 8).map(sub => (
+                          <button
+                            key={sub}
+                            type="button"
+                            onClick={() => setNewPartData({ ...newPartData, subCategory: sub })}
+                            style={{
+                              border: newPartData.subCategory === sub ? '1px solid var(--accent)' : '1px solid var(--border)',
+                              background: newPartData.subCategory === sub ? 'var(--accent)' : '#fff',
+                              color: newPartData.subCategory === sub ? '#fff' : 'var(--text-main)',
+                              padding: '0.2rem 0.55rem',
+                              borderRadius: '4px',
+                              fontSize: '0.72rem',
+                              cursor: 'pointer',
+                              fontWeight: newPartData.subCategory === sub ? '600' : 'normal'
+                            }}
+                          >
+                            {sub}
+                          </button>
+                        ))}
+                      </div>
+                    )}
 
                     <div style={styles.formRow}>
                       <div style={styles.formGroup}>
@@ -890,25 +832,124 @@ function AdminPortal() {
 
                     {/* Bike Compatibility checklist */}
                     <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>Bike Compatibility</label>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <label style={styles.formLabel}>
+                          Bike Compatibility {compatCheckboxes.length > 0 && <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>({compatCheckboxes.length} selected)</span>}
+                        </label>
+                        {compatCheckboxes.length > 0 && (
+                          <button 
+                            type="button" 
+                            onClick={() => setCompatCheckboxes([])} 
+                            style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
+                          >
+                            Clear All
+                          </button>
+                        )}
+                      </div>
                       <div style={styles.checkboxGrid}>
-                        {Object.entries(bikeBrands).map(([brand, bikes]) => (
-                          <div key={brand} style={{ marginBottom: '0.75rem' }}>
-                            <p style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '0.25rem' }}>{brand}</p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                              {(bikes || []).map(bike => (
-                                <label key={bike} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', cursor: 'pointer' }}>
-                                  <input 
-                                    type="checkbox"
-                                    checked={compatCheckboxes.includes(bike)}
-                                    onChange={() => handleToggleCompat(bike)}
-                                  />
-                                  <span>{bike}</span>
-                                </label>
-                              ))}
+                        {Object.entries(bikeBrands).map(([brand, bikes]) => {
+                          const brandBikes = bikes || [];
+                          const selectedInBrand = brandBikes.filter(b => compatCheckboxes.includes(b)).length;
+                          const allSelected = brandBikes.length > 0 && selectedInBrand === brandBikes.length;
+
+                          const toggleAllBrand = () => {
+                            if (allSelected) {
+                              setCompatCheckboxes(prev => prev.filter(b => !brandBikes.includes(b)));
+                            } else {
+                              setCompatCheckboxes(prev => [...new Set([...prev, ...brandBikes])]);
+                            }
+                          };
+
+                          return (
+                            <div 
+                              key={brand} 
+                              style={{ 
+                                background: '#ffffff', 
+                                border: '1px solid var(--border)', 
+                                borderRadius: '8px', 
+                                padding: '0.75rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.4rem',
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
+                              }}
+                            >
+                              <div style={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between', 
+                                alignItems: 'center', 
+                                borderBottom: '1px solid var(--border)', 
+                                paddingBottom: '0.35rem', 
+                                marginBottom: '0.2rem' 
+                              }}>
+                                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--primary)', letterSpacing: '0.03em' }}>{brand}</span>
+                                {brandBikes.length > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={toggleAllBrand}
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      color: allSelected ? 'var(--accent)' : 'var(--text-muted)',
+                                      fontSize: '0.7rem',
+                                      cursor: 'pointer',
+                                      padding: '0 0.2rem',
+                                      fontWeight: allSelected ? 600 : 400
+                                    }}
+                                  >
+                                    {allSelected ? 'Deselect All' : 'Select All'}
+                                  </button>
+                                )}
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                                {brandBikes.length === 0 ? (
+                                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic', padding: '0.2rem 0' }}>No models added</span>
+                                ) : (
+                                  brandBikes.map(bike => {
+                                    const isChecked = compatCheckboxes.includes(bike);
+                                    return (
+                                      <label 
+                                        key={bike} 
+                                        style={{ 
+                                          display: 'flex', 
+                                          alignItems: 'center', 
+                                          gap: '0.5rem', 
+                                          fontSize: '0.82rem', 
+                                          cursor: 'pointer',
+                                          padding: '0.3rem 0.4rem',
+                                          borderRadius: '5px',
+                                          background: isChecked ? 'rgba(229, 57, 53, 0.08)' : 'transparent',
+                                          transition: 'background 0.15s ease'
+                                        }}
+                                      >
+                                        <input 
+                                          type="checkbox"
+                                          checked={isChecked}
+                                          onChange={() => handleToggleCompat(bike)}
+                                          style={{
+                                            width: '15px',
+                                            height: '15px',
+                                            margin: 0,
+                                            accentColor: 'var(--accent)',
+                                            cursor: 'pointer',
+                                            flexShrink: 0
+                                          }}
+                                        />
+                                        <span style={{ 
+                                          color: isChecked ? 'var(--accent)' : 'var(--text-main)', 
+                                          fontWeight: isChecked ? 600 : 400,
+                                          whiteSpace: 'nowrap'
+                                        }}>
+                                          {bike}
+                                        </span>
+                                      </label>
+                                    );
+                                  })
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -1012,45 +1053,8 @@ function AdminPortal() {
                 </div>
               </div>
 
-              {/* Right Column: Bookings list & Enquiries */}
+              {/* Right Column: Customer Enquiries */}
               <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                {/* Bookings panel */}
-                <div className="glass-panel" style={{ padding: '2rem' }}>
-                  <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', textAlign: 'left' }}>Bike Service Reservations</h3>
-                  {bookings.length === 0 ? (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textAlign: 'left' }}>No bookings reserved.</p>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                      {(bookings || []).map(b => (
-                        <div key={b.code} style={styles.adminBookingCard}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div>
-                              <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 'bold' }}>{b.code}</span>
-                              <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold' }}>{b.bikeModel}</h4>
-                              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Owner: {b.name} ({b.phone})</p>
-                            </div>
-                            <button onClick={() => handleDeleteBooking(b.code)} style={styles.deleteBtn}>
-                              <X size={16} />
-                            </button>
-                          </div>
-
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginTop: '0.5rem', background: 'rgba(17,24,39,0.02)', padding: '0.5rem', borderRadius: '4px' }}>
-                            <p style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Update Live Status:</p>
-                            <select 
-                              value={b.statusIndex}
-                              onChange={(e) => handleUpdateStatus(b.code, e.target.value)}
-                              style={{ padding: '0.25rem', fontSize: '0.8rem', background: '#fff' }}
-                            >
-                              {STATUS_STEPS.map((step, idx) => (
-                                <option key={step.key} value={idx}>{step.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
 
                 {/* Customer messages panel */}
                 <div className="glass-panel" style={{ padding: '2rem' }}>
@@ -1316,7 +1320,7 @@ const styles = {
   },
   adminMetricsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(3, 1fr)',
     gap: '1.5rem',
     marginBottom: '2.5rem',
     textAlign: 'left'
@@ -1398,12 +1402,14 @@ const styles = {
   },
   checkboxGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '1rem',
-    background: 'rgba(255,255,255,0.03)',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+    gap: '0.85rem',
+    background: 'rgba(17, 24, 39, 0.02)',
     border: '1px solid var(--border)',
     padding: '1rem',
-    borderRadius: '8px'
+    borderRadius: '10px',
+    maxHeight: '340px',
+    overflowY: 'auto'
   },
   adminBookingCard: {
     background: 'rgba(17,24,39,0.01)',

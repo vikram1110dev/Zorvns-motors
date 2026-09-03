@@ -8,7 +8,7 @@ export default function ProductCard({ part, onViewProduct, onAddToCart, onToggle
       className="product-card"
       onClick={() => onViewProduct(part)}
     >
-      <span className="product-card-badge">{part.category}</span>
+      <span className="product-card-badge">{part.subCategory || part.category}</span>
 
       {part.images && part.images.length > 0 ? (
         <div className="product-card-image" style={{ overflowX: 'auto', scrollSnapType: 'x mandatory', display: 'flex' }}>
@@ -28,7 +28,9 @@ export default function ProductCard({ part, onViewProduct, onAddToCart, onToggle
       )}
 
       <div className="product-card-body">
-        <span className="product-card-category">{part.category}</span>
+        <span className="product-card-category">
+          {part.category}{part.subCategory ? ` • ${part.subCategory}` : ''}
+        </span>
         <h4 className="product-card-title">{part.name}</h4>
         <p className="product-card-desc">{part.desc}</p>
 
