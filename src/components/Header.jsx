@@ -22,6 +22,8 @@ export default function Header({
   selectedBike,
   setSelectedBrand,
   setSelectedBike,
+  categoryFilter,
+  onSelectCategory,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -229,11 +231,37 @@ export default function Header({
                     {(sparesMenu || []).map((col, colIdx) => (
                       <div key={colIdx} className="mega-menu-column">
                         {col.map((cat, catIdx) => (
-                          <React.Fragment key={cat.id}>
+                          <React.Fragment key={cat.id || catIdx}>
                             {catIdx > 0 && <div style={{ height: '0.75rem' }} />}
-                            {cat.title && <h4 className="mega-menu-heading">{cat.title}</h4>}
+                            {cat.title && (
+                              <button
+                                type="button"
+                                className={`mega-menu-heading-btn ${categoryFilter === cat.title ? 'active' : ''}`}
+                                onClick={() => {
+                                  if (onSelectCategory) onSelectCategory(cat.title);
+                                  setHoveredMenu(null);
+                                  handleNavClick('catalog');
+                                }}
+                                title={`Shop all ${cat.title}`}
+                              >
+                                <span>{cat.title}</span>
+                                <span className="mega-menu-arrow">&rarr;</span>
+                              </button>
+                            )}
                             {(cat.items || []).map((item, iIdx) => (
-                              <a key={iIdx} href="#" className="mega-menu-link">{item}</a>
+                              <button
+                                key={iIdx}
+                                type="button"
+                                className={`mega-menu-link-btn-text ${categoryFilter === item ? 'active' : ''}`}
+                                onClick={() => {
+                                  if (onSelectCategory) onSelectCategory(item);
+                                  setHoveredMenu(null);
+                                  handleNavClick('catalog');
+                                }}
+                                title={`Shop ${item}`}
+                              >
+                                {item}
+                              </button>
                             ))}
                           </React.Fragment>
                         ))}
@@ -258,30 +286,45 @@ export default function Header({
               {hoveredMenu === 'accessories' && (
                 <div className="mega-menu" onClick={(e) => e.stopPropagation()}>
                   <div className="app-container mega-menu-grid">
-                    <div className="mega-menu-column">
-                      <h4 className="mega-menu-heading">Riding Gear</h4>
-                      {['Helmets', 'Riding Jackets', 'Riding Gloves', 'Riding Pants', 'Riding Boots'].map(i => <a key={i} href="#" className="mega-menu-link">{i}</a>)}
-                    </div>
-                    <div className="mega-menu-column">
-                      <h4 className="mega-menu-heading">Luggage</h4>
-                      {['Tank Bags', 'Saddlebags', 'Top Boxes', 'Tail Bags', 'Bungee Cords'].map(i => <a key={i} href="#" className="mega-menu-link">{i}</a>)}
-                    </div>
-                    <div className="mega-menu-column">
-                      <h4 className="mega-menu-heading">Protection</h4>
-                      {['Crash Guards', 'Frame Sliders', 'Handguards', 'Radiator Guards', 'Sump Guards'].map(i => <a key={i} href="#" className="mega-menu-link">{i}</a>)}
-                    </div>
-                    <div className="mega-menu-column">
-                      <h4 className="mega-menu-heading">Performance</h4>
-                      {['Exhaust Systems', 'Performance Air Filters', 'ECU Remaps', 'Quickshifters'].map(i => <a key={i} href="#" className="mega-menu-link">{i}</a>)}
-                    </div>
-                    <div className="mega-menu-column">
-                      <h4 className="mega-menu-heading">Styling & Care</h4>
-                      {['Decals & Stickers', 'Tail Tidies', 'Bar End Mirrors', 'Bike Covers', 'Cleaning Kits'].map(i => <a key={i} href="#" className="mega-menu-link">{i}</a>)}
-                    </div>
-                    <div className="mega-menu-column">
-                      <h4 className="mega-menu-heading">Electronics</h4>
-                      {['Mobile Mounts', 'USB Chargers', 'Auxiliary Lights', 'Action Cameras', 'Bluetooth Communicators'].map(i => <a key={i} href="#" className="mega-menu-link">{i}</a>)}
-                    </div>
+                    {[
+                      { heading: 'Riding Gear', items: ['Helmets', 'Riding Jackets', 'Riding Gloves', 'Riding Pants', 'Riding Boots'] },
+                      { heading: 'Luggage', items: ['Tank Bags', 'Saddlebags', 'Top Boxes', 'Tail Bags', 'Bungee Cords'] },
+                      { heading: 'Protection', items: ['Crash Guards', 'Frame Sliders', 'Handguards', 'Radiator Guards', 'Sump Guards'] },
+                      { heading: 'Performance', items: ['Exhaust Systems', 'Performance Air Filters', 'ECU Remaps', 'Quickshifters'] },
+                      { heading: 'Styling & Care', items: ['Decals & Stickers', 'Tail Tidies', 'Bar End Mirrors', 'Bike Covers', 'Cleaning Kits'] },
+                      { heading: 'Electronics', items: ['Mobile Mounts', 'USB Chargers', 'Auxiliary Lights', 'Action Cameras', 'Bluetooth Communicators'] }
+                    ].map((group, gIdx) => (
+                      <div key={gIdx} className="mega-menu-column">
+                        <button
+                          type="button"
+                          className={`mega-menu-heading-btn ${categoryFilter === group.heading ? 'active' : ''}`}
+                          onClick={() => {
+                            if (onSelectCategory) onSelectCategory(group.heading);
+                            setHoveredMenu(null);
+                            handleNavClick('catalog');
+                          }}
+                          title={`Shop ${group.heading}`}
+                        >
+                          <span>{group.heading}</span>
+                          <span className="mega-menu-arrow">&rarr;</span>
+                        </button>
+                        {group.items.map((item, iIdx) => (
+                          <button
+                            key={iIdx}
+                            type="button"
+                            className={`mega-menu-link-btn-text ${categoryFilter === item ? 'active' : ''}`}
+                            onClick={() => {
+                              if (onSelectCategory) onSelectCategory(item);
+                              setHoveredMenu(null);
+                              handleNavClick('catalog');
+                            }}
+                            title={`Shop ${item}`}
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

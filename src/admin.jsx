@@ -1,4 +1,4 @@
-import React, { StrictMode, useState, useEffect } from 'react';
+import React, { StrictMode, useState, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
   Wrench, 
@@ -301,20 +301,36 @@ function AdminPortal() {
     name: '', category: '', price: '', stock: '', desc: '', images: ''
   });
 
+  const [toastMessage, setToastMessage] = useState(null);
+  const showToast = (msg, type = 'success') => {
+    setToastMessage({ msg, type });
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
   const handleAddMenuCategory = (colIdx) => {
     const title = prompt('Enter new category name (leave blank for a spacer):');
     if (title === null) return;
+    const trimmed = title.trim();
     const newMenu = [...sparesMenu];
-    newMenu[colIdx].push({ id: Date.now().toString(), title, items: [] });
+    newMenu[colIdx].push({ id: Date.now().toString(), title: trimmed, items: [] });
     setSparesMenu(newMenu);
+    if (trimmed) {
+      setNewPartData(prev => ({ ...prev, category: trimmed }));
+      setNewProduct(prev => ({ ...prev, category: trimmed }));
+      showToast(`Category "${trimmed}" added! Now available in Add New Spare Part.`, 'success');
+    }
   };
 
   const handleEditMenuCategory = (colIdx, catIdx, oldTitle) => {
     const title = prompt('Edit category name:', oldTitle);
     if (title === null) return;
+    const trimmed = title.trim();
     const newMenu = [...sparesMenu];
-    newMenu[colIdx][catIdx].title = title;
+    newMenu[colIdx][catIdx].title = trimmed;
     setSparesMenu(newMenu);
+    if (trimmed) {
+      showToast(`Category renamed to "${trimmed}".`, 'success');
+    }
   };
 
   const handleDeleteMenuCategory = (colIdx, catIdx) => {
@@ -322,14 +338,17 @@ function AdminPortal() {
     const newMenu = [...sparesMenu];
     newMenu[colIdx].splice(catIdx, 1);
     setSparesMenu(newMenu);
+    showToast('Category deleted.', 'info');
   };
 
   const handleAddMenuLink = (colIdx, catIdx) => {
     const link = prompt('Enter new sub-category link name:');
     if (!link) return;
+    const trimmed = link.trim();
     const newMenu = [...sparesMenu];
-    newMenu[colIdx][catIdx].items.push(link);
+    newMenu[colIdx][catIdx].items.push(trimmed);
     setSparesMenu(newMenu);
+    showToast(`Link "${trimmed}" added.`, 'success');
   };
 
   const handleDeleteMenuLink = (colIdx, catIdx, linkIdx) => {
@@ -339,6 +358,9 @@ function AdminPortal() {
   };
 
   const handleSaveAllChanges = () => {
+    localStorage.setItem('spark_spares_menu', JSON.stringify(sparesMenu));
+    localStorage.setItem('spark_spares', JSON.stringify(spares));
+    localStorage.setItem('spark_bike_brands', JSON.stringify(bikeBrands));
     localStorage.setItem('spark_last_modified', new Date().toISOString());
     window.dispatchEvent(new Event('storage'));
     showToast('All changes saved and published to site!', 'success');
@@ -531,7 +553,36 @@ function AdminPortal() {
     setEnquiries(prev => prev.map(e => e.id === id ? { ...e, resolved: !e.resolved } : e));
   };
 
-  const categories = ['Engine', 'Brakes', 'Filters', 'Controls', 'Fluids', 'Electrical', 'Drivetrain'];
+  // Derive categories dynamically from Shop By Spares Mega Menu + existing catalog inventory
+  const categories = useMemo(() => {
+    const map = new Map();
+    const addCategory = (name) => {
+      if (!name) return;
+      const trimmed = name.trim();
+      if (!trimmed || trimmed.toLowerCase() === '(spacer)') return;
+      const key = trimmed.toLowerCase();
+      if (!map.has(key)) {
+        map.set(key, trimmed);
+      }
+    };
+
+    // 1. Categories defined in Shop By Spares Mega Menu
+    (sparesMenu || []).forEach(col => {
+      (col || []).forEach(cat => {
+        addCategory(cat.title);
+      });
+    });
+
+    // 2. Categories from existing spares catalog
+    (spares || []).forEach(part => {
+      addCategory(part.category);
+    });
+
+    // 3. Fallback defaults
+    ['Engine', 'Brakes', 'Filters', 'Controls', 'Fluids', 'Electrical', 'Drivetrain'].forEach(d => addCategory(d));
+
+    return Array.from(map.values());
+  }, [sparesMenu, spares]);
 
   return (
     <>
@@ -705,7 +756,18 @@ function AdminPortal() {
                         </div>
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                           <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Category</label>
-                          <input type="text" required value={newProduct.category} onChange={(e) => setNewProduct({...newProduct, category: e.target.value})} style={{ padding: '0.5rem', border: '1px solid #eee', borderRadius: '4px' }} />
+                          <input 
+                            type="text" 
+                            list="admin-category-list" 
+                            required 
+                            placeholder="Select or enter category..." 
+                            value={newProduct.category} 
+                            onChange={(e) => setNewProduct({...newProduct, category: e.target.value})} 
+                            style={{ padding: '0.5rem', border: '1px solid #eee', borderRadius: '4px' }} 
+                          />
+                          <datalist id="admin-category-list">
+                            {(categories || []).map(cat => <option key={cat} value={cat} />)}
+                          </datalist>
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: '1rem' }}>
@@ -1095,6 +1157,32 @@ function AdminPortal() {
           >
             <Check size={18} /> Save All Changes
           </button>
+        )}
+
+        {/* Toast Notification */}
+        {toastMessage && (
+          <div
+            style={{
+              position: 'fixed',
+              bottom: '5.5rem',
+              right: '2rem',
+              zIndex: 1000,
+              background: toastMessage.type === 'error' ? 'var(--danger)' : '#111827',
+              color: '#fff',
+              padding: '0.75rem 1.25rem',
+              borderRadius: '8px',
+              fontSize: '0.88rem',
+              fontWeight: 500,
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              animation: 'fadeIn 0.2s ease-out'
+            }}
+          >
+            <Check size={16} color={toastMessage.type === 'error' ? '#fff' : '#10B981'} />
+            <span>{toastMessage.msg}</span>
+          </div>
         )}
       </main>
 

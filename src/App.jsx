@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Wrench,
   ShoppingBag,
@@ -340,6 +340,9 @@ function App() {
 
       const savedEnquiries = localStorage.getItem('spark_enquiries');
       if (savedEnquiries) setEnquiries(JSON.parse(savedEnquiries));
+
+      const savedMenu = localStorage.getItem('spark_spares_menu');
+      if (savedMenu) setSparesMenu(JSON.parse(savedMenu));
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -566,14 +569,29 @@ function App() {
   const filteredProducts = spares.filter(part => {
     const matchesSearch = part.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           part.desc.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = categoryFilter === 'All' || part.category === categoryFilter;
+    
+    let matchesCategory = true;
+    if (categoryFilter && categoryFilter !== 'All') {
+      const filterNorm = categoryFilter.trim().toLowerCase();
+      const partCatNorm = (part.category || '').trim().toLowerCase();
+
+      const exactMatch = partCatNorm === filterNorm;
+      const singularMatch = partCatNorm.replace(/s$/, '') === filterNorm.replace(/s$/, '');
+      const includesMatch = partCatNorm.includes(filterNorm) || filterNorm.includes(partCatNorm);
+      const nameMatch = (part.name || '').toLowerCase().includes(filterNorm);
+      const descMatch = (part.desc || '').toLowerCase().includes(filterNorm);
+
+      matchesCategory = exactMatch || singularMatch || includesMatch || nameMatch || descMatch;
+    }
 
     let matchesBike = true;
     if (selectedBike) {
-      matchesBike = part.compatibility && part.compatibility.includes(selectedBike);
+      matchesBike = part.compatibility && part.compatibility.some(b => b.toLowerCase() === selectedBike.toLowerCase());
     } else if (selectedBrand) {
       const brandBikes = bikeBrands[selectedBrand] || [];
-      matchesBike = part.compatibility && part.compatibility.some(bike => brandBikes.includes(bike));
+      matchesBike = part.compatibility && part.compatibility.some(bike =>
+        brandBikes.some(b => b.toLowerCase() === bike.toLowerCase())
+      );
     }
 
     return matchesSearch && matchesCategory && matchesBike;
@@ -587,7 +605,43 @@ function App() {
     return 0;
   });
 
-  const categories = ['All', 'Engine', 'Brakes', 'Filters', 'Controls', 'Fluids', 'Electrical', 'Drivetrain'];
+  // Dynamic categories computed from sparesMenu and catalog spares
+  const categories = useMemo(() => {
+    const map = new Map();
+    map.set('all', 'All');
+
+    const addCat = (name) => {
+      if (!name) return;
+      const trimmed = name.trim();
+      if (!trimmed || trimmed.toLowerCase() === '(spacer)') return;
+      const key = trimmed.toLowerCase();
+      if (!map.has(key)) {
+        map.set(key, trimmed);
+      }
+    };
+
+    // 1. Categories from Shop By Spares Mega Menu
+    (sparesMenu || []).forEach(col => {
+      (col || []).forEach(cat => {
+        addCat(cat.title);
+      });
+    });
+
+    // 2. Categories from existing spares catalog
+    (spares || []).forEach(part => {
+      addCat(part.category);
+    });
+
+    // 3. Defaults
+    ['Engine', 'Brakes', 'Filters', 'Controls', 'Fluids', 'Electrical', 'Drivetrain'].forEach(d => addCat(d));
+
+    // If currently filtered by a specific category, ensure it is in the list
+    if (categoryFilter && categoryFilter !== 'All') {
+      addCat(categoryFilter);
+    }
+
+    return Array.from(map.values());
+  }, [sparesMenu, spares, categoryFilter]);
 
   // Switch Screen logic
   const switchScreen = (tabName) => {
@@ -621,6 +675,12 @@ function App() {
         selectedBike={selectedBike}
         setSelectedBrand={setSelectedBrand}
         setSelectedBike={setSelectedBike}
+        categoryFilter={categoryFilter}
+        onSelectCategory={(cat) => {
+          setCategoryFilter(cat);
+          setSearchQuery('');
+          switchScreen('catalog');
+        }}
       />
 
       {/* Main Content */}
@@ -760,6 +820,18 @@ function App() {
                 <div className="compat-feedback">
                   <Check size={14} />
                   <span>Showing spare parts compatible with {selectedBike ? <strong>{selectedBike}</strong> : <strong>all {selectedBrand} models</strong>}</span>
+                </div>
+              )}
+              {categoryFilter !== 'All' && (
+                <div className="compat-feedback" style={{ marginTop: '0.65rem', background: 'rgba(229, 57, 53, 0.08)', borderColor: 'rgba(229, 57, 53, 0.25)', color: 'var(--accent)' }}>
+                  <ShoppingBag size={14} color="var(--accent)" />
+                  <span>Category filter: <strong>{categoryFilter}</strong></span>
+                  <button 
+                    onClick={() => setCategoryFilter('All')} 
+                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.2rem' }}
+                  >
+                    Clear Category &times;
+                  </button>
                 </div>
               )}
             </div>
