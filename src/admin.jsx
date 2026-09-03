@@ -13,7 +13,9 @@ import {
   Inbox,
   AlertCircle,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Upload,
+  Image as ImageIcon
 } from 'lucide-react';
 import './index.css';
 import zorvnsLogo from './assets/zorvns-logo.png';
@@ -407,10 +409,47 @@ function AdminPortal() {
     subCategory: '',
     price: '',
     stock: '',
-    desc: ''
+    desc: '',
+    images: []
   });
+  const [imageUrlInput, setImageUrlInput] = useState('');
   const [compatCheckboxes, setCompatCheckboxes] = useState([]);
   const [isCustomSubCat, setIsCustomSubCat] = useState(false);
+
+  // Handle local image file upload and convert to Data URL
+  const handleImageFileUpload = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        const dataUrl = uploadEvent.target.result;
+        setNewPartData(prev => ({
+          ...prev,
+          images: [...(prev.images || []), dataUrl]
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+  };
+
+  const handleAddImageUrl = () => {
+    if (!imageUrlInput.trim()) return;
+    const urls = imageUrlInput.split(',').map(u => u.trim()).filter(Boolean);
+    setNewPartData(prev => ({
+      ...prev,
+      images: [...(prev.images || []), ...urls]
+    }));
+    setImageUrlInput('');
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setNewPartData(prev => ({
+      ...prev,
+      images: (prev.images || []).filter((_, idx) => idx !== indexToRemove)
+    }));
+  };
 
   // Compute contextual subcategory suggestions strictly for the selected category
   const availableSubCategories = useMemo(() => {
@@ -486,6 +525,12 @@ function AdminPortal() {
       alert('Please select a Category first.');
       return;
     }
+
+    let finalImages = [...(newPartData.images || [])];
+    if (imageUrlInput.trim() && !finalImages.includes(imageUrlInput.trim())) {
+      finalImages.push(imageUrlInput.trim());
+    }
+
     const newPart = {
       id: Date.now(),
       name: newPartData.name,
@@ -495,11 +540,13 @@ function AdminPortal() {
       stock: parseInt(newPartData.stock),
       rating: 5.0,
       desc: newPartData.desc,
+      images: finalImages,
       compatibility: compatCheckboxes
     };
     const updated = [...spares, newPart];
     setSpares(updated);
-    setNewPartData({ name: '', category: '', subCategory: '', price: '', stock: '', desc: '' });
+    setNewPartData({ name: '', category: '', subCategory: '', price: '', stock: '', desc: '', images: [] });
+    setImageUrlInput('');
     setIsCustomSubCat(false);
     setCompatCheckboxes([]);
     showToast(`Added ${newPart.name} to inventory!`, 'success');
@@ -717,7 +764,22 @@ function AdminPortal() {
                       <tbody>
                         {(spares || []).map(part => (
                           <tr key={part.id} style={styles.tr}>
-                            <td style={{ ...styles.td, fontWeight: 'bold' }}>{part.name}</td>
+                            <td style={{ ...styles.td, fontWeight: 'bold' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                                {part.images && part.images.length > 0 ? (
+                                  <img 
+                                    src={part.images[0]} 
+                                    alt={part.name} 
+                                    style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'contain', background: '#F9FAFB', border: '1px solid var(--border)', flexShrink: 0 }} 
+                                  />
+                                ) : (
+                                  <div style={{ width: '36px', height: '36px', borderRadius: '6px', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                    <Package size={16} color="var(--text-muted)" />
+                                  </div>
+                                )}
+                                <span>{part.name}</span>
+                              </div>
+                            </td>
                             <td style={styles.td}>{part.category}</td>
                             <td style={styles.td}>
                               <input 
@@ -867,6 +929,104 @@ function AdminPortal() {
                           onChange={(e) => setNewPartData({...newPartData, name: e.target.value})}
                         />
                       </div>
+                    </div>
+
+                    {/* Step 4: Product Image(s) */}
+                    <div style={styles.formGroup}>
+                      <label style={styles.formLabel}>Product Image(s)</label>
+                      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                        <label style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          padding: '0.6rem 1rem',
+                          background: 'var(--bg-main)',
+                          border: '1px solid var(--border)',
+                          borderRadius: 'var(--radius-md)',
+                          cursor: 'pointer',
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          color: 'var(--text-main)',
+                          transition: 'background 0.2s ease'
+                        }}>
+                          <Upload size={16} color="var(--accent)" />
+                          <span>Upload File</span>
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            multiple 
+                            onChange={handleImageFileUpload} 
+                            style={{ display: 'none' }} 
+                          />
+                        </label>
+
+                        <div style={{ display: 'flex', flex: 1, minWidth: '240px', gap: '0.5rem' }}>
+                          <input 
+                            type="text"
+                            placeholder="Or paste image URL (https://...)"
+                            value={imageUrlInput}
+                            onChange={(e) => setImageUrlInput(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddImageUrl(); } }}
+                          />
+                          <button 
+                            type="button" 
+                            onClick={handleAddImageUrl}
+                            className="btn-secondary"
+                            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', whiteSpace: 'nowrap' }}
+                          >
+                            Add URL
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Image Preview List */}
+                      {newPartData.images && newPartData.images.length > 0 && (
+                        <div style={{ display: 'flex', gap: '0.65rem', marginTop: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                          {newPartData.images.map((imgUrl, imgIdx) => (
+                            <div 
+                              key={imgIdx} 
+                              style={{ 
+                                position: 'relative', 
+                                width: '64px', 
+                                height: '64px', 
+                                borderRadius: '8px', 
+                                overflow: 'hidden', 
+                                border: '1px solid var(--border)',
+                                background: '#F9FAFB'
+                              }}
+                            >
+                              <img 
+                                src={imgUrl} 
+                                alt={`Part ${imgIdx + 1}`} 
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveImage(imgIdx)}
+                                style={{
+                                  position: 'absolute',
+                                  top: '2px',
+                                  right: '2px',
+                                  background: 'rgba(239, 68, 68, 0.9)',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '50%',
+                                  width: '18px',
+                                  height: '18px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'pointer',
+                                  padding: 0
+                                }}
+                                title="Remove image"
+                              >
+                                <X size={11} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div style={styles.formRow}>
