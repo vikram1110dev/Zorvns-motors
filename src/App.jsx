@@ -30,6 +30,7 @@ import CartDrawer from './components/CartDrawer';
 import WishlistModal from './components/WishlistModal';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
 const INITIAL_SPARES_MENU = [
@@ -512,39 +513,40 @@ function App() {
     return Array.from(map.values());
   }, [sparesMenu, spares, categoryFilter]);
 
-  // Contextual subcategories available for filter pills
+  // Contextual subcategories available for filter pills (strictly for the selected category)
   const availableSubCategoriesForFilter = useMemo(() => {
-    const set = new Set();
+    // Only show subcategories after a category has been selected first!
+    if (!categoryFilter || categoryFilter === 'All') return [];
 
-    // 1. From spares in catalog
+    const set = new Set();
+    const catNorm = categoryFilter.trim().toLowerCase();
+
+    // 1. Direct match from CATEGORY_SUBCATEGORIES_MAP
+    for (const [catName, subs] of Object.entries(CATEGORY_SUBCATEGORIES_MAP || {})) {
+      if (catName.toLowerCase() === catNorm || catNorm.includes(catName.toLowerCase()) || catName.toLowerCase().includes(catNorm)) {
+        subs.forEach(s => set.add(s));
+      }
+    }
+
+    // 2. Only spares in catalog belonging to this category
     (spares || []).forEach(p => {
-      if (p.subCategory && p.subCategory.trim()) {
-        if (categoryFilter === 'All' || !categoryFilter) {
-          set.add(p.subCategory.trim());
-        } else {
-          const catNorm = categoryFilter.toLowerCase().trim();
-          const pCatNorm = (p.category || '').toLowerCase().trim();
-          if (pCatNorm === catNorm || pCatNorm.includes(catNorm) || catNorm.includes(pCatNorm)) {
-            set.add(p.subCategory.trim());
-          }
-        }
+      const pCat = (p.category || '').trim().toLowerCase();
+      if ((pCat === catNorm || pCat.includes(catNorm) || catNorm.includes(pCat)) && p.subCategory && p.subCategory.trim()) {
+        set.add(p.subCategory.trim());
       }
     });
 
-    // 2. From sparesMenu if category matches block title
-    if (categoryFilter !== 'All') {
-      const catNorm = categoryFilter.toLowerCase().trim();
-      (sparesMenu || []).forEach(col => {
-        (col || []).forEach(block => {
-          const blockTitle = (block.title || '').toLowerCase().trim();
-          if (blockTitle && (blockTitle === catNorm || blockTitle.includes(catNorm) || catNorm.includes(blockTitle))) {
-            (block.items || []).forEach(it => {
-              if (it && it.trim()) set.add(it.trim());
-            });
-          }
-        });
+    // 3. Only matching blocks in sparesMenu
+    (sparesMenu || []).forEach(col => {
+      (col || []).forEach(block => {
+        const blockTitle = (block.title || '').toLowerCase().trim();
+        if (blockTitle && (blockTitle === catNorm || blockTitle.includes(catNorm) || catNorm.includes(blockTitle))) {
+          (block.items || []).forEach(it => {
+            if (it && it.trim()) set.add(it.trim());
+          });
+        }
       });
-    }
+    });
 
     return Array.from(set);
   }, [spares, sparesMenu, categoryFilter]);

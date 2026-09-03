@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import './index.css';
 import zorvnsLogo from './assets/zorvns-logo.png';
+import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
 const INITIAL_SPARES_MENU = [
@@ -402,57 +403,70 @@ function AdminPortal() {
   // Admin New Part Form State
   const [newPartData, setNewPartData] = useState({
     name: '',
-    category: 'Engine',
+    category: '', // Start empty so user must select category first
     subCategory: '',
     price: '',
     stock: '',
     desc: ''
   });
   const [compatCheckboxes, setCompatCheckboxes] = useState([]);
+  const [isCustomSubCat, setIsCustomSubCat] = useState(false);
 
-  // Compute contextual subcategory suggestions for current category and all known subcategories
+  // Compute contextual subcategory suggestions strictly for the selected category
   const availableSubCategories = useMemo(() => {
+    if (!newPartData.category) return [];
+
     const set = new Set();
+    const catNorm = newPartData.category.trim().toLowerCase();
 
-    const defaultCategorySubMap = {
-      'Engine': ['Spark plug', 'Piston', 'Cylinder Head', 'Gasket', 'Camshaft', 'Valves', 'Carburetor', 'Oil filter'],
-      'Brakes': ['Brake Pads', 'Brake shoe', 'Disc plate', 'Master cylinder', 'Brake pedal', 'Brake lines', 'Brake housing', 'Brake cable'],
-      'Filters': ['Air Filter', 'Oil filter', 'Fuel Filter', 'Cabin Filter'],
-      'Controls': ['Levers', 'Gear pedal', 'Footrest', 'Footrest bracket', 'Throttle cable', 'Clutch cable', 'Handlebar', 'Mirrors', 'Control switch'],
-      'Fluids': ['Engine Oil', 'Brake Fluid', 'Chain lube', 'Fork oil', 'Coolant', 'Chain maintenance'],
-      'Electrical': ['Battery', 'Spark plug', 'Headlamp', 'Indicators', 'Regulator rectifier', 'Speedometer', 'Horn', 'Turn Signals'],
-      'Drivetrain': ['Regular chain sprocket', 'Chain', 'Chain maintenance', 'Clutch plate', 'Clutch assembly', 'Clutch shoe', 'CVT belt'],
-      'Fork parts': ['Fork oil seal', 'Shock absorber'],
-      'Swingarm parts': ['Swingarm bush kit'],
-      'Lighting': ['Headlamp', 'Indicators'],
-      'Body parts': ['Visor', 'Front shield', 'Mudguard', 'Fairings'],
-      'Gear system': ['Gear pedal'],
-      'Foot control': ['Footrest', 'Footrest bracket'],
-      'Fuel': ['Fuel pump assembly', 'Fuel cock']
-    };
-
-    if (newPartData.category && defaultCategorySubMap[newPartData.category]) {
-      defaultCategorySubMap[newPartData.category].forEach(s => set.add(s));
+    // 1. Direct match in CATEGORY_SUBCATEGORIES_MAP
+    for (const [catName, subs] of Object.entries(CATEGORY_SUBCATEGORIES_MAP)) {
+      if (catName.toLowerCase() === catNorm || catNorm.includes(catName.toLowerCase()) || catName.toLowerCase().includes(catNorm)) {
+        subs.forEach(s => set.add(s));
+      }
     }
 
+    // 2. Only matching blocks from sparesMenu
     (sparesMenu || []).forEach(col => {
       (col || []).forEach(block => {
-        if (block.items) {
-          block.items.forEach(it => {
+        const blockTitle = (block.title || '').trim().toLowerCase();
+        if (blockTitle && (blockTitle === catNorm || blockTitle.includes(catNorm) || catNorm.includes(blockTitle))) {
+          (block.items || []).forEach(it => {
             if (it && it.trim()) set.add(it.trim());
           });
         }
       });
     });
 
+    // 3. Only existing spares in catalog that belong to THIS category
     (spares || []).forEach(p => {
-      if (p.subCategory && p.subCategory.trim()) {
+      const pCat = (p.category || '').trim().toLowerCase();
+      if ((pCat === catNorm || pCat.includes(catNorm) || catNorm.includes(pCat)) && p.subCategory && p.subCategory.trim()) {
         set.add(p.subCategory.trim());
       }
     });
 
     return Array.from(set);
   }, [newPartData.category, sparesMenu, spares]);
+
+  const handleCategoryChange = (cat) => {
+    setNewPartData(prev => ({
+      ...prev,
+      category: cat,
+      subCategory: '' // reset subCategory when category changes
+    }));
+    setIsCustomSubCat(false);
+  };
+
+  const handleSubCategorySelect = (val) => {
+    if (val === '__custom__') {
+      setIsCustomSubCat(true);
+      setNewPartData(prev => ({ ...prev, subCategory: '' }));
+    } else {
+      setIsCustomSubCat(false);
+      setNewPartData(prev => ({ ...prev, subCategory: val }));
+    }
+  };
 
   // Admin login handler
   const handleAdminLogin = (e) => {
@@ -468,6 +482,10 @@ function AdminPortal() {
   // Add Part handler
   const handleAddPart = (e) => {
     e.preventDefault();
+    if (!newPartData.category) {
+      alert('Please select a Category first.');
+      return;
+    }
     const newPart = {
       id: Date.now(),
       name: newPartData.name,
@@ -481,7 +499,8 @@ function AdminPortal() {
     };
     const updated = [...spares, newPart];
     setSpares(updated);
-    setNewPartData({ name: '', category: 'Engine', subCategory: '', price: '', stock: '', desc: '' });
+    setNewPartData({ name: '', category: '', subCategory: '', price: '', stock: '', desc: '' });
+    setIsCustomSubCat(false);
     setCompatCheckboxes([]);
     showToast(`Added ${newPart.name} to inventory!`, 'success');
   };
@@ -742,69 +761,113 @@ function AdminPortal() {
                 <div className="glass-panel" style={{ padding: '2rem' }}>
                   <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', textAlign: 'left' }}>Add New Spare Part</h3>
                   <form onSubmit={handleAddPart} style={styles.adminAddForm}>
+                    {/* Step 1 & 2: Select Category First, then Select Sub Category */}
                     <div style={styles.formRow}>
-                      <div style={{ ...styles.formGroup, flex: 1.2 }}>
+                      <div style={{ ...styles.formGroup, flex: 1 }}>
+                        <label style={{ ...styles.formLabel, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span style={{ background: 'var(--accent)', color: '#fff', borderRadius: '50%', width: '18px', height: '18px', fontSize: '0.7rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>1</span>
+                          <span>Select Category First *</span>
+                        </label>
+                        <select 
+                          required
+                          value={newPartData.category}
+                          onChange={(e) => handleCategoryChange(e.target.value)}
+                          style={{
+                            borderColor: !newPartData.category ? 'var(--accent)' : 'var(--border)',
+                            background: !newPartData.category ? 'rgba(229, 57, 53, 0.03)' : '#fff'
+                          }}
+                        >
+                          <option value="">-- Choose Category First --</option>
+                          {(categories || []).map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div style={{ ...styles.formGroup, flex: 1 }}>
+                        <label style={{ ...styles.formLabel, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span style={{ background: newPartData.category ? 'var(--accent)' : 'var(--border)', color: '#fff', borderRadius: '50%', width: '18px', height: '18px', fontSize: '0.7rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>2</span>
+                          <span>Select Sub Category {newPartData.category ? `(${newPartData.category})` : ''} *</span>
+                        </label>
+                        {!newPartData.category ? (
+                          <div style={{
+                            padding: '0.75rem 1rem',
+                            border: '1px dashed var(--border)',
+                            borderRadius: 'var(--radius-md)',
+                            background: 'rgba(17, 24, 39, 0.02)',
+                            color: 'var(--text-muted)',
+                            fontSize: '0.82rem'
+                          }}>
+                            ← Select a Category first to unlock sub categories
+                          </div>
+                        ) : (
+                          <div>
+                            <select
+                              required={!isCustomSubCat}
+                              value={isCustomSubCat ? '__custom__' : newPartData.subCategory}
+                              onChange={(e) => handleSubCategorySelect(e.target.value)}
+                            >
+                              <option value="">-- Choose {newPartData.category} Sub Category --</option>
+                              {availableSubCategories.map(sub => (
+                                <option key={sub} value={sub}>{sub}</option>
+                              ))}
+                              <option value="__custom__">+ Enter Custom Sub Category</option>
+                            </select>
+
+                            {isCustomSubCat && (
+                              <input
+                                type="text"
+                                required
+                                autoFocus
+                                placeholder={`Enter custom ${newPartData.category} sub category...`}
+                                value={newPartData.subCategory}
+                                onChange={(e) => setNewPartData({ ...newPartData, subCategory: e.target.value })}
+                                style={{ marginTop: '0.4rem' }}
+                              />
+                            )}
+
+                            {availableSubCategories.length > 0 && !isCustomSubCat && (
+                              <div style={{ marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Quick pick:</span>
+                                {availableSubCategories.slice(0, 6).map(sub => (
+                                  <button
+                                    key={sub}
+                                    type="button"
+                                    onClick={() => handleSubCategorySelect(sub)}
+                                    style={{
+                                      border: newPartData.subCategory === sub ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                      background: newPartData.subCategory === sub ? 'var(--accent)' : '#fff',
+                                      color: newPartData.subCategory === sub ? '#fff' : 'var(--text-main)',
+                                      padding: '0.15rem 0.5rem',
+                                      borderRadius: '4px',
+                                      fontSize: '0.72rem',
+                                      cursor: 'pointer',
+                                      fontWeight: newPartData.subCategory === sub ? '700' : 'normal'
+                                    }}
+                                  >
+                                    {sub}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Step 3: Part Name */}
+                    <div style={styles.formRow}>
+                      <div style={styles.formGroup}>
                         <label style={styles.formLabel}>Part Name</label>
                         <input 
                           type="text" 
                           required 
-                          placeholder="e.g. Ohlins Rear Shock"
+                          placeholder="e.g. Ohlins Rear Shock or Brembo Caliper"
                           value={newPartData.name}
                           onChange={(e) => setNewPartData({...newPartData, name: e.target.value})}
                         />
                       </div>
-                      <div style={{ ...styles.formGroup, flex: 0.9 }}>
-                        <label style={styles.formLabel}>Category</label>
-                        <select 
-                          value={newPartData.category}
-                          onChange={(e) => setNewPartData({...newPartData, category: e.target.value})}
-                        >
-                          {(categories || []).map(cat => (
-                            <option key={cat}>{cat}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div style={{ ...styles.formGroup, flex: 0.9 }}>
-                        <label style={styles.formLabel}>Sub Category</label>
-                        <input 
-                          type="text"
-                          list="admin-subcat-list"
-                          placeholder="Select or enter..."
-                          value={newPartData.subCategory}
-                          onChange={(e) => setNewPartData({...newPartData, subCategory: e.target.value})}
-                        />
-                        <datalist id="admin-subcat-list">
-                          {availableSubCategories.map(sub => (
-                            <option key={sub} value={sub} />
-                          ))}
-                        </datalist>
-                      </div>
                     </div>
-
-                    {availableSubCategories.length > 0 && (
-                      <div style={{ marginTop: '-0.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Quick Subcategory:</span>
-                        {availableSubCategories.slice(0, 8).map(sub => (
-                          <button
-                            key={sub}
-                            type="button"
-                            onClick={() => setNewPartData({ ...newPartData, subCategory: sub })}
-                            style={{
-                              border: newPartData.subCategory === sub ? '1px solid var(--accent)' : '1px solid var(--border)',
-                              background: newPartData.subCategory === sub ? 'var(--accent)' : '#fff',
-                              color: newPartData.subCategory === sub ? '#fff' : 'var(--text-main)',
-                              padding: '0.2rem 0.55rem',
-                              borderRadius: '4px',
-                              fontSize: '0.72rem',
-                              cursor: 'pointer',
-                              fontWeight: newPartData.subCategory === sub ? '600' : 'normal'
-                            }}
-                          >
-                            {sub}
-                          </button>
-                        ))}
-                      </div>
-                    )}
 
                     <div style={styles.formRow}>
                       <div style={styles.formGroup}>
@@ -1439,8 +1502,11 @@ const styles = {
   }
 };
 
-createRoot(document.getElementById('admin-root')).render(
-  <StrictMode>
-    <AdminPortal />
-  </StrictMode>
-);
+const adminRoot = document.getElementById('admin-root');
+if (adminRoot) {
+  createRoot(adminRoot).render(
+    <StrictMode>
+      <AdminPortal />
+    </StrictMode>
+  );
+}
