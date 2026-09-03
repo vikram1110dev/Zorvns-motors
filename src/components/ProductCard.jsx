@@ -50,7 +50,7 @@ export default function ProductCard({ part, onViewProduct, onAddToCart, onToggle
 
         <div className="product-card-footer">
           <div>
-            <span className="product-price">₹{part.price.toFixed(2)}</span>
+            <span className="product-price">₹{Math.round(part.price).toLocaleString('en-IN')}</span>
             <span className="product-stock">In Stock: {part.stock}</span>
           </div>
           <div className="product-card-actions">

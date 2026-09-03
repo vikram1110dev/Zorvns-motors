@@ -329,13 +329,13 @@ export default function Header({
               )}
             </div>
 
-            <button className="nav-link-btn">Wholesale Price</button>
-            <button className="nav-link-btn">Faq</button>
+            <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Wholesale Price</button>
+            <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Faq</button>
             <button onClick={() => handleNavClick('contact')} className="nav-link-btn">Contact Us</button>
-            <button className="nav-link-btn">Blog</button>
+            <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Blog</button>
             <button onClick={() => handleNavClick('wishlist')} className="nav-link-btn">Wishlist</button>
-            <button className="nav-link-btn">Return & Replacement</button>
-            <button className="nav-link-btn">Brand Directory</button>
+            <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Return & Replacement</button>
+            <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Brand Directory</button>
           </nav>
         </div>
       </div>
@@ -358,14 +358,14 @@ export default function Header({
               <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Shop By Spares</button>
               <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Shop By Accessories</button>
               <div className="mobile-menu-divider" />
-              <button className="mobile-menu-link">Wholesale Price</button>
-              <button className="mobile-menu-link">Faq</button>
+              <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Wholesale Price</button>
+              <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Faq</button>
               <button className="mobile-menu-link" onClick={() => handleNavClick('contact')}>Contact Us</button>
               <button className="mobile-menu-link" onClick={() => handleNavClick('wishlist')}>Wishlist</button>
               <div className="mobile-menu-divider" />
-              <button className="mobile-menu-link">Blog</button>
-              <button className="mobile-menu-link">Return & Replacement</button>
-              <button className="mobile-menu-link">Brand Directory</button>
+              <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Blog</button>
+              <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Return & Replacement</button>
+              <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Brand Directory</button>
             </div>
           </div>
         </>

@@ -3,10 +3,6 @@ import {
   ShoppingBag,
   Search,
   AlertCircle,
-  Plus,
-  Minus,
-  Trash2,
-  X,
   Check,
   Phone,
   MapPin,
@@ -270,12 +266,6 @@ function App() {
   const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedBike, setSelectedBike] = useState('');
 
-  // Sidebar Filter States
-  const [filterCategories, setFilterCategories] = useState([]);
-  const [filterVehicleConfigs, setFilterVehicleConfigs] = useState([]);
-  const [filterAvailability, setFilterAvailability] = useState([]);
-  const [filterPriceRange, setFilterPriceRange] = useState({ min: '', max: '' });
-
   // Keep local states synchronized with changes made in other tabs (Admin panel)
   useEffect(() => {
     const handleStorageChange = () => {
@@ -290,7 +280,7 @@ function App() {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    const interval = setInterval(handleStorageChange, 1500);
+    const interval = setInterval(handleStorageChange, 5000);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
@@ -310,8 +300,6 @@ function App() {
   // Toast Notification State
   const [toasts, setToasts] = useState([]);
   const toastIdRef = useRef(0);
-  const cartPulseKeyRef = useRef(0);
-  const [cartPulseKey, setCartPulseKey] = useState(0);
 
   const showToast = (message, type = 'info') => {
     const id = ++toastIdRef.current;
@@ -363,7 +351,6 @@ function App() {
       }
       return [...prevCart, { ...part, qty: 1 }];
     });
-    setCartPulseKey(k => k + 1);
   };
 
   const updateQty = (id, change) => {
@@ -415,7 +402,7 @@ function App() {
 
   // Checkout simulation
   const handleCheckout = () => {
-    showToast(`🎉 Order placed! Total ₹${totalCartPrice.toFixed(2)} — Thank you!`, 'success');
+    showToast(`🎉 Order placed! Total ₹${Math.round(totalCartPrice).toLocaleString('en-IN')} — Thank you!`, 'success');
     setCart([]);
     setIsCartOpen(false);
   };
@@ -555,6 +542,7 @@ function App() {
   const switchScreen = (tabName) => {
     setActiveTab(tabName);
     setHoveredMenu(null);
+    if (tabName !== 'product') setSelectedProduct(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -835,7 +823,7 @@ function App() {
 
         {/* ═══ PRODUCT DETAIL SCREEN ═══ */}
         {activeTab === 'product' && selectedProduct && (
-          <section className="animate-fade-in-up" style={{ maxWidth: '1100px', margin: '0 auto', paddingTop: '1rem' }}>
+          <section className="animate-fade-in-up" style={{ maxWidth: '1100px', margin: '0 auto', paddingTop: '1.5rem' }}>
             <button
               onClick={() => { switchScreen('catalog'); setSelectedProduct(null); }}
               style={{ background: 'none', border: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1.5rem', fontSize: '0.9rem', fontWeight: 500 }}
@@ -878,7 +866,7 @@ function App() {
                     </span>
                   </div>
                   <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--accent)' }}>
-                    ₹{selectedProduct.price.toFixed(2)}
+                    ₹{Math.round(selectedProduct.price).toLocaleString('en-IN')}
                   </h2>
                 </div>
 

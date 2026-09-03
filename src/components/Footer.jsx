@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Phone, MapPin, Globe, MessageCircle } from 'lucide-react';
+import { Clock, Phone, MapPin } from 'lucide-react';
 
 // Simple inline SVG social icons (lucide removed brand icons)
 const InstagramIcon = (props) => (

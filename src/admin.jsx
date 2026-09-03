@@ -14,8 +14,7 @@ import {
   AlertCircle,
   ChevronUp,
   ChevronDown,
-  Upload,
-  Image as ImageIcon
+  Upload
 } from 'lucide-react';
 import './index.css';
 import zorvnsLogo from './assets/zorvns-logo.png';
