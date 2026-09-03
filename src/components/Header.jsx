@@ -18,6 +18,8 @@ export default function Header({
   brandOrder,
   activeMegaMenuBrand,
   setActiveMegaMenuBrand,
+  selectedBrand,
+  selectedBike,
   setSelectedBrand,
   setSelectedBike,
 }) {
@@ -83,55 +85,127 @@ export default function Header({
 
             {/* Shop By Bike dropdown */}
             <div className="nav-dropdown-wrapper" onMouseEnter={() => setHoveredMenu('bike')}>
-              <button className="nav-dropdown-btn">Shop By Bike <ChevronDown size={13} /></button>
+              <button
+                className={`nav-dropdown-btn ${hoveredMenu === 'bike' ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setHoveredMenu(hoveredMenu === 'bike' ? null : 'bike');
+                }}
+              >
+                Shop By Bike <ChevronDown size={13} />
+              </button>
               {hoveredMenu === 'bike' && (
-                <div className="mega-menu">
+                <div className="mega-menu" onClick={(e) => e.stopPropagation()}>
                   <div className="app-container" style={{ display: 'flex', gap: '2rem', textAlign: 'left' }}>
                     {/* Left: Brands Grid */}
-                    <div style={{ flex: '0 0 520px', borderRight: '1px solid var(--border)', paddingRight: '1rem', maxHeight: '380px', overflowY: 'auto' }}>
-                      <h4 className="mega-menu-heading" style={{ marginBottom: '0.75rem' }}>Select Brand</h4>
+                    <div style={{ flex: '0 0 520px', borderRight: '1px solid var(--border)', paddingRight: '1.25rem', maxHeight: '390px', overflowY: 'auto' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                        <h4 className="mega-menu-heading" style={{ margin: 0 }}>Select Brand</h4>
+                        <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Click brand to view models</span>
+                      </div>
                       <div className="brand-grid">
-                        {(brandOrder || []).filter(b => bikeBrands && bikeBrands[b]).map((brand) => (
-                          <div
-                            key={brand}
-                            className={`brand-card ${activeMegaMenuBrand === brand ? 'active' : ''}`}
-                            onMouseEnter={() => setActiveMegaMenuBrand(brand)}
-                          >
-                            {brandLogos[brand] ? (
-                              <img src={brandLogos[brand]} alt={brand} style={{ width: '32px', height: '32px', objectFit: 'contain', opacity: activeMegaMenuBrand === brand ? 1 : 0.6 }} />
-                            ) : (
-                              <div className="brand-icon">{brand.substring(0, 2).toUpperCase()}</div>
-                            )}
-                            <span className="brand-name">{brand}</span>
-                          </div>
-                        ))}
+                        {(brandOrder || []).filter(b => bikeBrands && bikeBrands[b]).map((brand) => {
+                          const isCurrentActive = (activeMegaMenuBrand || selectedBrand) === brand;
+                          return (
+                            <button
+                              key={brand}
+                              type="button"
+                              className={`brand-card ${isCurrentActive ? 'active' : ''}`}
+                              onClick={() => setActiveMegaMenuBrand(brand)}
+                              title={`Click to view ${brand} models`}
+                            >
+                              {brandLogos[brand] ? (
+                                <img
+                                  src={brandLogos[brand]}
+                                  alt={brand}
+                                  style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    objectFit: 'contain',
+                                    opacity: isCurrentActive ? 1 : 0.75,
+                                    transition: 'opacity 0.2s ease'
+                                  }}
+                                />
+                              ) : (
+                                <div className="brand-icon">{brand.substring(0, 2).toUpperCase()}</div>
+                              )}
+                              <span className="brand-name">{brand}</span>
+                              {isCurrentActive && (
+                                <span className="brand-active-indicator" title="Selected brand">
+                                  ✓
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
 
                     {/* Right: Models */}
-                    <div style={{ flex: 1, paddingLeft: '0.5rem', maxHeight: '380px', overflowY: 'auto' }}>
-                      <h4 className="mega-menu-heading" style={{ marginBottom: '0.75rem' }}>
-                        {activeMegaMenuBrand ? `Models for ${activeMegaMenuBrand}` : 'Select a brand'}
-                      </h4>
-                      {activeMegaMenuBrand && bikeBrands[activeMegaMenuBrand] && (
-                        <div className="model-grid">
-                          {bikeBrands[activeMegaMenuBrand].map((model, idx) => (
-                            <a
-                              key={idx}
-                              href="#"
-                              className="model-link"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setSelectedBrand(activeMegaMenuBrand);
-                                setSelectedBike(model);
-                                handleNavClick('catalog');
-                              }}
-                            >
-                              {model}
-                            </a>
-                          ))}
-                        </div>
-                      )}
+                    <div style={{ flex: 1, paddingLeft: '0.5rem', maxHeight: '390px', overflowY: 'auto' }}>
+                      {(() => {
+                        const effectiveBrand = activeMegaMenuBrand || selectedBrand || (brandOrder && brandOrder[0]);
+                        const models = effectiveBrand && bikeBrands ? bikeBrands[effectiveBrand] : [];
+                        return (
+                          <>
+                            <div className="mega-menu-models-header">
+                              <div>
+                                <h4 className="mega-menu-heading" style={{ margin: 0 }}>
+                                  {effectiveBrand ? `Models for ${effectiveBrand}` : 'Select a brand'}
+                                </h4>
+                                {effectiveBrand && models && (
+                                  <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                                    {models.length} {models.length === 1 ? 'model' : 'models'} available
+                                  </span>
+                                )}
+                              </div>
+                              {effectiveBrand && (
+                                <button
+                                  type="button"
+                                  className="view-all-brand-btn"
+                                  onClick={() => {
+                                    setSelectedBrand(effectiveBrand);
+                                    setSelectedBike('');
+                                    setHoveredMenu(null);
+                                    handleNavClick('catalog');
+                                  }}
+                                  title={`View all parts compatible with ${effectiveBrand}`}
+                                >
+                                  View All {effectiveBrand} Spares &rarr;
+                                </button>
+                              )}
+                            </div>
+
+                            {effectiveBrand && models && models.length > 0 ? (
+                              <div className="model-grid">
+                                {models.map((model, idx) => {
+                                  const isSelectedBike = selectedBike === model && selectedBrand === effectiveBrand;
+                                  return (
+                                    <button
+                                      key={idx}
+                                      type="button"
+                                      className={`model-link-btn ${isSelectedBike ? 'active' : ''}`}
+                                      onClick={() => {
+                                        setSelectedBrand(effectiveBrand);
+                                        setSelectedBike(model);
+                                        setHoveredMenu(null);
+                                        handleNavClick('catalog');
+                                      }}
+                                    >
+                                      <span className="model-link-text">{model}</span>
+                                      <span className="model-link-icon">&rarr;</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              <div style={{ padding: '2.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                                Click any brand on the left to browse compatible bike models.
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -140,9 +214,17 @@ export default function Header({
 
             {/* Shop By Spares dropdown */}
             <div className="nav-dropdown-wrapper" onMouseEnter={() => setHoveredMenu('spares')}>
-              <button className="nav-dropdown-btn">Shop By Spares <ChevronDown size={13} /></button>
+              <button
+                className={`nav-dropdown-btn ${hoveredMenu === 'spares' ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setHoveredMenu(hoveredMenu === 'spares' ? null : 'spares');
+                }}
+              >
+                Shop By Spares <ChevronDown size={13} />
+              </button>
               {hoveredMenu === 'spares' && (
-                <div className="mega-menu">
+                <div className="mega-menu" onClick={(e) => e.stopPropagation()}>
                   <div className="app-container mega-menu-grid">
                     {(sparesMenu || []).map((col, colIdx) => (
                       <div key={colIdx} className="mega-menu-column">
@@ -164,9 +246,17 @@ export default function Header({
 
             {/* Shop By Accessories dropdown */}
             <div className="nav-dropdown-wrapper" onMouseEnter={() => setHoveredMenu('accessories')}>
-              <button className="nav-dropdown-btn">Shop By Accessories <ChevronDown size={13} /></button>
+              <button
+                className={`nav-dropdown-btn ${hoveredMenu === 'accessories' ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setHoveredMenu(hoveredMenu === 'accessories' ? null : 'accessories');
+                }}
+              >
+                Shop By Accessories <ChevronDown size={13} />
+              </button>
               {hoveredMenu === 'accessories' && (
-                <div className="mega-menu">
+                <div className="mega-menu" onClick={(e) => e.stopPropagation()}>
                   <div className="app-container mega-menu-grid">
                     <div className="mega-menu-column">
                       <h4 className="mega-menu-heading">Riding Gear</h4>

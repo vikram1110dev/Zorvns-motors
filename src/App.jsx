@@ -617,6 +617,8 @@ function App() {
         brandOrder={brandOrder}
         activeMegaMenuBrand={activeMegaMenuBrand}
         setActiveMegaMenuBrand={setActiveMegaMenuBrand}
+        selectedBrand={selectedBrand}
+        selectedBike={selectedBike}
         setSelectedBrand={setSelectedBrand}
         setSelectedBike={setSelectedBike}
       />
