@@ -27,6 +27,7 @@ import WishlistModal from './components/WishlistModal';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollReveal from './components/ScrollReveal';
+import SkeletonCard from './components/SkeletonCard';
 import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
@@ -539,12 +540,19 @@ function App() {
     return Array.from(set);
   }, [spares, sparesMenu, categoryFilter]);
 
+  // Page transition state
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   // Switch Screen logic
   const switchScreen = (tabName) => {
-    setActiveTab(tabName);
+    setIsTransitioning(true);
     setHoveredMenu(null);
     if (tabName !== 'product') setSelectedProduct(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      setActiveTab(tabName);
+      setIsTransitioning(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 200);
   };
 
   return (
@@ -593,10 +601,17 @@ function App() {
       />
 
       {/* Main Content */}
-      <main className="app-container main-content" style={{ padding: '1.5rem' }}>
+      <main className={`app-container main-content ${isTransitioning ? 'page-transition-exit' : 'page-transition-enter'}`} style={{ padding: '1.5rem' }}>
+
+        {/* Skeleton Loading during transition */}
+        {isTransitioning && (
+          <div className="products-grid" style={{ paddingTop: '2rem' }}>
+            {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
+          </div>
+        )}
 
         {/* ═══ HOME SCREEN ═══ */}
-        {activeTab === 'home' && (
+        {!isTransitioning && activeTab === 'home' && (
           <div className="animate-fade-in-up" style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem', width: '100vw', marginLeft: 'calc(-50vw + 50%)', overflowX: 'hidden' }}>
 
             {/* Hero */}
@@ -657,7 +672,7 @@ function App() {
         )}
 
         {/* ═══ CATALOG SCREEN ═══ */}
-        {activeTab === 'catalog' && (
+        {!isTransitioning && activeTab === 'catalog' && (
           <section className="animate-fade-in-up" style={{ paddingTop: '1rem', marginBottom: '2rem' }}>
             <div className="section-header">
               <span className="section-subtitle">ZORVNS STORE</span>
@@ -834,7 +849,7 @@ function App() {
         )}
 
         {/* ═══ PRODUCT DETAIL SCREEN ═══ */}
-        {activeTab === 'product' && selectedProduct && (
+        {!isTransitioning && activeTab === 'product' && selectedProduct && (
           <section className="animate-fade-in-up" style={{ maxWidth: '1100px', margin: '0 auto', paddingTop: '1.5rem' }}>
             <button
               onClick={() => { switchScreen('catalog'); setSelectedProduct(null); }}
@@ -927,7 +942,7 @@ function App() {
 
 
         {/* ═══ CONTACT SCREEN ═══ */}
-        {activeTab === 'contact' && (
+        {!isTransitioning && activeTab === 'contact' && (
           <section className="animate-fade-in-up" style={{ maxWidth: '880px', margin: '0 auto', paddingTop: '1rem' }}>
             <div className="section-header">
               <span className="section-subtitle">CONTACT US</span>
@@ -1025,7 +1040,7 @@ function App() {
       <Footer zorvnsLogo={zorvnsLogo} onSwitchScreen={switchScreen} />
 
       {/* Wishlist Modal */}
-      {activeTab === 'wishlist' && (
+      {!isTransitioning && activeTab === 'wishlist' && (
         <WishlistModal
           wishlist={wishlist}
           onClose={() => switchScreen('catalog')}
