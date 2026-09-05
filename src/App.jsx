@@ -567,6 +567,7 @@ function App() {
       {/* Header Component */}
       <Header
         zorvnsLogo={zorvnsLogo}
+        activeTab={activeTab}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         cart={cart}

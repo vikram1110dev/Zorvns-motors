@@ -232,6 +232,17 @@
   transform: translateX(-50%) scaleX(1);
 }
 
+/* Active nav indicator */
+.nav-link-btn.nav-active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-link-btn.nav-active::after {
+  transform: translateX(-50%) scaleX(1);
+  background: var(--accent);
+}
+
 .nav-dropdown-btn {
   background: none;
   border: none;
@@ -1212,21 +1223,51 @@
   background: rgba(229, 57, 53, 0.08);
 }
 
+/* Shimmer sweep effect */
+.promo-banner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 30%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 70%,
+    transparent 100%
+  );
+  animation: promoShimmer 4s ease-in-out infinite;
+}
+
+@keyframes promoShimmer {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
 .promo-banner h3 {
   color: #fff;
   font-size: 1.35rem;
   margin-bottom: 0.5rem;
   position: relative;
+  z-index: 1;
 }
 
 .promo-banner p {
   color: rgba(255, 255, 255, 0.7);
   position: relative;
+  z-index: 1;
 }
 
 .promo-code {
   color: var(--accent);
   font-weight: 700;
+  background: rgba(229, 57, 53, 0.15);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(229, 57, 53, 0.25);
 }
 
 /* ─── Brands Grid ─── */

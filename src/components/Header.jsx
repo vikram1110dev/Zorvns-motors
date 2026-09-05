@@ -3,6 +3,7 @@ import { Search, User, ShoppingBag, ChevronDown, X, Menu } from 'lucide-react';
 
 export default function Header({
   zorvnsLogo,
+  activeTab,
   searchQuery,
   onSearchChange,
   cart,
@@ -81,8 +82,8 @@ export default function Header({
       <div className="header-bottom">
         <div className="app-container header-bottom-inner">
           <nav className="bottom-nav-scroll">
-            <button onClick={() => handleNavClick('home')} className="nav-link-btn">Home</button>
-            <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">All Collections</button>
+            <button onClick={() => handleNavClick('home')} className={`nav-link-btn ${activeTab === 'home' ? 'nav-active' : ''}`}>Home</button>
+            <button onClick={() => handleNavClick('catalog')} className={`nav-link-btn ${activeTab === 'catalog' ? 'nav-active' : ''}`}>All Collections</button>
 
             {/* Shop By Bike dropdown */}
             <div className="nav-dropdown-wrapper" onMouseEnter={() => setHoveredMenu('bike')}>
@@ -331,9 +332,9 @@ export default function Header({
 
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Wholesale Price</button>
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Faq</button>
-            <button onClick={() => handleNavClick('contact')} className="nav-link-btn">Contact Us</button>
+            <button onClick={() => handleNavClick('contact')} className={`nav-link-btn ${activeTab === 'contact' ? 'nav-active' : ''}`}>Contact Us</button>
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Blog</button>
-            <button onClick={() => handleNavClick('wishlist')} className="nav-link-btn">Wishlist</button>
+            <button onClick={() => handleNavClick('wishlist')} className={`nav-link-btn ${activeTab === 'wishlist' ? 'nav-active' : ''}`}>Wishlist</button>
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Return & Replacement</button>
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Brand Directory</button>
           </nav>
