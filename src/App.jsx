@@ -26,6 +26,7 @@ import CartDrawer from './components/CartDrawer';
 import WishlistModal from './components/WishlistModal';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ScrollReveal from './components/ScrollReveal';
 import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
@@ -602,45 +603,56 @@ function App() {
             <HeroSection heroImage={heroImg} onShopNow={() => switchScreen('catalog')} />
 
             {/* Shop by Category */}
-            <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
-              <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Shop By Category</h2>
-              <CategoryGrid onCategoryClick={() => switchScreen('catalog')} />
-            </div>
+            <ScrollReveal>
+              <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
+                <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Shop By Category</h2>
+                <CategoryGrid onCategoryClick={() => switchScreen('catalog')} />
+              </div>
+            </ScrollReveal>
 
             {/* Promo Banner */}
-            <div className="app-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
-              <div className="promo-banner">
-                <h3>FREE SHIPPING ON ORDERS OVER ₹4,999!</h3>
-                <p>Use code <span className="promo-code">FREERIDE</span> at checkout. Valid until end of month.</p>
+            <ScrollReveal delay={100}>
+              <div className="app-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <div className="promo-banner">
+                  <h3>FREE SHIPPING ON ORDERS OVER ₹4,999!</h3>
+                  <p>Use code <span className="promo-code">FREERIDE</span> at checkout. Valid until end of month.</p>
+                </div>
               </div>
-            </div>
+            </ScrollReveal>
 
             {/* Best Sellers */}
-            <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
-              <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Best Sellers</h2>
-              <div className="products-grid">
-                {spares.slice(0, 4).map(part => (
-                  <ProductCard
-                    key={part.id}
-                    part={part}
-                    onViewProduct={(p) => { setSelectedProduct(p); switchScreen('product'); }}
-                    onAddToCart={addToCart}
-                    onToggleWishlist={toggleWishlist}
-                    isWishlisted={isWishlisted(part.id)}
-                  />
-                ))}
+            <ScrollReveal>
+              <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
+                <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Best Sellers</h2>
+                <div className="products-grid stagger-children">
+                  {spares.slice(0, 4).map((part, idx) => (
+                    <ScrollReveal key={part.id} delay={idx * 100}>
+                      <ProductCard
+                        part={part}
+                        onViewProduct={(p) => { setSelectedProduct(p); switchScreen('product'); }}
+                        onAddToCart={addToCart}
+                        onToggleWishlist={toggleWishlist}
+                        isWishlisted={isWishlisted(part.id)}
+                      />
+                    </ScrollReveal>
+                  ))}
+                </div>
               </div>
-            </div>
+            </ScrollReveal>
 
             {/* Top Brands */}
-            <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto', marginBottom: '2rem' }}>
-              <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Top Brands</h2>
-              <div className="brands-grid">
-                {['BREMBO', 'K&N', 'MOTUL', 'NGK', 'AKRAPOVIC', 'MICHELIN'].map((brand, idx) => (
-                  <div key={idx} className="brand-logo-card">{brand}</div>
-                ))}
+            <ScrollReveal delay={100}>
+              <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto', marginBottom: '2rem' }}>
+                <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Top Brands</h2>
+                <div className="brands-grid stagger-children">
+                  {['BREMBO', 'K&N', 'MOTUL', 'NGK', 'AKRAPOVIC', 'MICHELIN'].map((brand, idx) => (
+                    <ScrollReveal key={idx} delay={idx * 80}>
+                      <div className="brand-logo-card">{brand}</div>
+                    </ScrollReveal>
+                  ))}
+                </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         )}
 
