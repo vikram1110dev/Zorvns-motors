@@ -1,12 +1,52 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ShoppingBag, Heart, Plus } from 'lucide-react';
 import StarRating from './StarRating';
 
 export default function ProductCard({ part, onViewProduct, onAddToCart, onToggleWishlist, isWishlisted }) {
+  const cardRef = useRef(null);
+
+  // 3D tilt effect on mouse move
+  const handleMouseMove = (e) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -4;
+    const rotateY = ((x - centerX) / centerX) * 4;
+    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+  };
+
+  const handleMouseLeave = () => {
+    const card = cardRef.current;
+    if (card) {
+      card.style.transform = '';
+    }
+  };
+
+  // Ripple effect on add to cart
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    const ripple = document.createElement('span');
+    ripple.className = 'btn-ripple';
+    const rect = btn.getBoundingClientRect();
+    ripple.style.left = `${e.clientX - rect.left}px`;
+    ripple.style.top = `${e.clientY - rect.top}px`;
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+    onAddToCart(part);
+  };
+
   return (
     <div
+      ref={cardRef}
       className="product-card"
       onClick={() => onViewProduct(part)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <span className="product-card-badge">{part.subCategory || part.category}</span>
 
@@ -17,6 +57,7 @@ export default function ProductCard({ part, onViewProduct, onAddToCart, onToggle
               key={i}
               src={imgUrl.trim()}
               alt={`${part.name} ${i + 1}`}
+              className="product-card-img"
               style={{ flex: '0 0 100%', scrollSnapAlign: 'start', objectFit: 'contain', backgroundColor: '#F9FAFB' }}
             />
           ))}
@@ -62,7 +103,7 @@ export default function ProductCard({ part, onViewProduct, onAddToCart, onToggle
               <Heart size={14} fill={isWishlisted ? '#EF4444' : 'none'} />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); onAddToCart(part); }}
+              onClick={handleAddToCart}
               className="add-cart-btn"
             >
               <Plus size={14} /> Add
