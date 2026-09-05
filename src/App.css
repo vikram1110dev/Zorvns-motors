@@ -669,10 +669,12 @@
 
 .hero-bg {
   position: absolute;
-  inset: 0;
+  inset: -20%;
   background-size: cover;
   background-position: center;
   background-color: #111;
+  transition: transform 0.1s linear;
+  will-change: transform;
 }
 
 .hero-bg::after {
@@ -705,11 +707,34 @@
   text-transform: uppercase;
 }
 
+/* Word-by-word reveal animation */
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(30px) rotateX(20deg);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.hero-word.visible {
+  opacity: 1;
+  transform: translateY(0) rotateX(0deg);
+}
+
 .hero-subtitle {
   font-size: 1.15rem;
   color: rgba(255, 255, 255, 0.85);
   margin-bottom: 2rem;
   line-height: 1.5;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s;
+}
+
+.hero-subtitle-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hero-cta {
@@ -728,12 +753,53 @@
   letter-spacing: 1px;
   transition: all var(--duration-normal) ease;
   box-shadow: 0 6px 20px rgba(229, 57, 53, 0.35);
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.hero-cta-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.25s ease, box-shadow 0.25s ease;
 }
 
 .hero-cta:hover {
   background: var(--accent-hover);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.03);
   box-shadow: 0 8px 28px rgba(229, 57, 53, 0.4);
+}
+
+/* Floating Particles */
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  animation: heroFloat 8s ease-in-out infinite;
+}
+
+.hero-particle-1 { top: 15%; left: 10%; animation-delay: 0s; animation-duration: 7s; }
+.hero-particle-2 { top: 30%; left: 80%; animation-delay: 1.5s; animation-duration: 9s; width: 6px; height: 6px; }
+.hero-particle-3 { top: 60%; left: 25%; animation-delay: 3s; animation-duration: 6s; }
+.hero-particle-4 { top: 75%; left: 70%; animation-delay: 2s; animation-duration: 10s; width: 5px; height: 5px; }
+.hero-particle-5 { top: 20%; left: 55%; animation-delay: 4s; animation-duration: 8s; width: 3px; height: 3px; }
+.hero-particle-6 { top: 85%; left: 40%; animation-delay: 1s; animation-duration: 7.5s; }
+
+@keyframes heroFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+  25% { transform: translate(15px, -20px) scale(1.3); opacity: 0.5; }
+  50% { transform: translate(-10px, -35px) scale(1); opacity: 0.3; }
+  75% { transform: translate(20px, -15px) scale(1.2); opacity: 0.6; }
 }
 
 @media (max-width: 768px) {
@@ -756,6 +822,30 @@
   .hero-cta {
     padding: 0.85rem 2rem;
     font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-word {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero-subtitle {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero-cta {
+    opacity: 1;
+    transform: none;
+  }
+  .hero-particle {
+    animation: none;
+    display: none;
+  }
+  .hero-bg {
+    transition: none;
   }
 }
 
