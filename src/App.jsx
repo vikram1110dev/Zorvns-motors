@@ -558,6 +558,10 @@ function App() {
 
   return (
     <>
+      {/* Accessibility: Skip to main content */}
+      <button className="skip-to-content" onClick={() => { document.getElementById('main-content')?.focus(); }}>
+        Skip to main content
+      </button>
       <div className="bg-gradient-wrapper"></div>
 
       {/* Header Component */}
@@ -602,7 +606,7 @@ function App() {
       />
 
       {/* Main Content */}
-      <main className={`app-container main-content ${isTransitioning ? 'page-transition-exit' : 'page-transition-enter'}`} style={{ padding: '1.5rem' }}>
+      <main id="main-content" tabIndex={-1} className={`app-container main-content ${isTransitioning ? 'page-transition-exit' : 'page-transition-enter'}`} style={{ padding: '1.5rem' }}>
 
         {/* Skeleton Loading during transition */}
         {isTransitioning && (

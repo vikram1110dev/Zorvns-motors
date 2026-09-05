@@ -1,5 +1,5 @@
-import React from 'react';
-import { Clock, Phone, MapPin } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, Phone, MapPin, Send } from 'lucide-react';
 
 // Simple inline SVG social icons (lucide removed brand icons)
 const InstagramIcon = (props) => (
@@ -21,6 +21,18 @@ const YoutubeIcon = (props) => (
 );
 
 export default function Footer({ zorvnsLogo, onSwitchScreen }) {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubscribed(true);
+      setEmail('');
+      setTimeout(() => setSubscribed(false), 3000);
+    }
+  };
+
   return (
     <footer className="site-footer">
       <div className="app-container footer-grid">
@@ -29,16 +41,16 @@ export default function Footer({ zorvnsLogo, onSwitchScreen }) {
             <img src={zorvnsLogo} alt="ZORVNS" style={{ height: '38px', maxWidth: '160px', objectFit: 'contain' }} />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, maxWidth: '320px' }}>
-            Premium motorcycle spare parts & performance components. Trusted by riders, built for enthusiasts.
+            Premium motorcycle spare parts &amp; performance components. Trusted by riders, built for enthusiasts.
           </p>
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.25rem' }}>
-            <a href="#" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} title="Instagram">
+          <div className="footer-social-row">
+            <a href="#" className="footer-social-icon" title="Instagram" aria-label="Follow us on Instagram">
               <InstagramIcon size={18} />
             </a>
-            <a href="#" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} title="Facebook">
+            <a href="#" className="footer-social-icon" title="Facebook" aria-label="Follow us on Facebook">
               <FacebookIcon size={18} />
             </a>
-            <a href="#" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} title="YouTube">
+            <a href="#" className="footer-social-icon" title="YouTube" aria-label="Subscribe to YouTube">
               <YoutubeIcon size={18} />
             </a>
           </div>
@@ -53,6 +65,29 @@ export default function Footer({ zorvnsLogo, onSwitchScreen }) {
             </div>
             <div style={{ paddingLeft: '1.65rem' }}>Sunday: Closed</div>
           </div>
+
+          {/* Newsletter signup */}
+          <div style={{ marginTop: '1.25rem' }}>
+            <h4 style={{ color: 'var(--text-main)', marginBottom: '0.5rem', fontSize: '0.95rem' }}>Newsletter</h4>
+            {subscribed ? (
+              <p className="footer-subscribed-msg">✓ Thank you for subscribing!</p>
+            ) : (
+              <form onSubmit={handleSubscribe} className="footer-newsletter-form">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="footer-newsletter-input"
+                  aria-label="Email for newsletter"
+                />
+                <button type="submit" className="footer-newsletter-btn" aria-label="Subscribe to newsletter">
+                  <Send size={14} />
+                </button>
+              </form>
+            )}
+          </div>
         </div>
 
         <div>
@@ -65,6 +100,16 @@ export default function Footer({ zorvnsLogo, onSwitchScreen }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <MapPin size={14} color="var(--accent)" />
               <span>482 Gearbox Alley, Speedville</span>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '1.25rem' }}>
+            <h4 style={{ color: 'var(--text-main)', marginBottom: '0.5rem', fontSize: '0.95rem' }}>Quick Links</h4>
+            <div className="footer-quick-links">
+              <button onClick={() => onSwitchScreen('catalog')} className="footer-link-btn">All Collections</button>
+              <button onClick={() => onSwitchScreen('contact')} className="footer-link-btn">Contact Us</button>
+              <button onClick={() => onSwitchScreen('wishlist')} className="footer-link-btn">Wishlist</button>
+              <button onClick={() => onSwitchScreen('catalog')} className="footer-link-btn">FAQ</button>
             </div>
           </div>
         </div>
