@@ -28,6 +28,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollReveal from './components/ScrollReveal';
 import SkeletonCard from './components/SkeletonCard';
+import BrandMarquee from './components/BrandMarquee';
 import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
@@ -659,13 +660,7 @@ function App() {
             <ScrollReveal delay={100}>
               <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto', marginBottom: '2rem' }}>
                 <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Top Brands</h2>
-                <div className="brands-grid stagger-children">
-                  {['BREMBO', 'K&N', 'MOTUL', 'NGK', 'AKRAPOVIC', 'MICHELIN'].map((brand, idx) => (
-                    <ScrollReveal key={idx} delay={idx * 80}>
-                      <div className="brand-logo-card">{brand}</div>
-                    </ScrollReveal>
-                  ))}
-                </div>
+                <BrandMarquee />
               </div>
             </ScrollReveal>
           </div>

@@ -16,9 +16,14 @@ export default function CategoryGrid({ onCategoryClick }) {
       {CATEGORIES.map((cat, idx) => {
         const Icon = cat.icon;
         return (
-          <div key={idx} className="category-item" onClick={() => onCategoryClick(cat.name)}>
+          <div
+            key={idx}
+            className="category-item"
+            onClick={() => onCategoryClick(cat.name)}
+            style={{ animationDelay: `${idx * 80}ms` }}
+          >
             <div className="category-icon-circle">
-              <Icon size={28} color="var(--text-muted)" strokeWidth={1.5} />
+              <Icon size={28} color="var(--text-muted)" strokeWidth={1.5} className="category-icon-svg" />
             </div>
             <span className="category-label">{cat.name}</span>
           </div>
