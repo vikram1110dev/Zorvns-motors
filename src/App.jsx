@@ -24,6 +24,7 @@ import QuantityButton from './components/QuantityButton';
 import CategoryGrid from './components/CategoryGrid';
 import HeroSection from './components/HeroSection';
 import CartDrawer from './components/CartDrawer';
+import CheckoutScreen from './components/CheckoutScreen';
 import WishlistModal from './components/WishlistModal';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -410,11 +411,22 @@ function App() {
     });
   };
 
-  // Checkout simulation
+  // Navigate to Checkout Screen
   const handleCheckout = () => {
-    showToast(`🎉 Order placed! Total ₹${Math.round(totalCartPrice).toLocaleString('en-IN')} — Thank you!`, 'success');
-    setCart([]);
     setIsCartOpen(false);
+    switchScreen('checkout');
+  };
+
+  // Order placed handler
+  const handleOrderSuccess = (orderData) => {
+    try {
+      const saved = localStorage.getItem('spark_orders');
+      const orders = saved ? JSON.parse(saved) : [];
+      localStorage.setItem('spark_orders', JSON.stringify([orderData, ...orders]));
+    } catch (err) {
+      console.error('Failed to save order to localStorage', err);
+    }
+    setCart([]);
   };
 
   // Filter products
@@ -951,7 +963,17 @@ function App() {
           </section>
         )}
 
-
+        {/* ═══ CHECKOUT & PAYMENT SCREEN ═══ */}
+        {!isTransitioning && activeTab === 'checkout' && (
+          <CheckoutScreen
+            cart={cart}
+            onUpdateQty={updateQty}
+            onRemoveItem={removeFromCart}
+            onBackToShopping={() => switchScreen('catalog')}
+            onOrderSuccess={handleOrderSuccess}
+            showToast={showToast}
+          />
+        )}
 
         {/* ═══ CONTACT SCREEN ═══ */}
         {!isTransitioning && activeTab === 'contact' && (
