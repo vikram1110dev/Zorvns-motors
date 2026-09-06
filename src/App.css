@@ -1149,16 +1149,251 @@
   padding: 0.45rem 0.85rem;
   font-size: 0.8rem;
   font-weight: 600;
-  background: var(--accent);
+  background: #E60050;
   color: #fff;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   cursor: pointer;
   transition: background var(--duration-fast) ease;
 }
 
 .add-cart-btn:hover {
-  background: var(--accent-hover);
+  background: #D90045;
+}
+
+/* ═════════════════════════════════════════════════
+   QUANTITY STEPPER / ADD BUTTON COMPONENT
+   Segmented pill with pink minus/plus & light count
+   ═════════════════════════════════════════════════ */
+
+/* Stepper container (Active cart item) */
+.qty-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #F3F4F6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+}
+
+.qty-stepper:hover {
+  box-shadow: 0 4px 10px rgba(230, 0, 80, 0.18);
+}
+
+/* Action buttons: - and + */
+.qty-stepper-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #E60050;
+  color: #FFFFFF;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.15s ease, transform 0.1s ease, filter 0.15s ease;
+  touch-action: manipulation;
+}
+
+.qty-stepper-btn:hover {
+  background: #C70043;
+}
+
+.qty-stepper-btn:active {
+  transform: scale(0.92);
+}
+
+.qty-stepper-btn:disabled {
+  background: #E60050;
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.qty-stepper-minus {
+  border-radius: 7px 0 0 7px;
+}
+
+.qty-stepper-plus {
+  border-radius: 0 7px 7px 0;
+}
+
+/* Center count display */
+.qty-stepper-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F3F4F6;
+  color: #111827;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  user-select: none;
+  text-align: center;
+}
+
+.qty-number {
+  display: inline-block;
+  animation: qtyNumFade 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qtyNumFade {
+  0% {
+    transform: scale(0.75);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Initial "+ ADD" Button */
+.qty-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border-radius: 8px;
+  background: #E60050;
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(230, 0, 80, 0.28);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  touch-action: manipulation;
+}
+
+.qty-add-btn:hover {
+  background: #D90045;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(230, 0, 80, 0.38);
+}
+
+.qty-add-btn:active {
+  transform: scale(0.95);
+}
+
+/* Out of Stock Button */
+.qty-btn-disabled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #E5E7EB;
+  color: #9CA3AF;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border: none;
+  cursor: not-allowed;
+  user-select: none;
+}
+
+/* Bumping Animation on Quantity Update */
+.qty-bump {
+  animation: qtyScaleBump 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes qtyScaleBump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* Sizing Modifiers */
+/* Medium (Default for Product Cards) */
+.qty-size-medium.qty-stepper {
+  height: 34px;
+}
+
+.qty-size-medium .qty-stepper-btn {
+  width: 34px;
+  height: 34px;
+}
+
+.qty-size-medium .qty-stepper-value {
+  min-width: 36px;
+  height: 34px;
+  font-size: 0.95rem;
+  padding: 0 0.25rem;
+}
+
+.qty-size-medium.qty-add-btn,
+.qty-size-medium.qty-btn-disabled {
+  height: 34px;
+  min-width: 90px;
+  padding: 0 0.85rem;
+  font-size: 0.82rem;
+}
+
+/* Large (For Product Detail Screen) */
+.qty-size-large.qty-stepper {
+  height: 48px;
+  border-radius: 10px;
+}
+
+.qty-size-large .qty-stepper-btn {
+  width: 48px;
+  height: 48px;
+}
+
+.qty-size-large .qty-stepper-value {
+  min-width: 56px;
+  height: 48px;
+  font-size: 1.25rem;
+  padding: 0 0.5rem;
+}
+
+.qty-size-large.qty-add-btn,
+.qty-size-large.qty-btn-disabled {
+  height: 48px;
+  min-width: 140px;
+  padding: 0 1.5rem;
+  font-size: 1rem;
+  border-radius: 10px;
+}
+
+/* Small (For Cart Drawer or Compact Lists) */
+.qty-size-small.qty-stepper {
+  height: 28px;
+  border-radius: 6px;
+}
+
+.qty-size-small .qty-stepper-btn {
+  width: 26px;
+  height: 28px;
+}
+
+.qty-size-small .qty-stepper-value {
+  min-width: 28px;
+  height: 28px;
+  font-size: 0.82rem;
+  padding: 0 0.2rem;
+}
+
+.qty-size-small.qty-add-btn,
+.qty-size-small.qty-btn-disabled {
+  height: 28px;
+  min-width: 72px;
+  padding: 0 0.6rem;
+  font-size: 0.74rem;
+  border-radius: 6px;
+}
+
+/* Product Detail Page button styling */
+.product-detail-qty-btn.qty-add-btn {
+  flex: 1;
+}
+
+.product-detail-qty-btn.qty-stepper {
+  flex: 1;
+  max-width: 220px;
 }
 
 /* Product grids */

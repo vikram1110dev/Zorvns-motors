@@ -20,6 +20,7 @@ import zorvnsLogo from './assets/zorvns-logo.png';
 import Toast from './components/Toast';
 import StarRating from './components/StarRating';
 import ProductCard from './components/ProductCard';
+import QuantityButton from './components/QuantityButton';
 import CategoryGrid from './components/CategoryGrid';
 import HeroSection from './components/HeroSection';
 import CartDrawer from './components/CartDrawer';
@@ -357,14 +358,20 @@ function App() {
   };
 
   const updateQty = (id, change) => {
-    setCart((prevCart) => prevCart.map(item => {
-      if (item.id === id) {
-        const newQty = item.qty + change;
-        if (newQty <= 0) return null;
-        return { ...item, qty: Math.min(newQty, item.stock) };
+    setCart((prevCart) => {
+      const item = prevCart.find(i => i.id === id);
+      if (!item) return prevCart;
+      const newQty = item.qty + change;
+      if (newQty <= 0) {
+        showToast(`${item.name} removed from cart.`, 'info');
+        return prevCart.filter(i => i.id !== id);
       }
-      return item;
-    }).filter(Boolean));
+      if (newQty > item.stock) {
+        showToast(`Only ${item.stock} in stock for ${item.name}.`, 'warning');
+        return prevCart;
+      }
+      return prevCart.map(i => i.id === id ? { ...i, qty: newQty } : i);
+    });
   };
 
   const removeFromCart = (id) => {
@@ -652,6 +659,8 @@ function App() {
                         part={part}
                         onViewProduct={(p) => { setSelectedProduct(p); switchScreen('product'); }}
                         onAddToCart={addToCart}
+                        onUpdateQty={updateQty}
+                        cartQty={cart.find(item => item.id === part.id)?.qty || 0}
                         onToggleWishlist={toggleWishlist}
                         isWishlisted={isWishlisted(part.id)}
                       />
@@ -839,6 +848,8 @@ function App() {
                     part={part}
                     onViewProduct={(p) => { setSelectedProduct(p); switchScreen('product'); }}
                     onAddToCart={addToCart}
+                    onUpdateQty={updateQty}
+                    cartQty={cart.find(item => item.id === part.id)?.qty || 0}
                     onToggleWishlist={toggleWishlist}
                     isWishlisted={isWishlisted(part.id)}
                   />
@@ -915,20 +926,21 @@ function App() {
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-                  <button
-                    onClick={() => { addToCart(selectedProduct); showToast(`Added ${selectedProduct.name} to cart`, 'success'); }}
-                    className="btn-primary"
-                    style={{ flex: 1, padding: '0.9rem', fontSize: '1rem' }}
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem', alignItems: 'center' }}>
+                  <QuantityButton
+                    quantity={cart.find(i => i.id === selectedProduct.id)?.qty || 0}
+                    onAdd={() => addToCart(selectedProduct)}
+                    onIncrement={() => updateQty(selectedProduct.id, 1)}
+                    onDecrement={() => updateQty(selectedProduct.id, -1)}
+                    max={selectedProduct.stock}
                     disabled={selectedProduct.stock <= 0}
-                  >
-                    <ShoppingBag size={18} />
-                    {selectedProduct.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                  </button>
+                    size="large"
+                    className="product-detail-qty-btn"
+                  />
                   <button
                     onClick={() => toggleWishlist(selectedProduct)}
                     className={`wishlist-btn ${isWishlisted(selectedProduct.id) ? 'active' : ''}`}
-                    style={{ width: '50px', height: '50px' }}
+                    style={{ width: '48px', height: '48px' }}
                     title={isWishlisted(selectedProduct.id) ? 'Remove from wishlist' : 'Save to wishlist'}
                   >
                     <Heart size={22} fill={isWishlisted(selectedProduct.id) ? '#EF4444' : 'none'} />

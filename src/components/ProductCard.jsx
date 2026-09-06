@@ -1,8 +1,17 @@
 import React, { useRef } from 'react';
-import { ShoppingBag, Heart, Plus } from 'lucide-react';
+import { ShoppingBag, Heart } from 'lucide-react';
 import StarRating from './StarRating';
+import QuantityButton from './QuantityButton';
 
-export default function ProductCard({ part, onViewProduct, onAddToCart, onToggleWishlist, isWishlisted }) {
+export default function ProductCard({
+  part,
+  onViewProduct,
+  onAddToCart,
+  onUpdateQty,
+  cartQty = 0,
+  onToggleWishlist,
+  isWishlisted
+}) {
   const cardRef = useRef(null);
 
   // 3D tilt effect on mouse move
@@ -24,20 +33,6 @@ export default function ProductCard({ part, onViewProduct, onAddToCart, onToggle
     if (card) {
       card.style.transform = '';
     }
-  };
-
-  // Ripple effect on add to cart
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    const btn = e.currentTarget;
-    const ripple = document.createElement('span');
-    ripple.className = 'btn-ripple';
-    const rect = btn.getBoundingClientRect();
-    ripple.style.left = `${e.clientX - rect.left}px`;
-    ripple.style.top = `${e.clientY - rect.top}px`;
-    btn.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
-    onAddToCart(part);
   };
 
   return (
@@ -102,12 +97,14 @@ export default function ProductCard({ part, onViewProduct, onAddToCart, onToggle
             >
               <Heart size={14} fill={isWishlisted ? '#EF4444' : 'none'} />
             </button>
-            <button
-              onClick={handleAddToCart}
-              className="add-cart-btn"
-            >
-              <Plus size={14} /> Add
-            </button>
+            <QuantityButton
+              quantity={cartQty}
+              onAdd={() => onAddToCart(part)}
+              onIncrement={() => onUpdateQty ? onUpdateQty(part.id, 1) : onAddToCart(part)}
+              onDecrement={() => onUpdateQty && onUpdateQty(part.id, -1)}
+              max={part.stock}
+              disabled={part.stock <= 0}
+            />
           </div>
         </div>
       </div>

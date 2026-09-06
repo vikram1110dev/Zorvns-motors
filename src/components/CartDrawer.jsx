@@ -1,5 +1,6 @@
 import React from 'react';
-import { ShoppingBag, X, Plus, Minus, Trash2 } from 'lucide-react';
+import { ShoppingBag, X, Trash2 } from 'lucide-react';
+import QuantityButton from './QuantityButton';
 
 export default function CartDrawer({ cart, isOpen, onClose, onUpdateQty, onRemove, onCheckout, totalPrice }) {
   if (!isOpen) return null;
@@ -42,15 +43,15 @@ export default function CartDrawer({ cart, isOpen, onClose, onUpdateQty, onRemov
                       = ₹{(item.price * item.qty).toFixed(2)}
                     </span>
                   </div>
-                  <div className="cart-qty-controls">
-                    <button onClick={() => onUpdateQty(item.id, -1)} className="cart-qty-btn">
-                      <Minus size={12} />
-                    </button>
-                    <span className="cart-qty-value">{item.qty}</span>
-                    <button onClick={() => onUpdateQty(item.id, 1)} className="cart-qty-btn">
-                      <Plus size={12} />
-                    </button>
-                    <button onClick={() => onRemove(item.id)} className="cart-delete-btn">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <QuantityButton
+                      quantity={item.qty}
+                      onIncrement={() => onUpdateQty(item.id, 1)}
+                      onDecrement={() => onUpdateQty(item.id, -1)}
+                      max={item.stock}
+                      size="small"
+                    />
+                    <button onClick={() => onRemove(item.id)} className="cart-delete-btn" title="Remove part from cart">
                       <Trash2 size={15} />
                     </button>
                   </div>
