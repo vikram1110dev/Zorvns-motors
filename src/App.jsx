@@ -32,6 +32,7 @@ import ScrollReveal from './components/ScrollReveal';
 import SkeletonCard from './components/SkeletonCard';
 import BrandMarquee from './components/BrandMarquee';
 import CountUp from './components/CountUp';
+import RecentlyViewed from './components/RecentlyViewed';
 import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
@@ -564,6 +565,21 @@ function App() {
   // Page transition state
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  // Recently Viewed Products
+  const [recentlyViewed, setRecentlyViewed] = useState(() => {
+    const saved = localStorage.getItem('spark_recently_viewed');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const addToRecentlyViewed = (product) => {
+    setRecentlyViewed(prev => {
+      const filtered = prev.filter(p => p.id !== product.id);
+      const updated = [product, ...filtered].slice(0, 8);
+      localStorage.setItem('spark_recently_viewed', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   // Switch Screen logic
   const switchScreen = (tabName) => {
     setIsTransitioning(true);
@@ -670,7 +686,7 @@ function App() {
                     <ScrollReveal key={part.id} delay={idx * 100}>
                       <ProductCard
                         part={part}
-                        onViewProduct={(p) => { setSelectedProduct(p); switchScreen('product'); }}
+                        onViewProduct={(p) => { addToRecentlyViewed(p); setSelectedProduct(p); switchScreen('product'); }}
                         onAddToCart={addToCart}
                         onUpdateQty={updateQty}
                         cartQty={cart.find(item => item.id === part.id)?.qty || 0}
@@ -682,6 +698,18 @@ function App() {
                 </div>
               </div>
             </ScrollReveal>
+
+            {/* Recently Viewed */}
+            {recentlyViewed.length > 0 && (
+              <ScrollReveal delay={50}>
+                <div className="app-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                  <RecentlyViewed
+                    products={recentlyViewed}
+                    onViewProduct={(p) => { addToRecentlyViewed(p); setSelectedProduct(p); switchScreen('product'); }}
+                  />
+                </div>
+              </ScrollReveal>
+            )}
 
             {/* Top Brands */}
             <ScrollReveal delay={100}>
@@ -859,7 +887,7 @@ function App() {
                   <ProductCard
                     key={part.id}
                     part={part}
-                    onViewProduct={(p) => { setSelectedProduct(p); switchScreen('product'); }}
+                    onViewProduct={(p) => { addToRecentlyViewed(p); setSelectedProduct(p); switchScreen('product'); }}
                     onAddToCart={addToCart}
                     onUpdateQty={updateQty}
                     cartQty={cart.find(item => item.id === part.id)?.qty || 0}
