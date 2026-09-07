@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { ShoppingBag, Heart } from 'lucide-react';
 import StarRating from './StarRating';
 import QuantityButton from './QuantityButton';
@@ -13,8 +13,10 @@ export default function ProductCard({
   isWishlisted
 }) {
   const cardRef = useRef(null);
+  const [glowPos, setGlowPos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
 
-  // 3D tilt effect on mouse move
+  // 3D tilt effect + magnetic glow on mouse move
   const handleMouseMove = (e) => {
     const card = cardRef.current;
     if (!card) return;
@@ -26,13 +28,17 @@ export default function ProductCard({
     const rotateX = ((y - centerY) / centerY) * -4;
     const rotateY = ((x - centerX) / centerX) * 4;
     card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    setGlowPos({ x, y });
   };
+
+  const handleMouseEnter = () => setIsHovered(true);
 
   const handleMouseLeave = () => {
     const card = cardRef.current;
     if (card) {
       card.style.transform = '';
     }
+    setIsHovered(false);
   };
 
   return (
@@ -41,8 +47,17 @@ export default function ProductCard({
       className="product-card"
       onClick={() => onViewProduct(part)}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Magnetic cursor glow overlay */}
+      <div
+        className="product-card-glow"
+        style={{
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(320px circle at ${glowPos.x}px ${glowPos.y}px, rgba(229, 57, 53, 0.12), transparent 60%)`,
+        }}
+      />
       <span className="product-card-badge">{part.subCategory || part.category}</span>
 
       {part.images && part.images.length > 0 ? (

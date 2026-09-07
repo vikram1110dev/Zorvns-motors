@@ -984,6 +984,16 @@
   transform-style: preserve-3d;
 }
 
+/* Magnetic cursor glow overlay */
+.product-card-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: var(--radius-lg);
+  transition: opacity 0.3s ease;
+}
+
 .product-card:hover {
   box-shadow: var(--shadow-card-hover);
   border-color: var(--border-hover);
