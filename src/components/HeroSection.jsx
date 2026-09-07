@@ -36,15 +36,35 @@ export default function HeroSection({ heroImage, onShopNow }) {
     return () => clearInterval(timer);
   }, []);
 
-  // Subtitle and CTA reveal
-  const [showSubtitle, setShowSubtitle] = useState(false);
+  // Typewriter effect for subtitle
+  const subtitleText = 'Premium Spares & Performance Parts for True Enthusiasts.';
+  const [typedLength, setTypedLength] = useState(0);
+  const [startTyping, setStartTyping] = useState(false);
+
+  useEffect(() => {
+    const startTimer = setTimeout(() => setStartTyping(true), titleWords.length * 200 + 300);
+    return () => clearTimeout(startTimer);
+  }, []);
+
+  useEffect(() => {
+    if (!startTyping) return;
+    if (typedLength >= subtitleText.length) return;
+
+    const charTimer = setTimeout(() => {
+      setTypedLength(prev => prev + 1);
+    }, 35);
+    return () => clearTimeout(charTimer);
+  }, [startTyping, typedLength, subtitleText.length]);
+
+  // CTA reveal (after typing finishes)
   const [showCta, setShowCta] = useState(false);
 
   useEffect(() => {
-    const subtitleTimer = setTimeout(() => setShowSubtitle(true), titleWords.length * 200 + 200);
-    const ctaTimer = setTimeout(() => setShowCta(true), titleWords.length * 200 + 500);
-    return () => { clearTimeout(subtitleTimer); clearTimeout(ctaTimer); };
-  }, []);
+    if (typedLength >= subtitleText.length) {
+      const ctaTimer = setTimeout(() => setShowCta(true), 300);
+      return () => clearTimeout(ctaTimer);
+    }
+  }, [typedLength, subtitleText.length]);
 
   return (
     <div className="hero-section" ref={heroRef}>
@@ -77,8 +97,9 @@ export default function HeroSection({ heroImage, onShopNow }) {
             </span>
           ))}
         </h1>
-        <p className={`hero-subtitle ${showSubtitle ? 'hero-subtitle-visible' : ''}`}>
-          Premium Spares &amp; Performance Parts for True Enthusiasts.
+        <p className={`hero-subtitle hero-typewriter ${startTyping ? 'hero-subtitle-visible' : ''}`}>
+          {subtitleText.slice(0, typedLength)}
+          <span className="hero-cursor" />
         </p>
         <button
           onClick={onShopNow}

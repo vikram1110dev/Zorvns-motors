@@ -748,6 +748,26 @@
   transform: translateY(0);
 }
 
+/* Typewriter cursor */
+.hero-typewriter {
+  min-height: 1.8em;
+}
+
+.hero-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: rgba(255, 255, 255, 0.9);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blinkCursor 0.8s step-end infinite;
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .hero-cta {
   display: inline-flex;
   align-items: center;
