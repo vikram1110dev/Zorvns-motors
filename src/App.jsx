@@ -31,6 +31,7 @@ import Footer from './components/Footer';
 import ScrollReveal from './components/ScrollReveal';
 import SkeletonCard from './components/SkeletonCard';
 import BrandMarquee from './components/BrandMarquee';
+import CountUp from './components/CountUp';
 import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
@@ -916,7 +917,7 @@ function App() {
                     </span>
                   </div>
                   <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--accent)' }}>
-                    ₹{Math.round(selectedProduct.price).toLocaleString('en-IN')}
+                    <CountUp end={Math.round(selectedProduct.price)} prefix="₹" duration={900} />
                   </h2>
                 </div>
 
