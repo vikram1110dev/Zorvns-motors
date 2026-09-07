@@ -102,7 +102,10 @@ export default function ProductCard({
         <div className="product-card-footer">
           <div>
             <span className="product-price">₹{Math.round(part.price).toLocaleString('en-IN')}</span>
-            <span className="product-stock">In Stock: {part.stock}</span>
+            <span className="product-stock">
+              <span className="stock-live-dot" />
+              In Stock: {part.stock}
+            </span>
           </div>
           <div className="product-card-actions">
             <button

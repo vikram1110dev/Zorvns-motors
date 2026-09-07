@@ -1116,10 +1116,36 @@
 }
 
 .product-stock {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   font-size: 0.7rem;
   color: var(--text-muted);
   margin-top: 0.15rem;
+}
+
+/* Pulsing "live" stock indicator dot */
+.stock-live-dot {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  flex-shrink: 0;
+}
+
+.stock-live-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid var(--success);
+  animation: stockPulse 2s ease-in-out infinite;
+}
+
+@keyframes stockPulse {
+  0%, 100% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 0.6; transform: scale(1.4); }
 }
 
 .product-card-actions {
