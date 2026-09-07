@@ -34,7 +34,6 @@ export default function CartDrawer({ cart, isOpen, onClose, onUpdateQty, onRemov
                 <div
                   key={item.id}
                   className="cart-item cart-item-enter"
-                  style={{ animationDelay: `${idx * 60}ms` }}
                 >
                   <div className="cart-item-info" style={{ flex: 1 }}>
                     <h4>{item.name}</h4>

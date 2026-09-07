@@ -1790,21 +1790,31 @@
   }
 }
 
-/* Cart item entry animation */
+/* Cart item entry animation — staggered slide-in */
 .cart-item-enter {
-  animation: cartItemSlideIn 0.35s var(--ease-out) both;
+  animation: cartItemSlideIn 0.45s var(--ease-out) both;
 }
 
 @keyframes cartItemSlideIn {
   from {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(60px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
 }
+
+/* Staggered delays for cascading effect */
+.cart-item-enter:nth-child(1) { animation-delay: 0ms; }
+.cart-item-enter:nth-child(2) { animation-delay: 60ms; }
+.cart-item-enter:nth-child(3) { animation-delay: 120ms; }
+.cart-item-enter:nth-child(4) { animation-delay: 180ms; }
+.cart-item-enter:nth-child(5) { animation-delay: 240ms; }
+.cart-item-enter:nth-child(6) { animation-delay: 300ms; }
+.cart-item-enter:nth-child(7) { animation-delay: 360ms; }
+.cart-item-enter:nth-child(8) { animation-delay: 420ms; }
 
 .cart-header-count {
   font-size: 0.7rem;
