@@ -3743,3 +3743,285 @@
   transform: translateX(3px);
   color: var(--accent);
 }
+
+/* ═════════════════════════════════════════════════
+   ANIMATION 1: FLY-TO-CART PARABOLIC PARTICLE
+   ═════════════════════════════════════════════════ */
+
+.fly-to-cart-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.fly-to-cart-outer {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: flyX 0.72s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+.fly-to-cart-inner {
+  animation: flyY 0.72s cubic-bezier(0.12, 0, 0.39, 0) forwards;
+}
+
+.fly-to-cart-orb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #FF1A75, #E60050);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(230, 0, 80, 0.65), 0 0 10px rgba(255, 26, 117, 0.4);
+  transform-origin: center;
+  animation: flyScaleFade 0.72s ease-in forwards;
+}
+
+.fly-to-cart-plus {
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+@keyframes flyX {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(var(--fly-dx));
+  }
+}
+
+@keyframes flyY {
+  0% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(calc(var(--fly-dy) * 0.35 - 85px));
+  }
+  100% {
+    transform: translateY(var(--fly-dy));
+  }
+}
+
+@keyframes flyScaleFade {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  20% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.35);
+    opacity: 0.2;
+  }
+}
+
+/* Header Cart Button Spring Bounce */
+.cart-bounce-spring {
+  animation: cartSpringWiggle 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+  position: relative;
+}
+
+@keyframes cartSpringWiggle {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.22) rotate(-8deg); }
+  50% { transform: scale(0.92) rotate(6deg); }
+  75% { transform: scale(1.08) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.cart-aura-ping::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: var(--radius-md);
+  border: 2px solid #E60050;
+  pointer-events: none;
+  animation: cartPing 0.6s ease-out forwards;
+}
+
+@keyframes cartPing {
+  0% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* ═════════════════════════════════════════════════
+   ANIMATION 2: CIRCULAR SCROLL PROGRESS & PULSE AURA
+   ═════════════════════════════════════════════════ */
+
+.back-to-top-wrapper {
+  position: fixed;
+  bottom: 5rem;
+  right: 1.5rem;
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(16px) scale(0.85);
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.back-to-top-wrapper.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Breathing Radar Aura */
+.back-to-top-aura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  margin-top: -24px;
+  margin-left: -24px;
+  border-radius: 50%;
+  background: rgba(229, 57, 53, 0.3);
+  pointer-events: none;
+  animation: backToTopRadar 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  z-index: 1;
+}
+
+@keyframes backToTopRadar {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  60% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+
+/* Percentage Tooltip on Hover */
+.back-to-top-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  padding: 3px 8px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  font-family: var(--font-sans);
+}
+
+.back-to-top-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -4px;
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--primary) transparent transparent transparent;
+}
+
+.back-to-top-tooltip.tooltip-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Main Button */
+.back-to-top-btn {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(229, 57, 53, 0.2);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+  z-index: 2;
+  overflow: visible;
+}
+
+.back-to-top-btn:hover {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 8px 24px rgba(229, 57, 53, 0.35);
+}
+
+.back-to-top-btn.launching {
+  animation: rocketLaunch 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rocketLaunch {
+  0% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(4px) scale(0.92); }
+  60% { transform: translateY(-24px) scale(1.15); opacity: 0.7; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* SVG Progress Ring */
+.scroll-progress-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.scroll-progress-track {
+  fill: none;
+  stroke: rgba(229, 57, 53, 0.14);
+}
+
+.scroll-progress-bar {
+  fill: none;
+  stroke: #E53935;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+/* Center Chevron Icon */
+.back-to-top-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #E53935;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(229, 57, 53, 0.4);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.back-to-top-btn:hover .back-to-top-icon-wrapper {
+  background: #C62828;
+  transform: translateY(-1px);
+}
+

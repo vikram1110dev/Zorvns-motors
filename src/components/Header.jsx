@@ -24,6 +24,7 @@ export default function Header({
   setSelectedBike,
   categoryFilter,
   onSelectCategory,
+  isCartBouncing = false,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -65,7 +66,10 @@ export default function Header({
             <button className="header-icon-btn" title="Account">
               <User size={20} />
             </button>
-            <button onClick={onCartOpen} className="header-cart-btn">
+            <button
+              onClick={onCartOpen}
+              className={`header-cart-btn ${isCartBouncing ? 'cart-bounce-spring cart-aura-ping' : ''}`}
+            >
               <ShoppingBag size={20} />
               <span style={{ fontWeight: 500 }}>Cart</span>
               {cart.length > 0 && (

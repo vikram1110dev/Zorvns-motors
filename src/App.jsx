@@ -33,6 +33,8 @@ import SkeletonCard from './components/SkeletonCard';
 import BrandMarquee from './components/BrandMarquee';
 import CountUp from './components/CountUp';
 import RecentlyViewed from './components/RecentlyViewed';
+import FlyToCart from './components/FlyToCart';
+import BackToTop from './components/BackToTop';
 import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
@@ -343,8 +345,39 @@ function App() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  // Flying items for Add to Cart animation
+  const [flyingItems, setFlyingItems] = useState([]);
+  const [isCartBouncing, setIsCartBouncing] = useState(false);
+
+  const triggerCartBounce = () => {
+    setIsCartBouncing(true);
+    setTimeout(() => setIsCartBouncing(false), 650);
+  };
+
+  const handleParticleArrival = (id) => {
+    setFlyingItems(prev => prev.filter(item => item.id !== id));
+    triggerCartBounce();
+  };
+
   // Cart helper functions
-  const addToCart = (part) => {
+  const addToCart = (part, event) => {
+    if (event && (event.currentTarget || event.target)) {
+      const targetEl = event.currentTarget || event.target;
+      const startRect = targetEl.getBoundingClientRect ? targetEl.getBoundingClientRect() : null;
+      const cartBtn = document.querySelector('.header-cart-btn')?.getBoundingClientRect();
+      if (startRect && cartBtn) {
+        setFlyingItems(prev => [
+          ...prev,
+          {
+            id: Date.now() + Math.random(),
+            startX: startRect.left + startRect.width / 2 - 18,
+            startY: startRect.top + startRect.height / 2 - 14,
+            endX: cartBtn.left + cartBtn.width / 2 - 18,
+            endY: cartBtn.top + cartBtn.height / 2 - 14,
+          }
+        ]);
+      }
+    }
     const existing = cart.find(item => item.id === part.id);
     if (existing) {
       showToast(`${part.name} quantity updated in cart.`, 'info');
@@ -607,6 +640,7 @@ function App() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         cart={cart}
+        isCartBouncing={isCartBouncing}
         onCartOpen={() => setIsCartOpen(true)}
         onSwitchScreen={switchScreen}
         hoveredMenu={hoveredMenu}
@@ -1112,12 +1146,11 @@ function App() {
         />
       )}
 
-      {/* Back to Top */}
-      {showBackToTop && (
-        <button onClick={scrollToTop} className="back-to-top animate-fade-in-up" title="Back to top">
-          <ChevronUp size={18} />
-        </button>
-      )}
+      {/* Back to Top with Scroll Progress & Aura */}
+      <BackToTop />
+
+      {/* Fly-to-Cart Animated Particle Overlay */}
+      <FlyToCart items={flyingItems} onParticleArrival={handleParticleArrival} />
 
       {/* Toast Notifications */}
       <Toast toasts={toasts} removeToast={removeToast} />

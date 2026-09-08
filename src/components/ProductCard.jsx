@@ -117,8 +117,8 @@ export default function ProductCard({
             </button>
             <QuantityButton
               quantity={cartQty}
-              onAdd={() => onAddToCart(part)}
-              onIncrement={() => onUpdateQty ? onUpdateQty(part.id, 1) : onAddToCart(part)}
+              onAdd={(e) => onAddToCart(part, e)}
+              onIncrement={(e) => onUpdateQty ? onUpdateQty(part.id, 1) : onAddToCart(part, e)}
               onDecrement={() => onUpdateQty && onUpdateQty(part.id, -1)}
               max={part.stock}
               disabled={part.stock <= 0}
