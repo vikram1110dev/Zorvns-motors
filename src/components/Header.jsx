@@ -58,6 +58,17 @@ export default function Header({
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="header-search-clear-btn"
+                  onClick={() => onSearchChange('')}
+                  title="Clear search"
+                  aria-label="Clear search"
+                >
+                  <X size={15} />
+                </button>
+              )}
             </div>
           </div>
 

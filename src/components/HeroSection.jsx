@@ -105,7 +105,8 @@ export default function HeroSection({ heroImage, onShopNow }) {
           onClick={onShopNow}
           className={`hero-cta ${showCta ? 'hero-cta-visible' : ''}`}
         >
-          Shop Now <ArrowRight size={18} />
+          <span>Shop Now</span>
+          <ArrowRight size={18} className="hero-cta-arrow" />
         </button>
       </div>
     </div>

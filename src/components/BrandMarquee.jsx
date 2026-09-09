@@ -15,6 +15,7 @@ export default function BrandMarquee() {
       <div className="marquee-track">
         {items.map((brand, idx) => (
           <div key={idx} className="marquee-item">
+            <span className="marquee-brand-dot" />
             <span className="marquee-brand-text">{brand}</span>
           </div>
         ))}

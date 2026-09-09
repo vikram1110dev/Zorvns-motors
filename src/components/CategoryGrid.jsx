@@ -23,9 +23,11 @@ export default function CategoryGrid({ onCategoryClick }) {
             style={{ animationDelay: `${idx * 80}ms` }}
           >
             <div className="category-icon-circle">
+              <span className="category-icon-halo" />
               <Icon size={28} color="var(--text-muted)" strokeWidth={1.5} className="category-icon-svg" />
             </div>
             <span className="category-label">{cat.name}</span>
+            <span className="category-hover-line" />
           </div>
         );
       })}
