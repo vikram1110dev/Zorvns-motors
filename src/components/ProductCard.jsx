@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { ShoppingBag, Heart } from 'lucide-react';
+import { ShoppingBag, Heart, Eye } from 'lucide-react';
 import StarRating from './StarRating';
 import QuantityButton from './QuantityButton';
 
 export default function ProductCard({
   part,
   onViewProduct,
+  onQuickView,
   onAddToCart,
   onUpdateQty,
   cartQty = 0,
@@ -60,23 +61,40 @@ export default function ProductCard({
       />
       <span className="product-card-badge">{part.subCategory || part.category}</span>
 
-      {part.images && part.images.length > 0 ? (
-        <div className="product-card-image" style={{ overflowX: 'auto', scrollSnapType: 'x mandatory', display: 'flex' }}>
-          {part.images.map((imgUrl, i) => (
-            <img
-              key={i}
-              src={imgUrl.trim()}
-              alt={`${part.name} ${i + 1}`}
-              className="product-card-img"
-              style={{ flex: '0 0 100%', scrollSnapAlign: 'start', objectFit: 'contain', backgroundColor: '#F9FAFB' }}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="product-card-image product-card-image-placeholder">
-          <ShoppingBag size={40} color="var(--text-light)" />
-        </div>
-      )}
+      <div className="product-card-image-wrap">
+        {part.images && part.images.length > 0 ? (
+          <div className="product-card-image" style={{ overflowX: 'auto', scrollSnapType: 'x mandatory', display: 'flex' }}>
+            {part.images.map((imgUrl, i) => (
+              <img
+                key={i}
+                src={imgUrl.trim()}
+                alt={`${part.name} ${i + 1}`}
+                className="product-card-img"
+                style={{ flex: '0 0 100%', scrollSnapAlign: 'start', objectFit: 'contain', backgroundColor: '#F9FAFB' }}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="product-card-image product-card-image-placeholder">
+            <ShoppingBag size={40} color="var(--text-light)" />
+          </div>
+        )}
+
+        {/* Quick View Hover Button */}
+        <button
+          type="button"
+          className="product-card-quickview-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onQuickView) onQuickView(part);
+          }}
+          title="Quick View Part"
+          aria-label={`Quick view ${part.name}`}
+        >
+          <Eye size={13} />
+          <span>Quick View</span>
+        </button>
+      </div>
 
       <div className="product-card-body">
         <span className="product-card-category">
@@ -108,6 +126,15 @@ export default function ProductCard({
             </span>
           </div>
           <div className="product-card-actions">
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); if (onQuickView) onQuickView(part); }}
+              title="Quick View"
+              className="quickview-action-btn"
+              aria-label="Quick View"
+            >
+              <Eye size={14} />
+            </button>
             <button
               onClick={(e) => { e.stopPropagation(); onToggleWishlist(part); }}
               title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}

@@ -9,7 +9,6 @@ import {
   Mail,
   Send,
   Heart,
-  ChevronUp,
   ArrowLeft
 } from 'lucide-react';
 import './App.css';
@@ -26,6 +25,7 @@ import HeroSection from './components/HeroSection';
 import CartDrawer from './components/CartDrawer';
 import CheckoutScreen from './components/CheckoutScreen';
 import WishlistModal from './components/WishlistModal';
+import QuickViewModal from './components/QuickViewModal';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollReveal from './components/ScrollReveal';
@@ -344,6 +344,7 @@ function App() {
 
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
 
   // Flying items for Add to Cart animation
   const [flyingItems, setFlyingItems] = useState([]);
@@ -721,6 +722,7 @@ function App() {
                       <ProductCard
                         part={part}
                         onViewProduct={(p) => { addToRecentlyViewed(p); setSelectedProduct(p); switchScreen('product'); }}
+                        onQuickView={(p) => setQuickViewProduct(p)}
                         onAddToCart={addToCart}
                         onUpdateQty={updateQty}
                         cartQty={cart.find(item => item.id === part.id)?.qty || 0}
@@ -922,6 +924,7 @@ function App() {
                     key={part.id}
                     part={part}
                     onViewProduct={(p) => { addToRecentlyViewed(p); setSelectedProduct(p); switchScreen('product'); }}
+                    onQuickView={(p) => setQuickViewProduct(p)}
                     onAddToCart={addToCart}
                     onUpdateQty={updateQty}
                     cartQty={cart.find(item => item.id === part.id)?.qty || 0}
@@ -1143,6 +1146,25 @@ function App() {
           onClose={() => switchScreen('catalog')}
           onToggleWishlist={toggleWishlist}
           onAddToCart={(part) => { addToCart(part); showToast(`${part.name} moved to cart!`, 'success'); }}
+        />
+      )}
+
+      {/* Quick View Modal */}
+      {quickViewProduct && (
+        <QuickViewModal
+          product={quickViewProduct}
+          onClose={() => setQuickViewProduct(null)}
+          onAddToCart={addToCart}
+          onUpdateQty={updateQty}
+          cartQty={cart.find(item => item.id === quickViewProduct.id)?.qty || 0}
+          onToggleWishlist={toggleWishlist}
+          isWishlisted={isWishlisted(quickViewProduct.id)}
+          onViewFullDetails={(part) => {
+            setQuickViewProduct(null);
+            addToRecentlyViewed(part);
+            setSelectedProduct(part);
+            switchScreen('product');
+          }}
         />
       )}
 

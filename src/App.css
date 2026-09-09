@@ -4025,3 +4025,554 @@
   transform: translateY(-1px);
 }
 
+/* ═══════════════════════════════════════════════
+   PRODUCT QUICK VIEW FEATURE
+   ═══════════════════════════════════════════════ */
+
+/* Card Image Wrap & Hover Quick View Button */
+.product-card-image-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card-quickview-btn {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(17, 24, 39, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 0.42rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  z-index: 6;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.product-card:hover .product-card-quickview-btn {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.product-card-quickview-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #FFFFFF;
+  transform: translateX(-50%) translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 18px rgba(229, 57, 53, 0.45);
+}
+
+/* Quick View action icon in card footer actions */
+.quickview-action-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickview-action-btn:hover {
+  background: rgba(229, 57, 53, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Quick View Overlay */
+.quickview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  background: rgba(10, 14, 23, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  animation: quickviewFadeIn 0.22s ease-out;
+}
+
+@keyframes quickviewFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes quickviewScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Quick View Modal Box */
+.quickview-modal {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  animation: quickviewScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quickview-close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.quickview-close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: rotate(90deg);
+}
+
+/* Quick View 2-Column Grid Layout */
+.quickview-layout {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Media Column */
+.quickview-media {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.quickview-main-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 330px;
+  background: #F9FAFB;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.quickview-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.quickview-main-image-wrap:hover .quickview-main-img {
+  transform: scale(1.05);
+}
+
+.quickview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-light);
+}
+
+.quickview-oem-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #065F46;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.quickview-thumb-strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.quickview-thumb-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  background: #F9FAFB;
+  padding: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.quickview-thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.quickview-thumb-btn:hover,
+.quickview-thumb-btn.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.2);
+}
+
+/* Content Column */
+.quickview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  text-align: left;
+}
+
+.quickview-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-right: 2rem;
+}
+
+.quickview-category-badge {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.quickview-stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.quickview-stock-badge.in-stock {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.quickview-stock-badge.out-stock {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.quickview-title {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--text-main);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.quickview-rating-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quickview-rating-num {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+.quickview-rating-count {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.quickview-price-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.quickview-price {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.quickview-taxes-tag {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.quickview-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Vehicle Fitment Tags */
+.quickview-compat-box {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.9rem;
+}
+
+.quickview-compat-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+
+.quickview-compat-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.quickview-compat-pill {
+  font-size: 0.68rem;
+  padding: 0.15rem 0.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+/* Delivery / Pincode Estimator */
+.quickview-delivery-box {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quickview-pincode-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.quickview-truck-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.quickview-pincode-input {
+  flex: 1;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  background: var(--bg-main);
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.quickview-pincode-input:focus {
+  border-color: var(--accent);
+}
+
+.quickview-pincode-btn {
+  padding: 0.4rem 0.85rem;
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.quickview-pincode-btn:hover {
+  background: var(--primary-hover);
+}
+
+.quickview-delivery-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+}
+
+.quickview-delivery-status.success {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.quickview-delivery-status.error {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.quickview-delivery-msg {
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.quickview-delivery-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin: 0.15rem 0 0 0;
+}
+
+/* Actions Row */
+.quickview-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.quickview-wishlist-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.quickview-wishlist-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #EF4444;
+}
+
+.quickview-wishlist-btn.active {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #EF4444;
+  color: #EF4444;
+}
+
+/* View Complete Details Link */
+.quickview-details-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: gap 0.2s ease, color 0.2s ease;
+  align-self: flex-start;
+}
+
+.quickview-details-link:hover {
+  color: var(--accent-hover);
+  gap: 0.55rem;
+  text-decoration: underline;
+}
+
+/* Quick View Mobile Responsiveness */
+@media (max-width: 768px) {
+  .quickview-modal {
+    padding: 1.25rem;
+    max-height: 92vh;
+    border-radius: var(--radius-lg);
+  }
+
+  .quickview-layout {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .quickview-main-image-wrap {
+    height: 240px;
+  }
+
+  .quickview-title {
+    font-size: 1.2rem;
+  }
+
+  .quickview-price {
+    font-size: 1.4rem;
+  }
+
+  /* Always show hover button on touch devices */
+  .product-card-quickview-btn {
+    display: none;
+  }
+}
+
+
