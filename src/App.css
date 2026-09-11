@@ -721,6 +721,42 @@
   margin-top: calc(var(--header-height) * -1 + 3.5rem);
 }
 
+/* Aurora Gradient Mesh — flowing color shift overlay */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.35;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(229, 57, 53, 0.5), transparent),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(255, 107, 53, 0.4), transparent),
+    radial-gradient(ellipse 70% 40% at 50% 50%, rgba(139, 92, 246, 0.3), transparent);
+  background-size: 200% 200%;
+  animation: auroraShift 12s ease-in-out infinite alternate;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+
+@keyframes auroraShift {
+  0% {
+    background-position: 0% 0%, 100% 100%, 50% 50%;
+    filter: hue-rotate(0deg);
+  }
+  33% {
+    background-position: 100% 50%, 0% 50%, 80% 20%;
+    filter: hue-rotate(15deg);
+  }
+  66% {
+    background-position: 50% 100%, 50% 0%, 20% 80%;
+    filter: hue-rotate(-10deg);
+  }
+  100% {
+    background-position: 0% 100%, 100% 0%, 50% 50%;
+    filter: hue-rotate(0deg);
+  }
+}
+
 .hero-bg {
   position: absolute;
   inset: -20%;
@@ -4795,4 +4831,370 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════
+   NEW ANIMATION EFFECTS
+   ═══════════════════════════════════════════════════ */
 
+/* ─── 1. Elastic Staggered Grid Entrance ─── */
+/* Product cards spring into view with elastic bounce */
+.products-grid > .product-card {
+  animation: elasticEntrance 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.products-grid > .product-card:nth-child(1) { animation-delay: 0ms; }
+.products-grid > .product-card:nth-child(2) { animation-delay: 60ms; }
+.products-grid > .product-card:nth-child(3) { animation-delay: 120ms; }
+.products-grid > .product-card:nth-child(4) { animation-delay: 180ms; }
+.products-grid > .product-card:nth-child(5) { animation-delay: 240ms; }
+.products-grid > .product-card:nth-child(6) { animation-delay: 300ms; }
+.products-grid > .product-card:nth-child(7) { animation-delay: 360ms; }
+.products-grid > .product-card:nth-child(8) { animation-delay: 420ms; }
+.products-grid > .product-card:nth-child(n+9) { animation-delay: 480ms; }
+
+@keyframes elasticEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.92) rotateX(8deg);
+    filter: blur(4px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-6px) scale(1.02) rotateX(-1deg);
+    filter: blur(0px);
+  }
+  75% {
+    transform: translateY(3px) scale(0.99) rotateX(0.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0deg);
+    filter: blur(0);
+  }
+}
+
+/* ─── 2. Neon Border Sweep on CTA Buttons ─── */
+/* An animated gradient border that sweeps around CTA buttons */
+.hero-cta,
+.cart-checkout-btn {
+  position: relative;
+  z-index: 0;
+}
+
+.hero-cta::before,
+.cart-checkout-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--neon-angle, 0deg),
+    transparent 0deg,
+    rgba(229, 57, 53, 0.9) 60deg,
+    rgba(255, 107, 53, 0.7) 120deg,
+    transparent 180deg,
+    rgba(229, 57, 53, 0.5) 240deg,
+    transparent 360deg
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: neonBorderSweep 3s linear infinite;
+}
+
+.hero-cta:hover::before,
+.cart-checkout-btn:hover::before {
+  opacity: 1;
+}
+
+@keyframes neonBorderSweep {
+  0% { --neon-angle: 0deg; }
+  100% { --neon-angle: 360deg; }
+}
+
+/* Fallback for browsers that don't support @property */
+@supports not (background: conic-gradient(from 0deg, red, blue)) {
+  .hero-cta::before,
+  .cart-checkout-btn::before {
+    display: none;
+  }
+}
+
+@property --neon-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ─── 3. Glitch Data Flicker on Price Hover ─── */
+/* Price text shimmers with a digital data glitch on hover */
+.product-price {
+  position: relative;
+  display: inline-block;
+  transition: color 0.2s ease;
+}
+
+.product-card:hover .product-price {
+  animation: priceGlitch 0.4s ease-in-out 1;
+  color: var(--accent);
+}
+
+@keyframes priceGlitch {
+  0% {
+    transform: translate(0);
+    text-shadow: none;
+  }
+  10% {
+    transform: translate(-2px, 1px);
+    text-shadow: 2px 0 rgba(229, 57, 53, 0.6), -2px 0 rgba(0, 255, 200, 0.4);
+  }
+  20% {
+    transform: translate(2px, -1px);
+    text-shadow: -2px 0 rgba(229, 57, 53, 0.6), 2px 0 rgba(0, 255, 200, 0.4);
+  }
+  30% {
+    transform: translate(-1px, 2px);
+    text-shadow: 1px 0 rgba(229, 57, 53, 0.4);
+  }
+  40% {
+    transform: translate(1px, -1px);
+    text-shadow: -1px 0 rgba(0, 255, 200, 0.3);
+  }
+  50% {
+    transform: translate(0);
+    text-shadow: none;
+  }
+  100% {
+    transform: translate(0);
+    text-shadow: none;
+  }
+}
+
+/* Add a glitch bar that sweeps across the price */
+.product-price::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -10%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(229, 57, 53, 0.12) 45%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(229, 57, 53, 0.12) 55%,
+    transparent 100%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.product-card:hover .product-price::after {
+  opacity: 1;
+  animation: priceBarSweep 0.8s ease-out 0.1s 1 forwards;
+}
+
+@keyframes priceBarSweep {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+/* ─── 4. Rotating Conic Gradient Ring on Footer Social Icons ─── */
+/* Animated gradient border ring that rotates around social icons on hover */
+.footer-social-icon {
+  position: relative;
+  z-index: 0;
+  overflow: visible;
+}
+
+.footer-social-icon::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from var(--social-ring-angle, 0deg),
+    var(--accent) 0deg,
+    rgba(255, 107, 53, 0.8) 90deg,
+    rgba(139, 92, 246, 0.6) 180deg,
+    rgba(229, 57, 53, 0.8) 270deg,
+    var(--accent) 360deg
+  );
+  z-index: -1;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: socialRingSpin 2.5s linear infinite;
+}
+
+.footer-social-icon:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Inner mask to create the ring (not solid fill) */
+.footer-social-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  z-index: -1;
+}
+
+@keyframes socialRingSpin {
+  0% { --social-ring-angle: 0deg; }
+  100% { --social-ring-angle: 360deg; }
+}
+
+@property --social-ring-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ─── 5. Magnetic Tilt Shadow Depth ─── */
+/* Dynamic drop shadow that shifts with mouse position on hover */
+.product-card:hover {
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
+}
+
+.product-card::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: calc(var(--radius-lg) - 2px);
+  opacity: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(229, 57, 53, 0.06) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(229, 57, 53, 0.04) 100%
+  );
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.product-card:hover::after {
+  opacity: 1;
+  animation: tiltGlowPulse 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes tiltGlowPulse {
+  0% {
+    background: linear-gradient(
+      135deg,
+      rgba(229, 57, 53, 0.06) 0%,
+      transparent 40%,
+      transparent 60%,
+      rgba(229, 57, 53, 0.04) 100%
+    );
+  }
+  100% {
+    background: linear-gradient(
+      315deg,
+      rgba(229, 57, 53, 0.08) 0%,
+      transparent 40%,
+      transparent 60%,
+      rgba(229, 57, 53, 0.06) 100%
+    );
+  }
+}
+
+/* ─── 6. Toast Icon Spin Entry ─── */
+/* Toast icon spins into existence with a bounce */
+.toast-icon-wrapper {
+  animation: toastIconSpin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes toastIconSpin {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(10deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ─── 7. Section Title Shimmer Text ─── */
+/* Glowing text sweep on section titles */
+.section-title {
+  background: linear-gradient(
+    90deg,
+    var(--text-main) 0%,
+    var(--text-main) 40%,
+    var(--accent) 50%,
+    var(--text-main) 60%,
+    var(--text-main) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textShimmerSweep 6s ease-in-out infinite;
+}
+
+@keyframes textShimmerSweep {
+  0%, 20% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  80%, 100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ─── 8. Cart Badge Elastic Pop ─── */
+/* When cart count changes, the badge does an elastic pop */
+.cart-count-badge {
+  animation: cartBadgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cartBadgePop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ─── Reduced Motion Preference ─── */
+@media (prefers-reduced-motion: reduce) {
+  .products-grid > .product-card,
+  .hero-section::before,
+  .hero-cta::before,
+  .cart-checkout-btn::before,
+  .footer-social-icon::before,
+  .product-card::after,
+  .toast-icon-wrapper,
+  .section-title,
+  .cart-count-badge {
+    animation: none !important;
+  }
+
+  .product-card:hover .product-price {
+    animation: none !important;
+  }
+
+  .product-card:hover .product-price::after {
+    animation: none !important;
+  }
+}
