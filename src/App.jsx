@@ -35,6 +35,11 @@ import CountUp from './components/CountUp';
 import RecentlyViewed from './components/RecentlyViewed';
 import FlyToCart from './components/FlyToCart';
 import BackToTop from './components/BackToTop';
+import TrustStats from './components/TrustStats';
+import DealOfTheDay from './components/DealOfTheDay';
+import TestimonialsSection from './components/TestimonialsSection';
+import CompareDrawer from './components/CompareDrawer';
+import PageTransition from './components/PageTransition';
 import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
@@ -345,6 +350,26 @@ function App() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+
+  // Compare Products State (max 3)
+  const [compareItems, setCompareItems] = useState([]);
+  const toggleCompare = (part) => {
+    setCompareItems(prev => {
+      const exists = prev.find(i => i.id === part.id);
+      if (exists) {
+        showToast(`${part.name} removed from compare.`, 'info');
+        return prev.filter(i => i.id !== part.id);
+      }
+      if (prev.length >= 3) {
+        showToast('You can compare up to 3 products at a time.', 'warning');
+        return prev;
+      }
+      showToast(`${part.name} added to compare!`, 'success');
+      return [...prev, part];
+    });
+  };
+  const isComparing = (id) => compareItems.some(i => i.id === id);
+  const clearCompare = () => { setCompareItems([]); showToast('Compare list cleared.', 'info'); };
 
   // Flying items for Add to Cart animation
   const [flyingItems, setFlyingItems] = useState([]);
@@ -694,11 +719,25 @@ function App() {
             {/* Hero */}
             <HeroSection heroImage={heroImg} onShopNow={() => switchScreen('catalog')} />
 
+            {/* Trust Stats */}
+            <TrustStats />
+
             {/* Shop by Category */}
             <ScrollReveal>
               <div className="app-container" style={{ textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
                 <h2 className="section-title" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2rem' }}>Shop By Category</h2>
                 <CategoryGrid onCategoryClick={() => switchScreen('catalog')} />
+              </div>
+            </ScrollReveal>
+
+            {/* Deal of the Day */}
+            <ScrollReveal delay={50}>
+              <div className="app-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <DealOfTheDay
+                  spares={spares}
+                  onAddToCart={addToCart}
+                  onViewProduct={(p) => { addToRecentlyViewed(p); setSelectedProduct(p); switchScreen('product'); }}
+                />
               </div>
             </ScrollReveal>
 
@@ -728,10 +767,19 @@ function App() {
                         cartQty={cart.find(item => item.id === part.id)?.qty || 0}
                         onToggleWishlist={toggleWishlist}
                         isWishlisted={isWishlisted(part.id)}
+                        onToggleCompare={toggleCompare}
+                        isComparing={isComparing(part.id)}
                       />
                     </ScrollReveal>
                   ))}
                 </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Customer Testimonials */}
+            <ScrollReveal delay={50}>
+              <div className="app-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <TestimonialsSection />
               </div>
             </ScrollReveal>
 
@@ -930,6 +978,8 @@ function App() {
                     cartQty={cart.find(item => item.id === part.id)?.qty || 0}
                     onToggleWishlist={toggleWishlist}
                     isWishlisted={isWishlisted(part.id)}
+                    onToggleCompare={toggleCompare}
+                    isComparing={isComparing(part.id)}
                   />
                 ))}
               </div>
@@ -1170,6 +1220,18 @@ function App() {
 
       {/* Back to Top with Scroll Progress & Aura */}
       <BackToTop />
+
+      {/* Compare Drawer */}
+      <CompareDrawer
+        items={compareItems}
+        onRemove={(id) => setCompareItems(prev => prev.filter(i => i.id !== id))}
+        onClear={clearCompare}
+        onAddToCart={addToCart}
+        onViewProduct={(p) => { addToRecentlyViewed(p); setSelectedProduct(p); switchScreen('product'); }}
+      />
+
+      {/* Page Transition Overlay */}
+      <PageTransition isActive={isTransitioning} />
 
       {/* Fly-to-Cart Animated Particle Overlay */}
       <FlyToCart items={flyingItems} onParticleArrival={handleParticleArrival} />

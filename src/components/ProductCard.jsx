@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { ShoppingBag, Heart, Eye } from 'lucide-react';
+import { ShoppingBag, Heart, Eye, GitCompareArrows } from 'lucide-react';
 import StarRating from './StarRating';
 import QuantityButton from './QuantityButton';
 
@@ -11,7 +11,9 @@ export default function ProductCard({
   onUpdateQty,
   cartQty = 0,
   onToggleWishlist,
-  isWishlisted
+  isWishlisted,
+  onToggleCompare,
+  isComparing
 }) {
   const cardRef = useRef(null);
   const [glowPos, setGlowPos] = useState({ x: 0, y: 0 });
@@ -135,6 +137,17 @@ export default function ProductCard({
             >
               <Eye size={14} />
             </button>
+            {onToggleCompare && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onToggleCompare(part); }}
+                title={isComparing ? 'Remove from compare' : 'Compare'}
+                className={`compare-action-btn ${isComparing ? 'active' : ''}`}
+                aria-label={isComparing ? 'Remove from compare' : 'Add to compare'}
+              >
+                <GitCompareArrows size={14} />
+              </button>
+            )}
             <button
               onClick={(e) => { e.stopPropagation(); onToggleWishlist(part); }}
               title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
