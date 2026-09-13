@@ -14,6 +14,10 @@ import {
 import './App.css';
 import heroImg from './assets/hero.png';
 import zorvnsLogo from './assets/zorvns-logo.png';
+import brakePadsImg from './assets/brake-pads.jpg';
+import sparkPlugImg from './assets/spark-plug.jpg';
+import airFilterImg from './assets/air-filter.jpg';
+import leversImg from './assets/levers.jpg';
 
 // Components
 import Toast from './components/Toast';
@@ -165,10 +169,10 @@ const INITIAL_BRAND_LOGOS = {
 
 // Mock spare parts catalog data
 const INITIAL_SPARES = [
-  { id: 1, name: 'Brembo Sintered Brake Pads', category: 'Brakes', subCategory: 'Brake Pads', price: 89.99, stock: 12, rating: 4.9, desc: 'High friction coefficient pads for maximum stopping power.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'Honda CBR650R'] },
-  { id: 2, name: 'NGK Iridium IX Spark Plug (Pack of 4)', category: 'Engine', subCategory: 'Spark plug', price: 45.50, stock: 8, rating: 4.8, desc: 'Designed specifically for high-performance motorcycle engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650'] },
-  { id: 3, name: 'K&N High-Flow Air Filter', category: 'Filters', subCategory: 'Air Filter', price: 65.00, stock: 15, rating: 4.7, desc: 'Washable and reusable filter for increased horsepower.', compatibility: ['KTM RC 390', 'KTM Adventure 390', 'RE Himalayan 450'] },
-  { id: 4, name: 'CNC Adjustable Clutch & Brake Levers', category: 'Controls', subCategory: 'Levers', price: 110.00, stock: 6, rating: 4.9, desc: '6-position adjustable aluminum levers, black anodized.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM Duke 250', 'KTM RC 390'] },
+  { id: 1, name: 'Brembo Sintered Brake Pads', category: 'Brakes', subCategory: 'Brake Pads', price: 89.99, stock: 12, rating: 4.9, desc: 'High friction coefficient pads for maximum stopping power.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'Honda CBR650R'], images: [brakePadsImg] },
+  { id: 2, name: 'NGK Iridium IX Spark Plug (Pack of 4)', category: 'Engine', subCategory: 'Spark plug', price: 45.50, stock: 8, rating: 4.8, desc: 'Designed specifically for high-performance motorcycle engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650'], images: [sparkPlugImg] },
+  { id: 3, name: 'K&N High-Flow Air Filter', category: 'Filters', subCategory: 'Air Filter', price: 65.00, stock: 15, rating: 4.7, desc: 'Washable and reusable filter for increased horsepower.', compatibility: ['KTM RC 390', 'KTM Adventure 390', 'RE Himalayan 450'], images: [airFilterImg] },
+  { id: 4, name: 'CNC Adjustable Clutch & Brake Levers', category: 'Controls', subCategory: 'Levers', price: 110.00, stock: 6, rating: 4.9, desc: '6-position adjustable aluminum levers, black anodized.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM Duke 250', 'KTM RC 390'], images: [leversImg] },
   { id: 5, name: 'Motul 300V Synthetic Oil (4 Liters)', category: 'Fluids', subCategory: 'Engine Oil', price: 79.99, stock: 20, rating: 5.0, desc: 'Double Ester technology for racing & high-revving engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
   { id: 6, name: 'LED Sequential Turn Signals (Set of 2)', category: 'Electrical', subCategory: 'Turn Signals', price: 34.99, stock: 24, rating: 4.6, desc: 'Sequential flowing glow pattern with high brightness LEDs.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
   { id: 7, name: 'DID 525 VX3 Gold X-Ring Chain', category: 'Drivetrain', subCategory: 'Chain', price: 135.00, stock: 4, rating: 4.9, desc: 'Top-tier durability and reduced friction chain.', compatibility: ['RE Continental GT 650', 'Honda CBR650R'] },
@@ -252,6 +256,11 @@ function App() {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
+  // Hero Banner image state (synced with admin panel)
+  const [heroImage, setHeroImage] = useState(() => {
+    return localStorage.getItem('spark_hero_image') || heroImg;
+  });
+
   // Pull latest spares inventory from local storage (synced with admin panel)
   const [spares, setSpares] = useState(() => {
     const saved = localStorage.getItem('spark_spares');
@@ -259,11 +268,12 @@ function App() {
     try {
       const parsed = JSON.parse(saved);
       return parsed.map(item => {
-        if (!item.subCategory) {
-          const match = INITIAL_SPARES.find(i => i.id === item.id);
-          return { ...item, subCategory: match ? match.subCategory : '' };
-        }
-        return item;
+        const match = INITIAL_SPARES.find(i => i.id === item.id);
+        return {
+          ...item,
+          subCategory: item.subCategory || (match ? match.subCategory : ''),
+          images: (item.images && item.images.length > 0) ? item.images : (match?.images || [])
+        };
       });
     } catch {
       return INITIAL_SPARES;
@@ -284,7 +294,24 @@ function App() {
   useEffect(() => {
     const handleStorageChange = () => {
       const savedSpares = localStorage.getItem('spark_spares');
-      if (savedSpares) setSpares(JSON.parse(savedSpares));
+      if (savedSpares) {
+        try {
+          const parsed = JSON.parse(savedSpares);
+          setSpares(parsed.map(item => {
+            const match = INITIAL_SPARES.find(i => i.id === item.id);
+            return {
+              ...item,
+              subCategory: item.subCategory || (match ? match.subCategory : ''),
+              images: (item.images && item.images.length > 0) ? item.images : (match?.images || [])
+            };
+          }));
+        } catch {
+          // ignore
+        }
+      }
+
+      const savedHero = localStorage.getItem('spark_hero_image');
+      if (savedHero) setHeroImage(savedHero);
 
       const savedEnquiries = localStorage.getItem('spark_enquiries');
       if (savedEnquiries) setEnquiries(JSON.parse(savedEnquiries));
@@ -294,7 +321,7 @@ function App() {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    const interval = setInterval(handleStorageChange, 5000);
+    const interval = setInterval(handleStorageChange, 3000);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
@@ -717,7 +744,7 @@ function App() {
           <div className="animate-fade-in-up" style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem', width: '100vw', marginLeft: 'calc(-50vw + 50%)', overflowX: 'hidden' }}>
 
             {/* Hero */}
-            <HeroSection heroImage={heroImg} onShopNow={() => switchScreen('catalog')} />
+            <HeroSection heroImage={heroImage} onShopNow={() => switchScreen('catalog')} />
 
             {/* Trust Stats */}
             <TrustStats />

@@ -14,10 +14,19 @@ import {
   AlertCircle,
   ChevronUp,
   ChevronDown,
-  Upload
+  Upload,
+  Image as ImageIcon,
+  RotateCcw,
+  ExternalLink,
+  Sparkles
 } from 'lucide-react';
 import './index.css';
 import zorvnsLogo from './assets/zorvns-logo.png';
+import heroImg from './assets/hero.png';
+import brakePadsImg from './assets/brake-pads.jpg';
+import sparkPlugImg from './assets/spark-plug.jpg';
+import airFilterImg from './assets/air-filter.jpg';
+import leversImg from './assets/levers.jpg';
 import { CATEGORY_SUBCATEGORIES_MAP } from './constants/categories';
 
 // INITIAL SPARES MENU DEFINITION
@@ -143,10 +152,10 @@ const INITIAL_BIKE_BRANDS = {
 
 // Initial Mock spare parts catalog data
 const INITIAL_SPARES = [
-  { id: 1, name: 'Brembo Sintered Brake Pads', category: 'Brakes', subCategory: 'Brake Pads', price: 89.99, stock: 12, rating: 4.9, desc: 'High friction coefficient pads for maximum stopping power.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'Honda CBR650R'] },
-  { id: 2, name: 'NGK Iridium IX Spark Plug (Pack of 4)', category: 'Engine', subCategory: 'Spark plug', price: 45.50, stock: 8, rating: 4.8, desc: 'Designed specifically for high-performance motorcycle engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650'] },
-  { id: 3, name: 'K&N High-Flow Air Filter', category: 'Filters', subCategory: 'Air Filter', price: 65.00, stock: 15, rating: 4.7, desc: 'Washable and reusable filter for increased horsepower.', compatibility: ['KTM RC 390', 'KTM Adventure 390', 'RE Himalayan 450'] },
-  { id: 4, name: 'CNC Adjustable Clutch & Brake Levers', category: 'Controls', subCategory: 'Levers', price: 110.00, stock: 6, rating: 4.9, desc: '6-position adjustable aluminum levers, black anodized.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM Duke 250', 'KTM RC 390'] },
+  { id: 1, name: 'Brembo Sintered Brake Pads', category: 'Brakes', subCategory: 'Brake Pads', price: 89.99, stock: 12, rating: 4.9, desc: 'High friction coefficient pads for maximum stopping power.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'Honda CBR650R'], images: [brakePadsImg] },
+  { id: 2, name: 'NGK Iridium IX Spark Plug (Pack of 4)', category: 'Engine', subCategory: 'Spark plug', price: 45.50, stock: 8, rating: 4.8, desc: 'Designed specifically for high-performance motorcycle engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650'], images: [sparkPlugImg] },
+  { id: 3, name: 'K&N High-Flow Air Filter', category: 'Filters', subCategory: 'Air Filter', price: 65.00, stock: 15, rating: 4.7, desc: 'Washable and reusable filter for increased horsepower.', compatibility: ['KTM RC 390', 'KTM Adventure 390', 'RE Himalayan 450'], images: [airFilterImg] },
+  { id: 4, name: 'CNC Adjustable Clutch & Brake Levers', category: 'Controls', subCategory: 'Levers', price: 110.00, stock: 6, rating: 4.9, desc: '6-position adjustable aluminum levers, black anodized.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM Duke 250', 'KTM RC 390'], images: [leversImg] },
   { id: 5, name: 'Motul 300V Synthetic Oil (4 Liters)', category: 'Fluids', subCategory: 'Engine Oil', price: 79.99, stock: 20, rating: 5.0, desc: 'Double Ester technology for racing & high-revving engines.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
   { id: 6, name: 'LED Sequential Turn Signals (Set of 2)', category: 'Electrical', subCategory: 'Turn Signals', price: 34.99, stock: 24, rating: 4.6, desc: 'Sequential flowing glow pattern with high brightness LEDs.', compatibility: ['Yamaha YZF-R15', 'Yamaha MT-15', 'KTM RC 390', 'KTM Duke 250', 'RE Classic 350', 'RE Himalayan 450', 'RE Continental GT 650', 'Honda CB350 H\'ness', 'Honda CBR650R', 'Honda Hornet 2.0', 'KTM Adventure 390'] },
   { id: 7, name: 'DID 525 VX3 Gold X-Ring Chain', category: 'Drivetrain', subCategory: 'Chain', price: 135.00, stock: 4, rating: 4.9, desc: 'Top-tier durability and reduced friction chain.', compatibility: ['RE Continental GT 650', 'Honda CBR650R'] },
@@ -167,11 +176,12 @@ function AdminPortal() {
     try {
       const parsed = JSON.parse(saved);
       return parsed.map(item => {
-        if (!item.subCategory) {
-          const matchInitial = INITIAL_SPARES.find(init => init.id === item.id);
-          return { ...item, subCategory: matchInitial ? matchInitial.subCategory : '' };
-        }
-        return item;
+        const matchInitial = INITIAL_SPARES.find(init => init.id === item.id);
+        return {
+          ...item,
+          subCategory: item.subCategory || (matchInitial ? matchInitial.subCategory : ''),
+          images: (item.images && item.images.length > 0) ? item.images : (matchInitial?.images || [])
+        };
       });
     } catch {
       return INITIAL_SPARES;
@@ -256,6 +266,96 @@ function AdminPortal() {
   const showToast = (msg, type = 'success') => {
     setToastMessage({ msg, type });
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  // Hero Banner image state (synced with storefront)
+  const [heroImage, setHeroImage] = useState(() => {
+    return localStorage.getItem('spark_hero_image') || heroImg;
+  });
+  const [heroUrlInput, setHeroUrlInput] = useState('');
+
+  // Per-item Best Seller URL inputs state
+  const [bestSellerUrlInputs, setBestSellerUrlInputs] = useState({});
+
+  const handleHeroFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      setHeroImage(dataUrl);
+      localStorage.setItem('spark_hero_image', dataUrl);
+      window.dispatchEvent(new Event('storage'));
+      showToast('Hero banner image updated from file upload!', 'success');
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleSetHeroUrl = () => {
+    if (!heroUrlInput || !heroUrlInput.trim()) return;
+    const trimmed = heroUrlInput.trim();
+    setHeroImage(trimmed);
+    localStorage.setItem('spark_hero_image', trimmed);
+    window.dispatchEvent(new Event('storage'));
+    setHeroUrlInput('');
+    showToast('Hero banner image updated from URL!', 'success');
+  };
+
+  const handleResetHero = () => {
+    setHeroImage(heroImg);
+    localStorage.setItem('spark_hero_image', heroImg);
+    window.dispatchEvent(new Event('storage'));
+    showToast('Hero banner reset to default image!', 'info');
+  };
+
+  // Best Seller product image controls
+  const handleBestSellerImageUpload = (partId, e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const updated = spares.map(p => p.id === partId ? { ...p, images: [dataUrl] } : p);
+      setSpares(updated);
+      localStorage.setItem('spark_spares', JSON.stringify(updated));
+      window.dispatchEvent(new Event('storage'));
+      const part = spares.find(p => p.id === partId);
+      showToast(`Image uploaded for ${part ? part.name : 'part'}!`, 'success');
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleSetBestSellerImageUrl = (partId) => {
+    const url = bestSellerUrlInputs[partId]?.trim();
+    if (!url) return;
+    const updated = spares.map(p => p.id === partId ? { ...p, images: [url] } : p);
+    setSpares(updated);
+    localStorage.setItem('spark_spares', JSON.stringify(updated));
+    window.dispatchEvent(new Event('storage'));
+    setBestSellerUrlInputs(prev => ({ ...prev, [partId]: '' }));
+    const part = spares.find(p => p.id === partId);
+    showToast(`Image URL saved for ${part ? part.name : 'part'}!`, 'success');
+  };
+
+  const handleResetBestSellerImage = (partId) => {
+    const defaultPart = INITIAL_SPARES.find(i => i.id === partId);
+    const updated = spares.map(p => p.id === partId ? { ...p, images: defaultPart ? defaultPart.images : [] } : p);
+    setSpares(updated);
+    localStorage.setItem('spark_spares', JSON.stringify(updated));
+    window.dispatchEvent(new Event('storage'));
+    const part = spares.find(p => p.id === partId);
+    showToast(`Image reset to default for ${part ? part.name : 'part'}!`, 'info');
+  };
+
+  const handleRemoveBestSellerImage = (partId) => {
+    const updated = spares.map(p => p.id === partId ? { ...p, images: [] } : p);
+    setSpares(updated);
+    localStorage.setItem('spark_spares', JSON.stringify(updated));
+    window.dispatchEvent(new Event('storage'));
+    const part = spares.find(p => p.id === partId);
+    showToast(`Image removed for ${part ? part.name : 'part'}!`, 'warning');
   };
 
   const handleAddMenuCategory = (colIdx) => {
@@ -1275,8 +1375,294 @@ function AdminPortal() {
                 </div>
               </div>
 
-              {/* Right Column: Customer Enquiries */}
+              {/* Right Column: Storefront Media Manager & Customer Enquiries */}
               <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
+                {/* ═══ STOREFRONT SHOWCASE & MEDIA CONTROL ═══ */}
+                <div className="glass-panel" style={{ padding: '2rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                        <Sparkles size={18} color="var(--accent)" />
+                        <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                          Storefront Showcase
+                        </span>
+                      </div>
+                      <h3 style={{ fontSize: '1.25rem', textAlign: 'left', margin: 0 }}>Header & Best Sellers Media</h3>
+                    </div>
+                    <a
+                      href="/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-secondary"
+                      style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem', textDecoration: 'none' }}
+                      title="Open storefront in new tab"
+                    >
+                      <ExternalLink size={13} />
+                      <span>View Store</span>
+                    </a>
+                  </div>
+
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', textAlign: 'left', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                    Customize the hero header banner and top Best Seller product images displayed on the homepage. Changes sync live across tabs.
+                  </p>
+
+                  {/* ── 1. HERO HEADER BANNER CONTROL ── */}
+                  <div style={{ background: '#FFFFFF', border: '1px solid var(--border)', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.5rem', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <ImageIcon size={16} color="var(--primary)" />
+                        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: 0, color: 'var(--primary)' }}>Header Banner Image</h4>
+                      </div>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, background: 'rgba(229, 57, 53, 0.1)', color: 'var(--accent)', padding: '0.2rem 0.5rem', borderRadius: '100px' }}>
+                        Live Banner
+                      </span>
+                    </div>
+
+                    {/* Hero Banner Preview */}
+                    <div style={{
+                      position: 'relative',
+                      width: '100%',
+                      height: '140px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      border: '1px solid var(--border)',
+                      marginBottom: '1rem',
+                      backgroundImage: `url(${heroImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      padding: '0.85rem',
+                      boxShadow: 'inset 0 -40px 60px rgba(0,0,0,0.65)'
+                    }}>
+                      <div style={{ color: '#fff', textAlign: 'left' }}>
+                        <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.85 }}>Homepage Hero</span>
+                        <h5 style={{ fontSize: '1rem', fontWeight: 900, margin: '0.1rem 0 0', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>UPGRADE YOUR RIDE</h5>
+                      </div>
+                    </div>
+
+                    {/* Hero Banner Controls */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        <label className="btn-secondary" style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          padding: '0.45rem 0.85rem',
+                          fontSize: '0.8rem',
+                          cursor: 'pointer',
+                          flex: '0 0 auto'
+                        }}>
+                          <Upload size={14} color="var(--accent)" />
+                          <span>Upload File</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleHeroFileUpload}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={handleResetHero}
+                          className="btn-secondary"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.45rem 0.75rem', fontSize: '0.8rem' }}
+                          title="Reset to default banner"
+                        >
+                          <RotateCcw size={13} />
+                          <span>Reset Default</span>
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <input
+                          type="text"
+                          placeholder="Or paste banner image URL (https://...)"
+                          value={heroUrlInput}
+                          onChange={(e) => setHeroUrlInput(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleSetHeroUrl())}
+                          style={{ flex: 1, padding: '0.45rem 0.65rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '0.8rem' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleSetHeroUrl}
+                          className="btn-primary"
+                          style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+                        >
+                          Apply URL
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── 2. BEST SELLERS PRODUCT IMAGES CONTROL ── */}
+                  <div style={{ background: '#FFFFFF', border: '1px solid var(--border)', borderRadius: '10px', padding: '1.25rem', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Package size={16} color="var(--primary)" />
+                        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: 0, color: 'var(--primary)' }}>Best Sellers Showcase Images</h4>
+                      </div>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, background: '#EFF6FF', color: '#2563EB', padding: '0.2rem 0.5rem', borderRadius: '100px' }}>
+                        Top 4 Products
+                      </span>
+                    </div>
+
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'left', marginBottom: '1rem' }}>
+                      Admin controls for the 4 featured products in Best Sellers. The <strong style={{ color: 'var(--accent)' }}>first two images</strong> are prominently displayed front and center on the homepage.
+                    </p>
+
+                    {/* Best Seller Items List */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {spares.slice(0, 4).map((part, idx) => {
+                        const hasImage = part.images && part.images.length > 0 && part.images[0];
+                        const isFirstTwo = idx < 2;
+
+                        return (
+                          <div
+                            key={part.id}
+                            style={{
+                              border: isFirstTwo ? '1.5px solid rgba(229, 57, 53, 0.4)' : '1px solid var(--border)',
+                              background: isFirstTwo ? 'rgba(229, 57, 53, 0.02)' : '#FAFAFA',
+                              borderRadius: '8px',
+                              padding: '0.85rem',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '0.65rem',
+                              textAlign: 'left'
+                            }}
+                          >
+                            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                              {/* Image Preview */}
+                              <div style={{
+                                position: 'relative',
+                                width: '64px',
+                                height: '64px',
+                                borderRadius: '8px',
+                                background: '#FFFFFF',
+                                border: '1px solid var(--border)',
+                                overflow: 'hidden',
+                                flexShrink: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}>
+                                {hasImage ? (
+                                  <img
+                                    src={part.images[0]}
+                                    alt={part.name}
+                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                  />
+                                ) : (
+                                  <Package size={24} color="var(--text-light)" />
+                                )}
+                              </div>
+
+                              {/* Details */}
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.2rem' }}>
+                                  <span style={{
+                                    fontSize: '0.65rem',
+                                    fontWeight: 800,
+                                    padding: '0.15rem 0.45rem',
+                                    borderRadius: '4px',
+                                    background: isFirstTwo ? 'var(--accent)' : 'var(--primary)',
+                                    color: '#FFFFFF'
+                                  }}>
+                                    #{idx + 1} {isFirstTwo ? '★ Primary Showcase' : 'Best Seller'}
+                                  </span>
+                                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{part.category}</span>
+                                </div>
+
+                                <h5 style={{ fontSize: '0.88rem', fontWeight: 700, margin: 0, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  {part.name}
+                                </h5>
+                                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--accent)' }}>
+                                  ₹{Math.round(part.price * 83 || part.price)}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Action Controls for this Best Seller image */}
+                            <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                              <label className="btn-secondary" style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                padding: '0.35rem 0.65rem',
+                                fontSize: '0.75rem',
+                                cursor: 'pointer'
+                              }}>
+                                <Upload size={12} color="var(--accent)" />
+                                <span>Upload Image</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleBestSellerImageUpload(part.id, e)}
+                                  style={{ display: 'none' }}
+                                />
+                              </label>
+
+                              <button
+                                type="button"
+                                onClick={() => handleResetBestSellerImage(part.id)}
+                                className="btn-secondary"
+                                style={{ padding: '0.35rem 0.6rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                                title="Reset to default photo"
+                              >
+                                <RotateCcw size={11} />
+                                <span>Reset Default</span>
+                              </button>
+
+                              {hasImage && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveBestSellerImage(part.id)}
+                                  style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#EF4444',
+                                    fontSize: '0.75rem',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.2rem',
+                                    padding: '0.25rem'
+                                  }}
+                                  title="Remove image"
+                                >
+                                  <Trash2 size={12} />
+                                  <span>Remove</span>
+                                </button>
+                              )}
+                            </div>
+
+                            {/* URL Input for this Best Seller image */}
+                            <div style={{ display: 'flex', gap: '0.35rem' }}>
+                              <input
+                                type="text"
+                                placeholder="Or enter image URL (https://...)"
+                                value={bestSellerUrlInputs[part.id] || ''}
+                                onChange={(e) => setBestSellerUrlInputs(prev => ({ ...prev, [part.id]: e.target.value }))}
+                                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleSetBestSellerImageUrl(part.id))}
+                                style={{ flex: 1, padding: '0.35rem 0.55rem', border: '1px solid var(--border)', borderRadius: '4px', fontSize: '0.75rem' }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleSetBestSellerImageUrl(part.id)}
+                                className="btn-secondary"
+                                style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
+                              >
+                                Set URL
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
 
                 {/* Customer messages panel */}
                 <div className="glass-panel" style={{ padding: '2rem' }}>
