@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, User, ShoppingBag, ChevronDown, X, Menu } from 'lucide-react';
+import { Search, User, ShoppingBag, ChevronDown, X, Menu, Bike, Truck } from 'lucide-react';
 
 export default function Header({
   zorvnsLogo,
@@ -25,6 +25,10 @@ export default function Header({
   categoryFilter,
   onSelectCategory,
   isCartBouncing = false,
+  onOpenGarage,
+  activeGarageBike = null,
+  garageBikesCount = 0,
+  onOpenTrackOrder,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -74,6 +78,25 @@ export default function Header({
 
           {/* Actions */}
           <div className="header-actions">
+            {/* My Garage Button */}
+            <button
+              type="button"
+              className={`header-garage-btn ${activeGarageBike ? 'garage-active' : ''}`}
+              onClick={onOpenGarage}
+              title={activeGarageBike ? `Active: ${activeGarageBike.brand} ${activeGarageBike.model}` : 'Open My Garage'}
+            >
+              <Bike size={18} />
+              <div className="header-garage-text">
+                <span className="header-garage-label">
+                  {activeGarageBike ? 'My Bike' : 'My Garage'}
+                </span>
+                <span className="header-garage-val">
+                  {activeGarageBike ? activeGarageBike.model : (garageBikesCount > 0 ? `${garageBikesCount} Saved` : 'Add Bike')}
+                </span>
+              </div>
+              {activeGarageBike && <span className="header-garage-dot" title="Fitment filter active" />}
+            </button>
+
             <button className="header-icon-btn" title="Account">
               <User size={20} />
             </button>
@@ -345,6 +368,15 @@ export default function Header({
               )}
             </div>
 
+            <button
+              type="button"
+              onClick={onOpenTrackOrder}
+              className="nav-link-btn track-nav-btn"
+              title="Track order status in real time"
+            >
+              <Truck size={14} style={{ marginRight: '5px', verticalAlign: '-2px' }} />
+              Track Order
+            </button>
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Wholesale Price</button>
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Faq</button>
             <button onClick={() => handleNavClick('contact')} className={`nav-link-btn ${activeTab === 'contact' ? 'nav-active' : ''}`}>Contact Us</button>
@@ -368,6 +400,27 @@ export default function Header({
               </button>
             </div>
             <div className="mobile-menu-body">
+              <button
+                className="mobile-menu-link highlight-garage"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenGarage) onOpenGarage();
+                }}
+              >
+                <Bike size={18} />
+                <span>My Garage {activeGarageBike ? `(${activeGarageBike.brand} ${activeGarageBike.model})` : ''}</span>
+              </button>
+              <button
+                className="mobile-menu-link highlight-track"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenTrackOrder) onOpenTrackOrder();
+                }}
+              >
+                <Truck size={18} />
+                <span>Track Order & Service</span>
+              </button>
+              <div className="mobile-menu-divider" />
               <button className="mobile-menu-link" onClick={() => handleNavClick('home')}>Home</button>
               <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>All Collections</button>
               <button className="mobile-menu-link" onClick={() => handleNavClick('catalog')}>Shop By Bike</button>
