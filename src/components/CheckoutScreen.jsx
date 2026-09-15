@@ -32,7 +32,8 @@ export default function CheckoutScreen({
   onRemoveItem,
   onBackToShopping,
   onOrderSuccess,
-  showToast
+  showToast,
+  onTrackOrder
 }) {
   // Step navigation: 'details' (Address & Payment) | 'success' (Order Placed)
   const [placedOrder, setPlacedOrder] = useState(null);
@@ -340,6 +341,16 @@ export default function CheckoutScreen({
           </div>
 
           <div className="success-actions">
+            {onTrackOrder && (
+              <button
+                type="button"
+                onClick={() => onTrackOrder(placedOrder.orderId)}
+                className="btn-primary"
+                style={{ background: 'linear-gradient(135deg, #10B981, #059669)', border: 'none' }}
+              >
+                <Truck size={16} /> Track This Order
+              </button>
+            )}
             <button
               onClick={() => window.print()}
               className="btn-secondary print-invoice-btn"
@@ -348,7 +359,7 @@ export default function CheckoutScreen({
             </button>
             <button
               onClick={onBackToShopping}
-              className="btn-primary"
+              className="btn-secondary"
             >
               <ShoppingBag size={16} /> Continue Shopping
             </button>

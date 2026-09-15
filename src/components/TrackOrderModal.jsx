@@ -7,8 +7,6 @@ import {
   Clock,
   MapPin,
   X,
-  ChevronRight,
-  ExternalLink,
   Printer,
   MessageSquare,
   AlertCircle,

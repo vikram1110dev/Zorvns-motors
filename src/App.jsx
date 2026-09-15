@@ -9,7 +9,8 @@ import {
   Mail,
   Send,
   Heart,
-  ArrowLeft
+  ArrowLeft,
+  Bike
 } from 'lucide-react';
 import './App.css';
 import heroImg from './assets/hero.png';
@@ -30,6 +31,8 @@ import CartDrawer from './components/CartDrawer';
 import CheckoutScreen from './components/CheckoutScreen';
 import WishlistModal from './components/WishlistModal';
 import QuickViewModal from './components/QuickViewModal';
+import MyGarageModal from './components/MyGarageModal';
+import TrackOrderModal from './components/TrackOrderModal';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollReveal from './components/ScrollReveal';
@@ -368,11 +371,96 @@ function App() {
     const updated = exists
       ? wishlist.filter(i => i.id !== part.id)
       : [...wishlist, part];
-    localStorage.setItem('spark_wishlist', JSON.stringify(updated));
-    showToast(exists ? 'Removed from wishlist' : `${part.name} saved to wishlist!`, exists ? 'info' : 'success');
     setWishlist(updated);
+    localStorage.setItem('spark_wishlist', JSON.stringify(updated));
+    showToast(exists ? `Removed ${part.name} from wishlist` : `Added ${part.name} to wishlist`, 'info');
   };
   const isWishlisted = (id) => wishlist.some(i => i.id === id);
+
+  // ═══════════════════════════════════════════════════════════
+  // MY GARAGE & TRACK ORDER WORKFLOW STATES
+  // ═══════════════════════════════════════════════════════════
+  const [isGarageOpen, setIsGarageOpen] = useState(false);
+  const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
+  const [trackInitialOrderId, setTrackInitialOrderId] = useState(null);
+
+  // Saved motorcycles in user's garage
+  const [garageBikes, setGarageBikes] = useState(() => {
+    try {
+      const saved = localStorage.getItem('spark_user_garage');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Active motorcycle for 1-click fitment filtering
+  const [activeGarageBike, setActiveGarageBike] = useState(() => {
+    try {
+      const saved = localStorage.getItem('spark_active_garage_bike');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Recent orders for quick tracking
+  const [recentOrders, setRecentOrders] = useState(() => {
+    try {
+      const saved = localStorage.getItem('spark_orders');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Activate / deactivate a bike from My Garage
+  const handleSelectActiveBike = (bike) => {
+    if (bike) {
+      setActiveGarageBike(bike);
+      localStorage.setItem('spark_active_garage_bike', JSON.stringify(bike));
+      setSelectedBrand(bike.brand);
+      setSelectedBike(bike.model);
+      showToast(`🏍️ Fitment filter active for ${bike.brand} ${bike.model}`, 'success');
+    } else {
+      setActiveGarageBike(null);
+      localStorage.removeItem('spark_active_garage_bike');
+      setSelectedBrand('');
+      setSelectedBike('');
+      showToast('Fitment filter cleared. Showing all parts.', 'info');
+    }
+  };
+
+  // Add motorcycle to My Garage
+  const handleAddGarageBike = (bikeData) => {
+    const newBike = {
+      id: 'bike-' + Date.now(),
+      ...bikeData,
+      addedAt: new Date().toISOString()
+    };
+    const updated = [newBike, ...garageBikes];
+    setGarageBikes(updated);
+    localStorage.setItem('spark_user_garage', JSON.stringify(updated));
+    handleSelectActiveBike(newBike);
+    showToast(`Added ${bikeData.brand} ${bikeData.model} to My Garage!`, 'success');
+  };
+
+  // Remove motorcycle from My Garage
+  const handleRemoveGarageBike = (id) => {
+    const updated = garageBikes.filter(b => b.id !== id);
+    setGarageBikes(updated);
+    localStorage.setItem('spark_user_garage', JSON.stringify(updated));
+    if (activeGarageBike && activeGarageBike.id === id) {
+      handleSelectActiveBike(null);
+    }
+    showToast('Motorcycle removed from garage', 'info');
+  };
+
+  // Open Track Order modal
+  const handleOpenTrackOrder = (orderId = null) => {
+    setTrackInitialOrderId(orderId);
+    setIsTrackModalOpen(true);
+  };
 
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -510,7 +598,9 @@ function App() {
     try {
       const saved = localStorage.getItem('spark_orders');
       const orders = saved ? JSON.parse(saved) : [];
-      localStorage.setItem('spark_orders', JSON.stringify([orderData, ...orders]));
+      const updatedOrders = [orderData, ...orders];
+      localStorage.setItem('spark_orders', JSON.stringify(updatedOrders));
+      setRecentOrders(updatedOrders);
     } catch (err) {
       console.error('Failed to save order to localStorage', err);
     }
@@ -696,6 +786,10 @@ function App() {
         isCartBouncing={isCartBouncing}
         onCartOpen={() => setIsCartOpen(true)}
         onSwitchScreen={switchScreen}
+        onOpenGarage={() => setIsGarageOpen(true)}
+        activeGarageBike={activeGarageBike}
+        garageBikesCount={garageBikes.length}
+        onOpenTrackOrder={() => handleOpenTrackOrder(null)}
         hoveredMenu={hoveredMenu}
         setHoveredMenu={setHoveredMenu}
         sparesMenu={sparesMenu}
@@ -840,6 +934,44 @@ function App() {
               <h2 className="section-title">GENUINE SPARES CATALOG</h2>
               <p className="section-desc">Search or filter our catalog of race-tested and manufacturer-approved components.</p>
             </div>
+
+            {/* My Garage Active Fitment Banner */}
+            {activeGarageBike && (
+              <div className="catalog-garage-banner glass-panel">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div className="catalog-garage-banner-icon">
+                    <Bike size={22} color="var(--primary)" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#10B981', fontWeight: 700 }}>
+                      My Garage Fitment Active
+                    </div>
+                    <div style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                      Showing parts guaranteed to fit <strong>{activeGarageBike.brand} {activeGarageBike.model}</strong>
+                      {activeGarageBike.nickname && <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: '6px' }}>({activeGarageBike.nickname})</span>}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    style={{ fontSize: '0.78rem', padding: '0.4rem 0.8rem' }}
+                    onClick={() => setIsGarageOpen(true)}
+                  >
+                    Change Bike
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    style={{ fontSize: '0.78rem', padding: '0.4rem 0.8rem' }}
+                    onClick={() => handleSelectActiveBike(null)}
+                  >
+                    Clear Filter
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Bike Finder */}
             <div className="glass-panel bike-finder" style={{ textAlign: 'left' }}>
@@ -1115,6 +1247,7 @@ function App() {
             onBackToShopping={() => switchScreen('catalog')}
             onOrderSuccess={handleOrderSuccess}
             showToast={showToast}
+            onTrackOrder={(orderId) => handleOpenTrackOrder(orderId)}
           />
         )}
 
@@ -1255,6 +1388,42 @@ function App() {
         onClear={clearCompare}
         onAddToCart={addToCart}
         onViewProduct={(p) => { addToRecentlyViewed(p); setSelectedProduct(p); switchScreen('product'); }}
+      />
+
+      {/* My Garage Modal */}
+      <MyGarageModal
+        isOpen={isGarageOpen}
+        onClose={() => setIsGarageOpen(false)}
+        garageBikes={garageBikes}
+        activeBike={activeGarageBike}
+        onSelectActiveBike={handleSelectActiveBike}
+        onAddBike={handleAddGarageBike}
+        onRemoveBike={handleRemoveGarageBike}
+        bikeBrands={bikeBrands}
+        onBrowseCatalog={() => {
+          setIsGarageOpen(false);
+          switchScreen('catalog');
+        }}
+      />
+
+      {/* Track Order / Service Modal */}
+      <TrackOrderModal
+        isOpen={isTrackModalOpen}
+        onClose={() => {
+          setIsTrackModalOpen(false);
+          setTrackInitialOrderId(null);
+        }}
+        recentOrders={recentOrders}
+        initialOrderId={trackInitialOrderId}
+        onContactSupport={(orderId) => {
+          setIsTrackModalOpen(false);
+          setContactData(prev => ({
+            ...prev,
+            subject: `Order Inquiry #${orderId}`,
+            message: `Hi ZORVNS Support, I need assistance with my Order #${orderId}.`
+          }));
+          switchScreen('contact');
+        }}
       />
 
       {/* Page Transition Overlay */}
