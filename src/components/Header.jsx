@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, User, ShoppingBag, ChevronDown, X, Menu, Bike, Truck } from 'lucide-react';
+import { Search, User, ShoppingBag, ChevronDown, X, Menu, Bike, Truck, Volume2, Wrench, ShieldAlert } from 'lucide-react';
 
 export default function Header({
   zorvnsLogo,
@@ -29,6 +29,9 @@ export default function Header({
   activeGarageBike = null,
   garageBikesCount = 0,
   onOpenTrackOrder,
+  onOpenSoundSimulator,
+  onOpenServiceEstimator,
+  onOpenRideAssist,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -377,6 +380,29 @@ export default function Header({
               <Truck size={14} style={{ marginRight: '5px', verticalAlign: '-2px' }} />
               Track Order
             </button>
+
+            {/* Feature 1: Exhaust Sound Simulator */}
+            <button
+              type="button"
+              onClick={onOpenSoundSimulator}
+              className="nav-link-btn header-sound-btn"
+              title="Interactive Exhaust Sound Studio & Audio Simulator"
+            >
+              <Volume2 size={14} style={{ color: '#00f0ff' }} />
+              <span style={{ color: '#00f0ff' }}>Exhaust Lab</span>
+            </button>
+
+            {/* Feature 2: Smart Service Estimator */}
+            <button
+              type="button"
+              onClick={onOpenServiceEstimator}
+              className="nav-link-btn header-service-btn"
+              title="Calculate bike maintenance intervals and wear checklist"
+            >
+              <Wrench size={14} style={{ color: '#f59e0b' }} />
+              <span style={{ color: '#f59e0b' }}>Service Estimator</span>
+            </button>
+
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Wholesale Price</button>
             <button onClick={() => handleNavClick('catalog')} className="nav-link-btn">Faq</button>
             <button onClick={() => handleNavClick('contact')} className={`nav-link-btn ${activeTab === 'contact' ? 'nav-active' : ''}`}>Contact Us</button>
@@ -419,6 +445,37 @@ export default function Header({
               >
                 <Truck size={18} />
                 <span>Track Order & Service</span>
+              </button>
+              <button
+                className="mobile-menu-link highlight-sound"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenSoundSimulator) onOpenSoundSimulator();
+                }}
+              >
+                <Volume2 size={18} />
+                <span>Exhaust Lab (Sound Studio)</span>
+              </button>
+              <button
+                className="mobile-menu-link highlight-service"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenServiceEstimator) onOpenServiceEstimator();
+                }}
+              >
+                <Wrench size={18} />
+                <span>Service Estimator & Spares Kit</span>
+              </button>
+              <button
+                className="mobile-menu-link"
+                style={{ color: '#ef4444', fontWeight: 700 }}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenRideAssist) onOpenRideAssist();
+                }}
+              >
+                <ShieldAlert size={18} />
+                <span>24/7 Roadside SOS (RideAssist)</span>
               </button>
               <div className="mobile-menu-divider" />
               <button className="mobile-menu-link" onClick={() => handleNavClick('home')}>Home</button>

@@ -33,6 +33,9 @@ import WishlistModal from './components/WishlistModal';
 import QuickViewModal from './components/QuickViewModal';
 import MyGarageModal from './components/MyGarageModal';
 import TrackOrderModal from './components/TrackOrderModal';
+import SoundSimulatorModal from './components/SoundSimulatorModal';
+import ServiceEstimatorModal from './components/ServiceEstimatorModal';
+import EmergencyRideAssistModal from './components/EmergencyRideAssistModal';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollReveal from './components/ScrollReveal';
@@ -383,6 +386,9 @@ function App() {
   const [isGarageOpen, setIsGarageOpen] = useState(false);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
   const [trackInitialOrderId, setTrackInitialOrderId] = useState(null);
+  const [isSoundSimulatorOpen, setIsSoundSimulatorOpen] = useState(false);
+  const [isServiceEstimatorOpen, setIsServiceEstimatorOpen] = useState(false);
+  const [isRideAssistOpen, setIsRideAssistOpen] = useState(false);
 
   // Saved motorcycles in user's garage
   const [garageBikes, setGarageBikes] = useState(() => {
@@ -790,6 +796,9 @@ function App() {
         activeGarageBike={activeGarageBike}
         garageBikesCount={garageBikes.length}
         onOpenTrackOrder={() => handleOpenTrackOrder(null)}
+        onOpenSoundSimulator={() => setIsSoundSimulatorOpen(true)}
+        onOpenServiceEstimator={() => setIsServiceEstimatorOpen(true)}
+        onOpenRideAssist={() => setIsRideAssistOpen(true)}
         hoveredMenu={hoveredMenu}
         setHoveredMenu={setHoveredMenu}
         sparesMenu={sparesMenu}
@@ -1404,6 +1413,7 @@ function App() {
           setIsGarageOpen(false);
           switchScreen('catalog');
         }}
+        onOpenServiceEstimator={() => setIsServiceEstimatorOpen(true)}
       />
 
       {/* Track Order / Service Modal */}
@@ -1425,6 +1435,44 @@ function App() {
           switchScreen('contact');
         }}
       />
+
+      {/* Feature 1: Performance Exhaust Lab Simulator */}
+      <SoundSimulatorModal
+        isOpen={isSoundSimulatorOpen}
+        onClose={() => setIsSoundSimulatorOpen(false)}
+        onAddToCart={(part) => {
+          addToCart(part);
+          showToast(`${part.name} added to cart!`, 'success');
+        }}
+      />
+
+      {/* Feature 2: Smart Bike Service Estimator */}
+      <ServiceEstimatorModal
+        isOpen={isServiceEstimatorOpen}
+        onClose={() => setIsServiceEstimatorOpen(false)}
+        bikeBrands={bikeBrands}
+        activeBike={activeGarageBike}
+        onAddToCart={addToCart}
+        onShowToast={showToast}
+      />
+
+      {/* Feature 3: Emergency Roadside Assistance & SOS Helpline */}
+      <EmergencyRideAssistModal
+        isOpen={isRideAssistOpen}
+        onClose={() => setIsRideAssistOpen(false)}
+        activeBike={activeGarageBike}
+      />
+
+      {/* Floating 24/7 Roadside SOS Quick Trigger */}
+      <button
+        type="button"
+        className="floating-sos-btn"
+        onClick={() => setIsRideAssistOpen(true)}
+        title="24/7 Highway Emergency Breakdown Assistance & Live GPS Dispatch"
+      >
+        <Phone size={14} />
+        <span>SOS Help</span>
+      </button>
 
       {/* Page Transition Overlay */}
       <PageTransition isActive={isTransitioning} />

@@ -10,7 +10,8 @@ export default function MyGarageModal({
   onAddBike,
   onRemoveBike,
   bikeBrands = {},
-  onBrowseCatalog
+  onBrowseCatalog,
+  onOpenServiceEstimator
 }) {
   const [newBrand, setNewBrand] = useState('');
   const [newModel, setNewModel] = useState('');
@@ -203,6 +204,21 @@ export default function MyGarageModal({
                             title={`Filter store for ${bike.brand} ${bike.model}`}
                           >
                             Select for Filter
+                          </button>
+                        )}
+                        {onOpenServiceEstimator && (
+                          <button
+                            type="button"
+                            className="btn-secondary"
+                            style={{ padding: '0.4rem 0.65rem', fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                            onClick={() => {
+                              onSelectActiveBike(bike);
+                              onClose();
+                              onOpenServiceEstimator();
+                            }}
+                            title={`Check service intervals & spares for ${bike.model}`}
+                          >
+                            <Wrench size={13} color="#f59e0b" /> Service
                           </button>
                         )}
                         <button
